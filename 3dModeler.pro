@@ -1,3 +1,5 @@
+CONFIG += staticlib
+
 QT += opengl
 
 SOURCES += \

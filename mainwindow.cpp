@@ -633,8 +633,6 @@ MainWindow::MainWindow()
 
     setWindowTitle( "3d Modeler" );
 
-    browser->append( "Hello and welcome to 3dModeler!" );
-
  //  model->load( "/path/to/model.mdl" );
 }
 
