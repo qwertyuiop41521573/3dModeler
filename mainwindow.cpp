@@ -1,4 +1,4 @@
-    #include <QtGui>
+#include <QtGui>
 #include <QtOpenGL>
 #include <QSpacerItem>
 
@@ -12,29 +12,16 @@ MainWindow::MainWindow()
 {
     int i;
     centralWidget = new QWidget;
-    setCentralWidget( centralWidget );
 
-    browser = new QTextBrowser;
-    browser->setFixedHeight( 50 );
+    model = new Model;
 
-    model = new Model( browser );
 
-    toolPan = new Tool( "Pan", toolPanFunction, Qt::OpenHandCursor );
-    toolZoom = new Tool( "Zoom", toolZoomFunction, Qt::ArrowCursor );
-    toolRotateCamera = new Tool( "Rotate",
-                     toolRotateCameraFunction, Qt::ArrowCursor );
-    toolOrbit = new Tool( "Orbit", toolOrbitFunction, Qt::ArrowCursor );
+    // TOOLS
 
-    connect( toolPan, SIGNAL( makeMeActive( Tool* ) ), this,
-             SLOT( setActiveToolSlot( Tool* ) ) );
-    connect( toolZoom, SIGNAL( makeMeActive( Tool* ) ), this,
-             SLOT( setActiveToolSlot( Tool* ) ) );
-    connect( toolRotateCamera, SIGNAL( makeMeActive( Tool* ) ), this,
-             SLOT( setActiveToolSlot( Tool* ) ) );
-    connect( toolOrbit, SIGNAL( makeMeActive( Tool* ) ), this, SLOT( setActiveToolSlot( Tool* ) ) );
-
-    connect( toolPan, SIGNAL( changeCursor( bool ) ), this,
-             SLOT( changeCursor( bool ) ) );
+    tPan = new TPan(this, "Pan");
+    tZoom = new TZoom(this, "Zoom");
+    tRotateCamera = new TRotateCamera(this, "Rotate");
+    tOrbit = new TOrbit(this, "Orbit");
 
     //toolSelect
     QWidget *toolSelectWidget = new QWidget;
@@ -58,11 +45,10 @@ MainWindow::MainWindow()
         }
 
         toolSelectWidget->setLayout( toolSelectLayout );
-        toolSelect = new Tool( "Select", toolSelectFunction,
-                Qt::CrossCursor, toolSelectWidget, toolSelectElements );
-        connect( toolSelect, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+        tSelect = new TSelect(this, "Select", toolSelectWidget,
+                              toolSelectElements);
     }
+
 
     //toolMove
     QWidget *toolMoveWidget = new QWidget;
@@ -84,12 +70,11 @@ MainWindow::MainWindow()
         }
 
         toolMoveWidget->setLayout( toolMoveLayout );
-        toolMove = new Tool( "Move", toolMoveFunction, Qt::CrossCursor,
+        toolMove = new ToolWithWidget(this, "Move",
                     toolMoveWidget, toolMoveElements, "Move" );
         toolMoveLayout->addWidget( toolMove->getFinalButton(), 3, 0,
                                    1, 2 );
-        connect( toolMove, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolMove->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
@@ -115,13 +100,12 @@ MainWindow::MainWindow()
 
 
         toolScaleWidget->setLayout( toolScaleLayout );
-        toolScale = new Tool( "Scale", toolScaleFunction,
-            Qt::CrossCursor, toolScaleWidget, toolScaleElements,
+        toolScale = new ToolWithWidget(this, "Scale",
+            toolScaleWidget, toolScaleElements,
                               "Scale" );
         toolScaleLayout->addWidget( toolScale->getFinalButton(), 3,
                                     0, 1, 2 );
-        connect( toolScale, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolScale->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
@@ -153,13 +137,12 @@ MainWindow::MainWindow()
         toolRotateLayout->addWidget( toolRotateElements->
                                      getMyCheckBox( 0 ), 5, 0, 1, 2 );
         toolRotateWidget->setLayout( toolRotateLayout );
-        toolRotate = new Tool( "Rotate", toolRotateFunction,
-                Qt::CrossCursor, toolRotateWidget, toolRotateElements,
+        toolRotate = new ToolWithWidget(this, "Rotate",
+                 toolRotateWidget, toolRotateElements,
                                "Rotate" );
         toolRotateLayout->addWidget( toolRotate->getFinalButton(), 4,
                                      0, 1, 2 );
-        connect( toolRotate, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolRotate->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
@@ -183,13 +166,12 @@ MainWindow::MainWindow()
         }
 
         toolVertexWidget->setLayout( toolVertexLayout );
-        toolVertex = new Tool( "Vertex", toolVertexFunction,
-                Qt::CrossCursor, toolVertexWidget, toolVertexElements,
+        toolVertex = new ToolWithWidget(this, "Vertex",
+                toolVertexWidget, toolVertexElements,
                                "Create Vertex" );
         toolVertexLayout->addWidget( toolVertex->getFinalButton(),
                                      3, 0, 1, 2 );
-        connect( toolVertex, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolVertex->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
@@ -201,13 +183,12 @@ MainWindow::MainWindow()
         WidgetElements *toolTriangleElements = new WidgetElements( 0, 0,
                                                                    0, 0, 0 );
         toolTriangleWidget->setLayout( toolTriangleLayout );
-        toolTriangle = new Tool( "Triangle", toolTriangleFunction,
-            Qt::CrossCursor, toolTriangleWidget, toolTriangleElements,
+        toolTriangle = new ToolWithWidget(this, "Triangle",
+             toolTriangleWidget, toolTriangleElements,
                                  "Cancel" );
         toolTriangleLayout->addWidget( toolTriangle->getFinalButton(),
                                        0, 0 );
-        connect( toolTriangle, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolTriangle->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
@@ -246,13 +227,12 @@ MainWindow::MainWindow()
         toolPlaneLayout->addWidget( toolPlaneVLine, 1, 3, 7, 1 );
 
         toolPlaneWidget->setLayout( toolPlaneLayout );
-        toolPlane = new Tool( "Plane", toolPlaneFunction, Qt::CrossCursor,
+        toolPlane = new ToolWithWidget(this, "Plane",
                             toolPlaneWidget, toolPlaneElements,
                               "Create Plane" );
         toolPlaneLayout->addWidget( toolPlane->getFinalButton(), 9,
                                     0, 1, 6 );
-        connect( toolPlane, SIGNAL( makeMeActive( Tool* ) ), this,
-                 SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolPlane->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
@@ -263,7 +243,7 @@ MainWindow::MainWindow()
         QGridLayout *toolBoxLayout = new QGridLayout;
         WidgetElements *toolBoxElements = new WidgetElements( 0, 6, 0, 0, 2 );
         toolBoxWidget->setLayout( toolBoxLayout );
-        toolBox = new Tool( "Box", toolBoxFunction, Qt::CrossCursor, toolBoxWidget, toolBoxElements,
+        toolBox = new ToolWithWidget(this, "Box", toolBoxWidget, toolBoxElements,
                             "Create Box", true );
         toolBoxElements->getCheckBox( 0 )->setText( "Square" );
         toolBoxElements->getCheckBox( 0 )->setMaximumWidth( 130 );
@@ -292,7 +272,7 @@ MainWindow::MainWindow()
             toolBoxLayout->addWidget( toolBoxElements->getSpinBox( i + 3 ), 3 + i, 3 );
         }
         toolBoxLayout->addWidget( toolBox->getFinalButton(), 6, 0, 1, 4 );
-        connect( toolBox, SIGNAL( makeMeActive( Tool* ) ), this, SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolBox->getFinalButton(), SIGNAL( clicked() ), this, SLOT( final() ) );
     }
 
@@ -302,7 +282,7 @@ MainWindow::MainWindow()
         QGridLayout *toolEllipseLayout = new QGridLayout;
         WidgetElements *toolEllipseElements = new WidgetElements( 0, 8, 0, 0, 1 );
         toolEllipseWidget->setLayout( toolEllipseLayout );
-        toolEllipse = new Tool( "Ellipse", toolEllipseFunction, Qt::CrossCursor, toolEllipseWidget, toolEllipseElements, "Create Ellipse" );
+        toolEllipse = new ToolWithWidget(this, "Ellipse", toolEllipseWidget, toolEllipseElements, "Create Ellipse" );
 
         toolEllipseElements->getSpinBox( 0 )->setMaximumWidth( 50 );
         toolEllipseElements->getSpinBox( 0 )->setMinimum( 3 );
@@ -348,7 +328,7 @@ MainWindow::MainWindow()
         toolEllipseLayout->addWidget( toolEllipse->getFinalButton(), 7, 0, 1, 4 );
 
 
-        connect( toolEllipse, SIGNAL( makeMeActive( Tool* ) ), this, SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolEllipse->getFinalButton(), SIGNAL( clicked() ), this, SLOT( final() ) );
     }
 
@@ -358,7 +338,7 @@ MainWindow::MainWindow()
         QGridLayout *toolCylinderLayout = new QGridLayout;
         WidgetElements *toolCylinderElements = new WidgetElements( 0, 8, 0, 0, 1 );
         toolCylinderWidget->setLayout( toolCylinderLayout );
-        toolCylinder = new Tool( "Cylinder", toolCylinderFunction, Qt::CrossCursor, toolCylinderWidget,
+        toolCylinder = new ToolWithWidget(this, "Cylinder", toolCylinderWidget,
                                  toolCylinderElements, "Create Cylinder", true );
 
         toolCylinderElements->getSpinBox( 0 )->setMaximumWidth( 50 );
@@ -405,7 +385,7 @@ MainWindow::MainWindow()
         toolCylinderLayout->addWidget( toolCylinder->getFinalButton(), 7, 0, 1, 4 );
 
 
-        connect( toolCylinder, SIGNAL( makeMeActive( Tool* ) ), this, SLOT( setActiveToolSlot( Tool* ) ) );
+
         connect( toolCylinder->getFinalButton(), SIGNAL( clicked() ), this, SLOT( final() ) );
     }
 
@@ -426,188 +406,136 @@ MainWindow::MainWindow()
 
     workWithWidget->setLayout( workWithLayout );
 
-    QWidget *viewportWidget = new QWidget;
-    QGridLayout *viewportLayout = new QGridLayout;
-    for( i = 0; i < 4; i++ )
-    {
-        widget[ i ] = new GLWidget( browser, model, &toolActive,
-                                    workWithElements, this );
-        connect( widget[ i ], SIGNAL( makeMeActive( GLWidget* ) ),
-                 this, SLOT( setActiveWidgetSlot( GLWidget* ) ) );
-        connect( widget[ i ], SIGNAL(
-                    quickAccessToolOrbit() ), this, SLOT(
-                             quickAccessToolOrbit() ) );
-        connect( widget[ i ], SIGNAL( quickAccessToolPan() ),
-                         this, SLOT( quickAccessToolPan() ) );
 
-        connect( widget[ i ], SIGNAL( quickAccessToolZoom() ),
-                 this, SLOT( quickAccessToolZoom() ) );
-        connect( widget[ i ], SIGNAL( stopQuickAccess() ),
-                         this, SLOT( stopQuickAccess() ) );
-    }
+    toolActive = tSelect;
+    setActiveTool(tSelect);
 
-    widget[ 0 ]->setProjection( TOP );
-    widget[ 1 ]->setProjection( FRONT );
-    widget[ 2 ]->setProjection( LEFT );
-    widget[ 3 ]->setProjection( PERSPECTIVE );
-
-    toolActive = toolSelect;
-    setActiveTool( toolSelect );
+    // TOOLS END
 
 
-    renderingMode = new QComboBox;
-
-    renderingMode->addItem( "Wireframe" );
-    renderingMode->addItem( "Flat Shaded" );
-    renderingMode->addItem( "Smooth Shaded" );
-    renderingMode->addItem( "Textured" );
-
-    renderingMode->setMaximumWidth( 150 );
-    renderingMode->setFixedHeight( 20 );
-    connect( renderingMode, SIGNAL( currentIndexChanged( int ) ),
-             this, SLOT( changeRenderingMode( int ) ) );
-
-    QLabel *renderingModeLabel = new QLabel( "Rendering Mode:" );
-    renderingModeLabel->setMaximumHeight( 15 );
-
-    wireframeOverlay = new QCheckBox( "Wireframe Overlay" );
-    wireframeOverlay->setFixedHeight( 20 );
-    connect( wireframeOverlay, SIGNAL( clicked( bool ) ), this,
-             SLOT( changeWireFrameOverlay() ) );
-
-    QLabel *projectionLabel = new QLabel( "Projection:" );
-    projectionLabel->setFixedHeight( 20 );
-
-    projection = new QComboBox;
-
-    projection->addItem( "Top" );
-    projection->addItem( "Bottom" );
-    projection->addItem( "Front" );
-    projection->addItem( "Back" );
-    projection->addItem( "Left" );
-    projection->addItem( "Right" );
-    projection->addItem( "Perpective" );
-
-    projection->setMaximumWidth( 150 );
-    projection->setFixedHeight( 20 );
-    connect( projection, SIGNAL( currentIndexChanged( int ) ),
-             this, SLOT( changeProjection( int ) ) );
-
-    QLabel *viewportsLabel = new QLabel( "Viewports:" );
-    viewportsLabel->setFixedHeight( 20 );
-
-    for( i = 0; i < 4; i++ )
-    {
-        hideViewportButtons[ i ] = new MyPushButton( i );
-        connect( hideViewportButtons[ i ], SIGNAL(
-            handledClick( int ) ), this, SLOT(
-                     hideViewport( int ) ) );
-    }
-    maximizeButton = new QPushButton( "Maximize\nActive" );
-    maximizeButton->setMaximumWidth( 75 );
-    maximizeButton->setMinimumHeight( 50 );
-    maximizeButton->setCheckable( true );
-    connect( maximizeButton, SIGNAL( clicked( bool ) ), this,
-             SLOT( maximize( bool ) ) );
-
-    QFrame *line = new QFrame();
-    line->setFrameShape( QFrame::HLine );
-    line->setFrameShadow( QFrame::Sunken );
-    line->setMaximumWidth( 150 );
-    line->setFixedHeight( 5 );
-
-    QFrame *line2 = new QFrame();
-    line2->setFrameShape( QFrame::HLine );
-    line2->setFrameShadow( QFrame::Sunken );
-    line2->setMaximumWidth( 150 );
-
-    QFrame *line3 = new QFrame();
-    line3->setFrameShape( QFrame::HLine );
-    line3->setFrameShadow( QFrame::Sunken );
-    line3->setMaximumWidth( 150 );
-
-
-
-    widgetActive = widget[ 3 ];
-    setActiveWidget( widget[ 3 ] );
-
-    createActions();
-    createMenus();
-
+    //layouts and gui elements
     QGridLayout *centralLayout = new QGridLayout;
 
+    //scrollarea
     QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setHorizontalScrollBarPolicy(
-                Qt::ScrollBarAlwaysOff );
-    scrollArea->setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded );
-    scrollArea->setFixedWidth( 190 );
+                Qt::ScrollBarAlwaysOff);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setFixedWidth(190);
     QWidget *scrollAreaWidget = new QWidget;
     QGridLayout *scrollAreaLayout = new QGridLayout;
 
-    QFrame *line4 = new QFrame();
-    line4->setFrameShape( QFrame::HLine );
-    line4->setFrameShadow( QFrame::Sunken );
-    line4->setMaximumWidth( 150 );
+    renderingMode = new MyComboBox;
 
-    QFrame *line5 = new QFrame();
-    line5->setFrameShape( QFrame::HLine );
-    line5->setFrameShadow( QFrame::Sunken );
-    line5->setMaximumWidth( 150 );
+    renderingMode->addItem("Wireframe");
+    renderingMode->addItem("Flat Shaded");
+    renderingMode->addItem("Smooth Shaded");
+    renderingMode->addItem("Textured");
 
-    QSpacerItem *spacer = new QSpacerItem( 40, 20,
-                   QSizePolicy::Minimum, QSizePolicy::Expanding );
+    connect(renderingMode, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(changeRenderingMode(int)));
 
-    scrollAreaLayout->addWidget( renderingModeLabel, 0, 0, 1, 4 );
-    scrollAreaLayout->addWidget( renderingMode, 1, 0, 1, 4 );
-    scrollAreaLayout->addWidget( wireframeOverlay, 2, 0, 1, 4 );
-    scrollAreaLayout->addWidget( projectionLabel, 3, 0, 1, 4 );
-    scrollAreaLayout->addWidget( projection, 4, 0, 1, 4 );
-    scrollAreaLayout->addWidget( viewportsLabel, 5, 0, 1, 4 );
-    for( i = 0; i < 4; i++ ) scrollAreaLayout->addWidget(
-                hideViewportButtons[ i ], 6 + i / 2, i % 2 );
-    scrollAreaLayout->addWidget( maximizeButton, 6, 2, 2, 2 );
-    scrollAreaLayout->addWidget( line, 8, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolPan->getButton(), 9, 0, 1, 2 );
-    scrollAreaLayout->addWidget( toolZoom->getButton(), 9, 2, 1, 2 );
-    scrollAreaLayout->addWidget( toolRotateCamera->getButton(),
-                                 10, 0, 1, 2 );
-    scrollAreaLayout->addWidget( toolOrbit->getButton(), 10, 2, 1, 2 );
-    scrollAreaLayout->addWidget( line2, 11, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolSelect->getButton(), 12, 0,
-                                 1, 2 );
-    scrollAreaLayout->addWidget( toolMove->getButton(), 12, 2,
-                                 1, 2 );
-    scrollAreaLayout->addWidget( toolScale->getButton(), 13, 0,
-                                 1, 2 );
-    scrollAreaLayout->addWidget( toolRotate->getButton(), 13, 2,
-                                 1, 2 );
-    scrollAreaLayout->addWidget( line5, 14, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolVertex->getButton(), 15, 0,
-                                 1, 2 );
-    scrollAreaLayout->addWidget( toolTriangle->getButton(), 15, 2,
-                                 1, 2 );
-    scrollAreaLayout->addWidget( toolPlane->getButton(), 16, 0, 1, 2 );
-    scrollAreaLayout->addWidget( toolBox->getButton(), 16, 2, 1, 2 );
-    scrollAreaLayout->addWidget( toolEllipse->getButton(), 17, 0, 1, 2 );
-    scrollAreaLayout->addWidget( toolCylinder->getButton(), 17, 2, 1, 2 );
-    scrollAreaLayout->addWidget( line3, 18, 0, 1, 4 );
-    scrollAreaLayout->addWidget( workWithWidget, 19, 0, 1, 4 );
-    scrollAreaLayout->addWidget( line4, 20, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolSelectWidget, 21, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolMoveWidget, 22, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolScaleWidget, 23, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolRotateWidget, 24, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolVertexWidget, 25, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolTriangleWidget, 26, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolPlaneWidget, 27, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolBoxWidget, 28, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolEllipseWidget, 23, 0, 1, 4 );
-    scrollAreaLayout->addWidget( toolCylinderWidget, 24, 0, 1, 4 );
+    QLabel *renderingModeLabel = new QLabel("Rendering Mode:");
 
-    scrollAreaLayout->addItem( spacer, 40, 0, 1, 4 );
+    wireframeOverlay = new QCheckBox("Wireframe Overlay");
 
-    scrollAreaWidget->setLayout( scrollAreaLayout );
-    scrollArea->setWidget( scrollAreaWidget);
+    connect(wireframeOverlay, SIGNAL(clicked(bool)), this, SLOT(
+                changeWireFrameOverlay()));
+
+    QLabel *projectionLabel = new QLabel("Projection:");
+    projection = new MyComboBox;
+
+    projection->addItem("Top");
+    projection->addItem("Bottom");
+    projection->addItem("Front");
+    projection->addItem("Back");
+    projection->addItem("Left");
+    projection->addItem("Right");
+    projection->addItem("Perpective");
+
+    connect(projection, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(changeProjection(int)));
+
+    QLabel *viewportsLabel = new QLabel("Viewports:");
+
+    for(i = 0; i < 4; i++) hideViewportButtons[i] = new
+            MyPushButton(i, this);
+
+    maximizeButton = new QPushButton("Maximize\nActive");
+    maximizeButton->setMaximumWidth(75);
+    maximizeButton->setCheckable(true);
+    connect(maximizeButton, SIGNAL(clicked(bool)), this, SLOT(
+                maximize(bool)));
+
+    QFrame *line[5];
+    for(i = 0; i < 5; i++)
+    {
+        line[i] = new QFrame;
+        line[i]->setFrameShape(QFrame::HLine);
+        line[i]->setFrameShadow(QFrame::Sunken);
+        line[i]->setMaximumWidth(150);
+    }
+
+    QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::
+                                   Minimum, QSizePolicy::Expanding);
+
+    scrollAreaLayout->addWidget(renderingModeLabel, 0, 0, 1, 4);
+    scrollAreaLayout->addWidget(renderingMode, 1, 0, 1, 4);
+    scrollAreaLayout->addWidget(wireframeOverlay, 2, 0, 1, 4);
+    scrollAreaLayout->addWidget(projectionLabel, 3, 0, 1, 4);
+    scrollAreaLayout->addWidget(projection, 4, 0, 1, 4);
+    scrollAreaLayout->addWidget(viewportsLabel, 5, 0, 1, 4);
+
+    for(i = 0; i < 4; i++) scrollAreaLayout->addWidget(
+                hideViewportButtons[i], 6 + i / 2, i % 2);
+
+    scrollAreaLayout->addWidget(maximizeButton, 6, 2, 2, 2);
+    scrollAreaLayout->addWidget(line[0], 8, 0, 1, 4);
+    scrollAreaLayout->addWidget(tPan->getButton(), 9, 0, 1, 2);
+    scrollAreaLayout->addWidget(tZoom->getButton(), 9, 2, 1, 2);
+    scrollAreaLayout->addWidget(tRotateCamera->getButton(),
+                                 10, 0, 1, 2);
+    scrollAreaLayout->addWidget(tOrbit->getButton(), 10, 2, 1,
+                                2);
+    scrollAreaLayout->addWidget(line[1], 11, 0, 1, 4);
+    scrollAreaLayout->addWidget(tSelect->getButton(), 12, 0,
+                                 1, 2);
+    scrollAreaLayout->addWidget(toolMove->getButton(), 12, 2,
+                                 1, 2);
+    scrollAreaLayout->addWidget(toolScale->getButton(), 13, 0,
+                                 1, 2);
+    scrollAreaLayout->addWidget(toolRotate->getButton(), 13, 2,
+                                 1, 2);
+    scrollAreaLayout->addWidget(line[2], 14, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolVertex->getButton(), 15, 0,
+                                 1, 2);
+    scrollAreaLayout->addWidget(toolTriangle->getButton(), 15, 2,
+                                 1, 2);
+    scrollAreaLayout->addWidget(toolPlane->getButton(), 16, 0, 1,
+                                2);
+    scrollAreaLayout->addWidget(toolBox->getButton(), 16, 2, 1, 2);
+    scrollAreaLayout->addWidget(toolEllipse->getButton(), 17, 0, 1,
+                                2);
+    scrollAreaLayout->addWidget(toolCylinder->getButton(), 17, 2, 1,
+                                2);
+    scrollAreaLayout->addWidget(line[3], 18, 0, 1, 4);
+    scrollAreaLayout->addWidget(workWithWidget, 19, 0, 1, 4);
+    scrollAreaLayout->addWidget(line[4], 20, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolSelectWidget, 21, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolMoveWidget, 22, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolScaleWidget, 23, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolRotateWidget, 24, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolVertexWidget, 25, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolTriangleWidget, 26, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolPlaneWidget, 27, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolBoxWidget, 28, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolEllipseWidget, 23, 0, 1, 4);
+    scrollAreaLayout->addWidget(toolCylinderWidget, 24, 0, 1, 4);
+
+    scrollAreaLayout->addItem(spacer, 40, 0, 1, 4);
+
+    scrollAreaWidget->setLayout(scrollAreaLayout);
+    scrollArea->setWidget(scrollAreaWidget);
 
     toolMoveWidget->hide();
     toolScaleWidget->hide();
@@ -618,20 +546,39 @@ MainWindow::MainWindow()
     toolBoxWidget->hide();
     toolEllipseWidget->hide();
     toolCylinderWidget->hide();
+    //scrollarea end
 
-    for( i = 0; i < 4; i++ )
-        viewportLayout->addWidget( widget[ i ], i / 2, i % 2 );
-    viewportWidget->setLayout( viewportLayout );
+    //viewports
+    QWidget *viewportWidget = new QWidget;
+    QGridLayout *viewportLayout = new QGridLayout;
+
+    for(i = 0; i < 4; i++) widget[i] = new GLWidget(this);
+
+    widget[0]->setProjection(TOP);
+    widget[1]->setProjection(FRONT);
+    widget[2]->setProjection(LEFT);
+    widget[3]->setProjection(PERSPECTIVE);
+
+    widgetActive = widget[3];
+    setActiveWidget(widget[3]);
+
+    for(i = 0; i < 4; i++) viewportLayout->addWidget(widget[i],
+                                                     i / 2, i % 2);
+    viewportWidget->setLayout(viewportLayout);
+    //viewports end
+
+    //add viewports and scrollarea to window
+    centralLayout->addWidget(viewportWidget, 0, 0);
+    centralLayout->addWidget(scrollArea, 0, 1);
+    centralWidget->setLayout(centralLayout);
+    setCentralWidget(centralWidget);
+
+    createActions();
+    createMenus();
+
+    setWindowTitle("3d Modeler");
 
 
-
-    centralLayout->addWidget( viewportWidget, 0, 0 );
-    centralLayout->addWidget( browser, 1, 0 );
-    centralLayout->addWidget( scrollArea, 0, 1, 2, 1 );
-
-    centralWidget->setLayout( centralLayout );
-
-    setWindowTitle( "3d Modeler" );
 
  //  model->load( "/path/to/model.mdl" );
 }
@@ -704,26 +651,23 @@ void MainWindow::createMenus()
     editMenu->addAction( deleteAction );
 }
 
-void MainWindow::setActiveWidget( GLWidget *widget )
+void MainWindow::setActiveWidget(GLWidget *widget)
 {
-    widgetActive->setActive( false );
+    widgetActive->setActive(false);
     widgetActive = widget;
-    widgetActive->setActive( true );
-    renderingMode->setCurrentIndex( widgetActive->
-                                    getRenderingMode() );
-    wireframeOverlay->setChecked(
-                widgetActive->getWireframeOverlay() );
-    projection->setCurrentIndex(
-                widgetActive->getProjection() );
+    widgetActive->setActive(true);
+    renderingMode->setCurrentIndex(widgetActive->
+                                   getRenderingMode());
+    wireframeOverlay->setChecked(widgetActive->
+                                 getWireframeOverlay());
+    projection->setCurrentIndex(widgetActive->getProjection());
 }
 
-void MainWindow::setActiveTool( Tool *tool )
+void MainWindow::setActiveTool(Tool *tool)
 {
-    for( int i = 0; i < 4; i++ )
-        widget[ i ]->setCursor( tool->cursor() );
-    toolActive->setActive( false );
+    toolActive->setActive(false);
     toolActive = tool;
-    tool->setActive( true );
+    tool->setActive(true);
 }
 
 bool MainWindow::saveRequest()
@@ -808,63 +752,51 @@ bool MainWindow::openFileDialog( QString action )
 void MainWindow::quickAccessToolOrbit()
 {
     lastTool = toolActive;
-    setActiveTool( toolOrbit );
+    setActiveTool(tOrbit);
 }
 
 void MainWindow::quickAccessToolPan()
 {
     lastTool = toolActive;
-    setActiveTool( toolPan );
-    toolPanFunction( widgetActive, START, 0, 0 );
-}
-
-void MainWindow::quickAccessToolZoom()
-{
-    toolZoom->getButton()->setChecked( true );
+    setActiveTool(tPan);
+    tPan->function(START, 0, 0);
 }
 
 void MainWindow::handleSelectClick( MyCheckBox *myCheckBox )
 {
-    if( toolSelect->getElements()->getMyCheckBox( 0 )->
-        isChecked() && toolSelect->getElements()->
+    if( tSelect->getElements()->getMyCheckBox( 0 )->
+        isChecked() && tSelect->getElements()->
                       getMyCheckBox( 1 )->isChecked() )
     {
-        for( int i = 0; i < 2; i++ ) toolSelect->getElements()->
+        for( int i = 0; i < 2; i++ ) tSelect->getElements()->
                 getMyCheckBox( i )->setChecked( false );
         myCheckBox->setChecked( true );
     }
 }
 
-void MainWindow::hideViewport( int index )
+void MainWindow::hideViewport(int index)
 {
-    widget[ index ]->setHidden( !widget[ index ]->isHidden() );
+    widget[index]->setHidden(!widget[index]->isHidden());
     bool threeViewportsHidden = true;
-    for( int i = 0; i < 4; i++ ) if( widget[ i ] != widgetActive )
-       threeViewportsHidden *= hideViewportButtons[ i ]->isChecked();
-    maximizeButton->setChecked( threeViewportsHidden &&
-                                !widgetActive->isHidden() );
+    for(int i = 0; i < 4; i++) if(widget[i] != widgetActive)
+       threeViewportsHidden *= hideViewportButtons[i]->isChecked();
+    maximizeButton->setChecked(threeViewportsHidden &&
+                               !widgetActive->isHidden());
 }
 
-void MainWindow::maximize( bool value )
+void MainWindow::maximize(bool value)
 {
-    if( value )
+    if(value)
     {
-        for( int i = 0; i < 4; i++ )
+        for(int i = 0; i < 4; i++)
         {
-            widget[ i ]->setOldHidden( widget[ i ]->isHidden() );
-            hideViewportButtons[ i ]->setChecked(
-                        !( widget[ i ] == widgetActive ) );
+            widget[i]->setOldHidden(widget[i]->isHidden());
+            hideViewportButtons[i]->setChecked(!(widget[i] ==
+                                                 widgetActive));
         }
     }
-    else for( int i = 0; i < 4; i++ ) hideViewportButtons[ i ]->
-            setChecked( widget[ i ]->oldHidden() );
-}
-
-void MainWindow::changeCursor( bool cursorClosed )
-{
-    Qt::CursorShape cursor = cursorClosed ? Qt::ClosedHandCursor :
-                                            Qt::OpenHandCursor;
-    for( int i = 0; i < 4; i++ ) widget[ i ]->setCursor( cursor );
+    else for(int i = 0; i < 4; i++) hideViewportButtons[i]->
+            setChecked(widget[i]->oldHidden());
 }
 
 void MainWindow::snapTogether()
@@ -947,3 +879,17 @@ void MainWindow::deleteSlot()
     model->vertexNumber -= deleteList.size();*/
 }
 
+Model *MainWindow::getModel()
+{
+    return model;
+}
+
+WidgetElements *MainWindow::getWorkWithElements()
+{
+    return workWithElements;
+}
+
+void MainWindow::stopQuickAccess()
+{
+    setActiveTool(lastTool);
+};

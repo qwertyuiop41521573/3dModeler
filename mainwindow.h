@@ -10,8 +10,18 @@
 #include "tool.h"
 #include "functions.h"
 #include "mypushbutton.h"
+#include "mycombobox.h"
+
 
 #include <iostream>
+
+#include "tpan.h"
+#include "tzoom.h"
+#include "trotatecamera.h"
+#include "torbit.h"
+#include "tselect.h"
+
+#include "toolwithwidget.h"
 
 using namespace std;
 
@@ -21,6 +31,21 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
+    Model *getModel();
+    Tool **getActiveTool()
+    { return &toolActive; }
+    WidgetElements *getWorkWithElements();
+    void setActiveWidget(GLWidget *widget);
+    GLWidget **getActiveWidget()
+    { return &widgetActive; };
+
+    void quickAccessToolOrbit();
+    void quickAccessToolPan();
+    void stopQuickAccess();
+
+    void hideViewport(int index);
+    void setActiveTool(Tool *tool);
+
 
 private slots:
     void open();
@@ -37,56 +62,42 @@ private slots:
     void snapTogether();
     void deleteSlot();
 
-    void setActiveWidgetSlot( GLWidget *widget )
-    { setActiveWidget( widget ); };
-
-    void setActiveToolSlot( Tool *tool )
-    { setActiveTool( tool ); };
-
     void final()
-    { toolActive->function( widgetActive, FINAL, 0, 0 ); };
+    { toolActive->function(FINAL, 0, 0 ); };
 
-    void changeRenderingMode( int mode )
-    { widgetActive->setRenderingMode(
-                    RenderingMode( mode ) ); };
+    void changeRenderingMode(int mode)
+    { widgetActive->setRenderingMode(RenderingMode(mode)); };
 
     void changeWireFrameOverlay()
-    { widgetActive->setWireframeOverlay(
-        !widgetActive->getWireframeOverlay() ); };
+    { widgetActive->setWireframeOverlay(!widgetActive->
+                                        getWireframeOverlay()); };
 
     void changeProjection( int newProjection )
     { widgetActive->setProjection(
                     Projection( newProjection ) ); };
 
-    void quickAccessToolOrbit();
-    void quickAccessToolPan();
-    void quickAccessToolZoom();
 
-    void stopQuickAccess()
-    { setActiveTool( lastTool ); };
+
 
 
 
     void handleSelectClick( MyCheckBox *myCheckBox );
-    void hideViewport( int index );
-    void maximize( bool value );
-    void changeCursor( bool cursorClosed );
+
+    void maximize(bool value);
 
 private:
     QWidget *centralWidget;
     Model *model;
-    Tool *toolPan, *toolZoom, *toolRotateCamera, *toolOrbit;
-    Tool *toolActive, *lastTool;
-    GLWidget *widget[ 4 ];
-    GLWidget *widgetActive;
 
-    QComboBox *renderingMode;
+    Tool *toolActive, *lastTool;
+    GLWidget *widget[4], *widgetActive;
+
+    MyComboBox *renderingMode;
     QCheckBox *wireframeOverlay;
-    QComboBox *projection;
+    MyComboBox *projection;
     WidgetElements *workWithElements;
 
-    Tool *toolSelect, *toolMove, *toolScale, *toolRotate;
-    Tool *toolVertex, *toolPlane, *toolTriangle, *toolBox, *toolEllipse, *toolCylinder;
+
 
     QMenu *fileMenu, *editMenu;
     QAction *openAction;
@@ -97,18 +108,28 @@ private:
 
     QAction *selectAllAction, *selectNoneAction, *snapTogetherAction;
     QAction *deleteAction;
-    MyPushButton *hideViewportButtons[ 4 ];
+    MyPushButton *hideViewportButtons[4];
     QPushButton *maximizeButton;
     QCursor windowCursor;
-    QTextBrowser *browser;
 
     void createActions();
     void createMenus();
 
-    void setActiveWidget( GLWidget *widget );
-    void setActiveTool( Tool *tool );
+
+
     bool saveRequest();
     bool openFileDialog( QString title );
+
+    ToolWithWidget *toolSelect, *toolMove, *toolScale, *toolRotate;
+    ToolWithWidget *toolVertex, *toolPlane, *toolTriangle, *toolBox, *toolEllipse, *toolCylinder;
+
+
+    TPan *tPan;
+    TZoom *tZoom;
+    TRotateCamera *tRotateCamera;
+    TOrbit *tOrbit;
+    TSelect *tSelect;
+
 };
 
 #endif // MAINWINDOW_H

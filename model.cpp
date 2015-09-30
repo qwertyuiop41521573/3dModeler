@@ -5,20 +5,16 @@
 
 using namespace std;
 
-Model::Model( QTextBrowser *browser )
+Model::Model()
 {
-    _browser = browser;
 }
 
 bool Model::load( const char *newFileName )
 {
-    _browser->append( "Loading " + QString( newFileName ) );
     loaded = true;
     FILE *input = fopen( newFileName, "rt" );
     if( !input )
     {
-        _browser->append( "    Failed to open file " + QString(
-                                  newFileName ) );
         loaded = false;
     }
     else
@@ -27,7 +23,6 @@ bool Model::load( const char *newFileName )
         fscanf( input, "%i", &i );
         if( i != 0 && i != 1 )
         {
-            _browser->append( "    Wrong \'textured\' value" );
             loaded = false;
         }
         else
@@ -71,9 +66,8 @@ bool Model::load( const char *newFileName )
             fileName = QString( newFileName );
         }
     }
-    _browser->append( QString( "    " ) + ( loaded ? "Successfully loaded!" : "Failed to load model" ) );
-    if( loaded ) _browser->append( QString( "    Vertices: " )  + QString::number( vertexNumber ) + QString( "    Triangles: " ) +
-                                   QString::number( triangleNumber ) );
+
+
     return loaded;
 }
 
@@ -84,17 +78,14 @@ void Model::clear()
     triangle.clear();
     isEmpty = true;
     isModified = loaded = false;
-    _browser->append( "Cleared model" );
 }
 
 void Model::save()
 {
-    _browser->append( "Saving to " + fileName );
     bool saved = true;
     FILE *output = fopen( fileName.toStdString().c_str(), "wt" );
     if( !output )
     {
-        _browser->append( "    Failed to open file " + fileName );
         saved = false;
     }
     else
@@ -116,7 +107,6 @@ void Model::save()
         fclose( output );
         isModified = false;
     }
-    _browser->append( QString( "    " ) + ( saved ? "Successfully saved!" : "Failed to save model" ) );
 }
 
 

@@ -1,43 +1,25 @@
 #include "tool.h"
+#include "mainwindow.h"
 
-Tool::Tool( QString buttonText, toolFunction newFunction,Qt::
-    CursorShape cursor, QWidget *widget, WidgetElements
-            *newElements, QString finalButtonText, bool hasStage2 )
+
+Tool::Tool(MainWindow *mainWindow, QString buttonText)
 {
-    button = new QPushButton( buttonText );
-    setupButton( button );
-    connect( button, SIGNAL( clicked( bool ) ), this,
-             SLOT( handleClick( bool ) ) );
-    if( !finalButtonText.isNull() )
-        finalButton = new QPushButton( finalButtonText );
-    _hasStage2 = hasStage2;
-
-    function = newFunction;
-   // _cursor.setShape( cursor );
-    _widget = widget;
-    elements = newElements;
+    _mainWindow = mainWindow;
+    button = new QPushButton(buttonText);
+    setupButton(button);
+    connect(button, SIGNAL(clicked(bool)), this, SLOT(handleClick(
+                                                          bool)));
+    _activeWidget = _mainWindow->getActiveWidget();
 }
 
-void Tool::setActive( bool value )
+void Tool::setActive(bool value)
 {
     _isActive = value;
-    button->setChecked( value );
-    if( _widget )
-    {
-        if( value ) _widget->show();
-        else _widget->hide();
-    }
+    button->setChecked(value);
 }
 
-void Tool::handleClick( bool pressed )
+void Tool::handleClick(bool pressed)
 {
-    if( pressed ) emit makeMeActive( this );
-    else button->setChecked( true );
+    if(pressed) _mainWindow->setActiveTool(this);
+    else button->setChecked(true);
 }
-
-bool Tool::elementsExist()
-{
-    if( elements == 0 ) return false;
-    return true;
-}
-

@@ -1,22 +1,24 @@
 #include "glwidget.h"
+#include "mainwindow.h"
 #include "functions.h"
 
 #include <iostream>
 #include <math.h>
 
-//#include <QtMath>
 #include <QMouseEvent>
 
 using namespace std;
 
-GLWidget::GLWidget( QTextBrowser *browser, Model *newModel, Tool **newActiveTool,
-                    WidgetElements *newWorkWithElements,
-                    QWidget *parent ) : QGLWidget( parent )
+GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
+    QOpenGLWidget(parent)
 {
-    _browser = browser;
-    model = newModel;
-    activeTool = newActiveTool;
-    workWithElements = newWorkWithElements;
+    _mainWindow = mainWindow;
+    model = _mainWindow->getModel();
+    activeTool = _mainWindow->getActiveTool();
+    workWithElements = _mainWindow->getWorkWithElements();
+
+
+
     timer = new QBasicTimer;
     programColor = new QGLShaderProgram;
     programTexture =new QGLShaderProgram;
@@ -113,10 +115,10 @@ GLWidget::GLWidget( QTextBrowser *browser, Model *newModel, Tool **newActiveTool
 
 void GLWidget::initializeGL()
 {
-    initializeGLFunctions();
+    initializeOpenGLFunctions();
     glClearColorVector( gray );
     initShaders();
-    if( model->textured ) initTextures();
+    //if( model->textured ) initTextures();
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
     glGenBuffers( 2, modelVboIds );
@@ -367,7 +369,7 @@ void GLWidget::drawAdittional()
     {
         if( toolIsOn )
         {
-            ( *activeTool )->function( this, DRAW, 0, &toolData );
+            ( *activeTool )->function(DRAW, 0, &toolData );
             int vertexNumber = toolData.vertices.size();
             int indexNumber = toolData.indices.size();
             for( i = 0; i < vertexNumber; i++ ) toolData.vertices[ i ].
@@ -403,7 +405,7 @@ void GLWidget::drawAdittional()
 
 void GLWidget::timerEvent( QTimerEvent *event )
 {
-    updateGL();
+    update();
 }
 
 void GLWidget::initShaders()
@@ -422,7 +424,7 @@ void GLWidget::initShaders()
                            Fragment, ":/texture.frag") )
         close();
 }
-
+/*
 void GLWidget::initTextures()
 {
     glEnable( GL_TEXTURE_2D );
@@ -435,11 +437,16 @@ void GLWidget::initTextures()
                      GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
                      GL_REPEAT );
-}
+}*/
 
-void GLWidget::mousePressEvent( QMouseEvent *event )
+void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-    if( !_isActive ) emit makeMeActive( this );
+    if(!_isActive) _mainWindow->setActiveWidget(this);
+
+
+
+
+
     if( !toolIsOn ) startPosition = lastPosition = QVector2D( event->x() - halfWidth,
                                           halfHeight - event->y() );
     if( !quickAccess )
@@ -448,18 +455,25 @@ void GLWidget::mousePressEvent( QMouseEvent *event )
         {
         case Qt::LeftButton:
         {
-            if( !( *activeTool )->stage2() ) ( *activeTool )->function( this, START, event, 0 );
+            Tool *aT = *activeTool;
+            //  ! stage2     hasStage2 == true && stage2 == false
+            //               hasStage2 == false
+            //  hasStage2 ? !stage2 : true
+            if(aT->hasStage2() ? !aT->stage2() : true) aT->function(
+                        START, event, 0);
+
+
             break;
         }
         case Qt::RightButton:
         {
-            emit quickAccessToolOrbit();
+            _mainWindow->quickAccessToolOrbit();
             quickAccess = true;
             break;
         }
         case Qt::MiddleButton:
         {
-            emit quickAccessToolPan();
+            _mainWindow->quickAccessToolPan();
             quickAccess = true;
         }
         }
@@ -471,7 +485,7 @@ void GLWidget::mouseMoveEvent( QMouseEvent *event )
     if( event->buttons() & Qt::LeftButton || quickAccess || ( *activeTool )->stage2() )
     {
         toolIsOn = true;
-        ( *activeTool )->function( this, EXECUTE, event, 0 );
+        (*activeTool)->function(EXECUTE, event, 0);
         lastPosition = currentPosition = QVector2D( event->x() -
                           halfWidth, halfHeight - event->y() );
     }
@@ -479,17 +493,19 @@ void GLWidget::mouseMoveEvent( QMouseEvent *event )
 
 void GLWidget::mouseReleaseEvent( QMouseEvent *event )
 {
-    if( quickAccess )
+    if(quickAccess)
     {
         toolIsOn = false;
-        emit stopQuickAccess();
+        _mainWindow->stopQuickAccess();
         quickAccess = false;
     }
     else if( event->button() == Qt::LeftButton )
     {
         toolIsOn = false;
-        if( ( *activeTool )->hasStage2() && !( *activeTool )->stage2() ) ( *activeTool )->function( this, STAGE2, 0, 0 );
-        else ( *activeTool )->function( this, STOP, 0, 0 );
+        Tool *aT = *activeTool;
+        if(aT->hasStage2() && !aT->stage2()) aT->function(STAGE2, 0,
+                                                         0);
+        else aT->function(STOP, 0, 0 );
     }
 }
 

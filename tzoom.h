@@ -1,11 +1,15 @@
 #ifndef TZOOM_H
 #define TZOOM_H
 
+#include "tool.h"
 
 class TZoom : public Tool
 {
 public:
-    TZoom();
+    TZoom(MainWindow *mainWindow, QString buttonText);
+
+    void function(Action action, QMouseEvent
+                  *event, VertexAndIndexData *data);
 
 signals:
 

@@ -11,16 +11,9 @@ struct List;
 struct WidgetElements;
 
 void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue );
-void toolPanFunction( GLWidget *widget, Action action,
-                QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolZoomFunction( GLWidget *widget, Action action,
-                QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolRotateCameraFunction( GLWidget *widget, Action action,
-                QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolOrbitFunction( GLWidget *widget, Action action,
-                QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolSelectFunction( GLWidget *widget, Action action = DRAW,
-            QMouseEvent *event = 0, VertexAndIndexData *data = 0 );
+
+
+
 void toolMoveFunction( GLWidget *widget, Action action, QMouseEvent
                       *event = 0, VertexAndIndexData *data = 0 );
 void toolScaleFunction( GLWidget *widget, Action action, QMouseEvent

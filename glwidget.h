@@ -1,10 +1,10 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-#include <QGLWidget>
-#include <QGLFunctions>
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
 #include <QBasicTimer>
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
 #include "tool.h"
 #include "model.h"
@@ -15,7 +15,7 @@
 using namespace std;
 
 typedef enum { WIREFRAME, FLAT_SHADED, SMOOTH_SHADED,
-       TEXTURED } RenderingMode;
+               TEXTURED } RenderingMode;
 
 typedef enum { TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT,
                PERSPECTIVE } Projection;
@@ -26,13 +26,13 @@ struct VertexData_Texture
     QVector2D texCoord;
 };
 
-class GLWidget : public QGLWidget, protected QGLFunctions
+class MainWindow;
+
+class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    explicit GLWidget( QTextBrowser *browser, Model *newModel, Tool **newActiveTool,
-                       WidgetElements *newWorkWithElements, QWidget
-                       *parent = 0 );
+    explicit GLWidget(MainWindow *mainWindow, QWidget *parent = 0);
 
     void setActive( bool value )
     { _isActive = value; };
@@ -128,9 +128,6 @@ public:
     void setToolIsOn( bool value)
     { toolIsOn = value; };
 
-    QTextBrowser *browser()
-    { return _browser; };
-
     QVector3D startPosition3D()
     { return _startPosition3D; };
 
@@ -142,16 +139,9 @@ public:
     void countRotationMatrices();
     void setCurrentPosition( double x, double y );
 
-signals:
-    void makeMeActive( GLWidget *widget );
-    void quickAccessToolOrbit();
-    void quickAccessToolPan();
-    void quickAccessToolZoom();
-    void stopQuickAccess();
-
 protected:
     void initializeGL();
-    void resizeGL( int mewWidth, int newHeight );
+    void resizeGL( int newWidth, int newHeight );
     void paintGL();
 
     void timerEvent( QTimerEvent *event );
@@ -161,11 +151,17 @@ protected:
     void wheelEvent( QWheelEvent *event );
 
     void initShaders();
-    void initTextures();
+   // void initTextures();
 
 public slots:
 
 private:
+    MainWindow *_mainWindow;
+
+
+
+
+
     int width, height;
     int halfWidth, halfHeight;
     qreal aspect;
@@ -211,7 +207,6 @@ private:
     VertexAndIndexData grid, axis, frame;
     QVector3D pivot;
     QVector2D pivotTransformed;
-    QTextBrowser *_browser;
 
     vector <VertexData_Texture> vertices_tex;
     vector <VertexData_Color> vertices_col;

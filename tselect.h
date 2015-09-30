@@ -1,11 +1,17 @@
 #ifndef TSELECT_H
 #define TSELECT_H
 
+#include "toolwithwidget.h"
 
-class TSelect : public Tool
+class TSelect : public ToolWithWidget
 {
 public:
-    TSelect();
+    TSelect(MainWindow *mainWindow, QString buttonText,
+            QWidget *widget = 0, WidgetElements *newElements = 0,
+            QString finalButtonText = 0, bool hasStage2 = false);
+
+    void function(Action action, QMouseEvent *event,
+                  VertexAndIndexData *data);
 
 signals:
 

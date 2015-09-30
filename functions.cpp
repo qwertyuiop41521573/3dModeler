@@ -22,265 +22,17 @@ void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue )
     spinBox->setValue( defaultValue );
 }
 
-void toolPanFunction( GLWidget *widget, Action action,
-                    QMouseEvent *event, VertexAndIndexData *data )
-{
-    bool closedCursor = action == START;
-    if( closedCursor || action == STOP )
-        emit widget->getActiveTool()->changeCursor( closedCursor );
-    if( action == EXECUTE )
-    {
-        double dx = widget->getLastPosition().x() - event->x() +
-                widget->getHalfWidth();
-        double dy = widget->getLastPosition().y() -
-                widget->getHalfHeight() + event->y();
-        double radZ = inRadians( widget->getCamera()->rotation().z() );
-        double radX = inRadians( widget->getCamera()->rotation().x() );
-        QVector3D dr( dx * sin( radZ ) + dy * sin( radX ) * cos( radZ ),
-                      dx *-cos( radZ ) + dy * sin( radX ) * sin( radZ ),
-                      dy * cos( radX ) );
-        dr /= widget->getProjection() == PERSPECTIVE ? 60 : widget->getScale();
-        widget->getCamera()->addToPosition( dr );
-    }
-}
-
-void toolZoomFunction( GLWidget *widget, Action action,
-                    QMouseEvent *event, VertexAndIndexData *data )
-{
-    if( action != EXECUTE ) return;
-    bool perspective = widget->getProjection() == PERSPECTIVE;
-    double dy = ( widget->getHalfHeight() - event->y() -
-            widget->getLastPosition().y() ) / ( perspective ? 40 : 100 );
-
-    if( perspective )
-    {
-        QVector3D rotation = widget->getCamera()->rotation();
-        double radZ = inRadians( rotation.z() );
-        double radX = inRadians( rotation.x() );
-        widget->getCamera()->addToPosition( dy * cos( radX ) * cos( radZ ), dy * cos( radX ) * sin( radZ ),
-                                       -dy * sin( radX ) );
-    }
-    else widget->multiplyScaleBy( exp( dy ) );
-}
-
-void toolRotateCameraFunction( GLWidget *widget, Action action,
-                   QMouseEvent *event, VertexAndIndexData *data )
-{
-    if( action != EXECUTE || widget->getProjection()
-            != PERSPECTIVE ) return;
-    Camera *camera = widget->getCamera();
-    camera->addToRotation( Z, (-event->x() + widget->getHalfWidth() +
-                              widget->getLastPosition().x() ) / double( 3 ) );
-    double newRotationX = camera->rotation().x() + ( widget->getLastPosition().y() -
-                                          widget->getHalfHeight() + event->y() ) / double( 3 );
-    if( newRotationX >-90 && newRotationX < 90 ) camera->setRotation( X, newRotationX );
-}
-
-void toolOrbitFunction( GLWidget *widget, Action action,
-                   QMouseEvent *event, VertexAndIndexData *data )
-{
-    if( action != EXECUTE || widget->getProjection()
-            != PERSPECTIVE ) return;
-    Camera *camera = widget->getCamera();
-    double rotZ = (-event->x() + widget->getHalfWidth() +
-            widget->getLastPosition().x() ) / double( 2 );
-    double rotX = ( widget->getLastPosition().y() -
-            widget->getHalfHeight() + event->y() ) / double( 2 );
-    QMatrix4x4 rotation;
-    rotation.setToIdentity();
-    rotation.rotate( rotZ, 0, 0, 1 );
-    camera->setPosition( rotation * QVector4D( camera->position() ) );
-    camera->addToRotation( Z, rotZ );
-    rotation.setToIdentity();
-    rotation.rotate( camera->rotation().z() - 90, 0, 0, 1 );
-    rotation.rotate(-rotX, 1, 0, 0 );
-    rotation.rotate( 90 - camera->rotation().z(), 0, 0, 1 );
-    double newRotationX = camera->rotation().x() + rotX;
-    if( newRotationX < 90 && newRotationX >-90 )
-    {
-        camera->setPosition( rotation * QVector4D( camera->position() ) );
-        camera->setRotation( X, newRotationX );
-    }
-}
 
 void toolSelectFunction( GLWidget *widget, Action action,
                    QMouseEvent *event, VertexAndIndexData *data )
 {
-    int i;
-    WidgetElements *workWithElements = widget->
-            getWorkWithElements();
-    Model *model = widget->getModel();
-    if( action == START )
-    {
-        widget->browser()->append( "Selecting" );
-        QVector2D min, max;
-        QVector2D startPosition = widget->getStartPosition();
-        QVector2D currentPosition( event->x() - widget->
-            getHalfWidth(), widget->getHalfHeight() - event->y() );
-        min.setX( qMin( startPosition.x(),
-                        currentPosition.x() ) - 5 );
-        min.setY( qMin( startPosition.y(),
-                        currentPosition.y() ) - 5 );
-        max.setX( qMax( startPosition.x(),
-                        currentPosition.x() ) + 5 );
-        max.setY( qMax( startPosition.y(),
-                        currentPosition.y() ) + 5 );
 
-        bool perspective = widget->getProjection() == PERSPECTIVE;
-        widget->countFinalMatrix( perspective );
-        int j;
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
-        {
-            for( i = 0; i < widget->getModel()->vertexNumber; i++ )
-                model->vertex[ i ].setNewSelected( isSelected(
-                    widget->getFinalMatrix(), model->vertex[ i ].
-                           getPosition(), perspective, min, max ) );
-        }
-        else
-        {
-         /*   for( i = 0; i < model->triangleNumber; i++ )
-            {
-                model->triangle[ i ].setNewSelected( false );
-                for( j = 0; j < 3; j++ )
-                {
-                    if( isSelected( widget->getFinalMatrix(),
-                        model->vertex[ model->triangle[ i ].
-                        getIndex( j ) ].getPosition(), perspective,
-                                    min, max ) )
-                    {
-                        model->triangle[ i ].setNewSelected( true );
-                        break;
-                    }
-                }
-            }*/
-        }
-        return;
-    }
-    if( action == DRAW )
-    {
-        data->vertices.resize( 4 );
-
-        QVector2D min, max;
-        QVector2D startPosition = widget->getStartPosition();
-        QVector2D currentPosition = widget->getCurrentPosition();
-        min.setX( qMin( startPosition.x(),
-                        currentPosition.x() ) - 5 );
-        min.setY( qMin( startPosition.y(),
-                        currentPosition.y() ) - 5 );
-        max.setX( qMax( startPosition.x(),
-                        currentPosition.x() ) + 5 );
-        max.setY( qMax( startPosition.y(),
-                        currentPosition.y() ) + 5 );
-
-        data->vertices[ 0 ].position = min;
-        data->vertices[ 1 ].position.setX( max.x() );
-        data->vertices[ 1 ].position.setY( min.y() );
-        data->vertices[ 2 ].position = max;
-        data->vertices[ 3 ].position.setX( min.x() );
-        data->vertices[ 3 ].position.setY( max.y() );
-
-        data->indices.resize( 8 );
-        data->indices[ 0 ] = 0;
-        data->indices[ 1 ] = 1;
-        data->indices[ 2 ] = 1;
-        data->indices[ 3 ] = 2;
-        data->indices[ 4 ] = 2;
-        data->indices[ 5 ] = 3;
-        data->indices[ 6 ] = 3;
-        data->indices[ 7 ] = 0;
-
-        bool perspective = widget->getProjection() == PERSPECTIVE;
-        widget->countFinalMatrix( perspective );
-        int j;
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
-        {
-            for( i = 0; i < widget->getModel()->vertexNumber; i++ )
-                model->vertex[ i ].setNewSelected( isSelected(
-                    widget->getFinalMatrix(), model->vertex[ i ].
-                           getPosition(), perspective, min, max ) );
-        }
-        else
-        {
-            for( i = 0; i < model->triangleNumber; i++ )
-            {
-                model->triangle[ i ].setNewSelected( false );
-                for( j = 0; j < 3; j++ )
-                {
-                    if( isSelected( widget->getFinalMatrix(),
-                        model->vertex[ model->triangle[ i ].
-                        getIndex( j ) ].getPosition(), perspective,
-                                    min, max ) )
-                    {
-                        model->triangle[ i ].setNewSelected( true );
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    if( action == STOP  )
-    {
-        WidgetElements *toolElements = widget->getActiveTool()->
-                getElements();
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
-        {
-            int amount = 0;
-            for( i = 0; i < model->vertexNumber; i++ )
-            {
-                amount += model->vertex[ i ].newSelected();
-                if( !toolElements->getMyCheckBox( 0 )->isChecked()
-                        && !toolElements->getMyCheckBox( 1 )->
-                        isChecked() )
-                    model->vertex[ i ].setSelected( model->vertex[
-                                               i ].newSelected() );
-                if( toolElements->getMyCheckBox( 0 )->isChecked() )
-                {
-                    if( !model->vertex[ i ].isSelected() )
-                        model->vertex[ i ].setSelected( model->
-                                    vertex[ i ].newSelected() );
-                }
-                if( toolElements->getMyCheckBox( 1 )->isChecked() )
-                {
-                    if( model->vertex[ i ].isSelected() )
-                        model->vertex[ i ].setSelected( !model->
-                                       vertex[ i ].newSelected() );
-                }
-                model->vertex[ i ].setNewSelected( false );
-            }
-            widget->browser()->append( "    Selected " +
-                     QString::number( amount ) + " vertices" );
-        }
-        else
-        {
-            for( i = 0; i < model->triangleNumber; i++ )
-            {
-                if( !toolElements->getMyCheckBox( 0 )->isChecked()
-                        && !toolElements->getMyCheckBox( 1 )->
-                        isChecked() )
-                    model->triangle[ i ].setSelected(
-                    model->triangle[ i ].newSelected() );
-                if( toolElements->getMyCheckBox( 0 )->isChecked() )
-                {
-                    if( !model->triangle[ i ].isSelected() )
-                        model->triangle[ i ].setSelected( model->
-                                      triangle[ i ].newSelected() );
-                }
-                if( toolElements->getMyCheckBox( 1 )->isChecked() )
-                {
-                    if( model->triangle[ i ].isSelected() )
-                        model->triangle[ i ].setSelected( !model->
-                                      triangle[ i ].newSelected() );
-                }
-                model->triangle[ i ].setNewSelected( false );
-            }
-        }
-    }
 }
 
 void toolMoveFunction( GLWidget *widget, Action action, QMouseEvent
                          *event, VertexAndIndexData *data )
 {
-    if( action == START || action == STOP ) return;
+ /*   if( action == START || action == STOP ) return;
     WidgetElements *toolElements = widget->getActiveTool()->
             getElements();
     WidgetElements *workWithElements = widget->
@@ -356,13 +108,13 @@ void toolMoveFunction( GLWidget *widget, Action action, QMouseEvent
                 }
             }
         }
-    }
+    }*/
 }
 
 void toolScaleFunction( GLWidget *widget, Action action, QMouseEvent
                           *event, VertexAndIndexData *data )
 {
-    if( action == STOP ) return;
+  /*  if( action == STOP ) return;
     WidgetElements *toolElements = widget->getActiveTool()->
             getElements();
     Model *model = widget->getModel();
@@ -542,13 +294,13 @@ void toolScaleFunction( GLWidget *widget, Action action, QMouseEvent
                 }
             }
         }
-    }
+    }*/
 }
 
 void toolRotateFunction( GLWidget *widget, Action action, QMouseEvent
                          *event, VertexAndIndexData *data )
 {
-    if( action == STOP ) return;
+ /*   if( action == STOP ) return;
     WidgetElements *toolElements = widget->getActiveTool()->
             getElements();
     WidgetElements *workWithElements = widget->
@@ -728,13 +480,13 @@ void toolRotateFunction( GLWidget *widget, Action action, QMouseEvent
                 }
             }
         }
-    }
+    }*/
 }
 
 void toolVertexFunction( GLWidget *widget, Action action, QMouseEvent
                                 *event, VertexAndIndexData *data )
 {
-    if( action == DRAW ) return;
+  /*  if( action == DRAW ) return;
     Model *model = widget->getModel();
     if( action == START || action == FINAL )
     {
@@ -755,7 +507,7 @@ void toolVertexFunction( GLWidget *widget, Action action, QMouseEvent
         int vertexNumber = model->vertexNumber;
         model->vertex[ vertexNumber - 1 ].setNewSelected( false );
         model->vertex[ vertexNumber - 1 ].setSelected( true );
-    }
+    }*/
 }
 
 void toolTriangleFunction( GLWidget *widget, Action action,
@@ -836,7 +588,7 @@ void toolTriangleFunction( GLWidget *widget, Action action,
 void toolPlaneFunction( GLWidget *widget, Action action, QMouseEvent
                       *event, VertexAndIndexData *data )
 {
-    if( action == DRAW ) return;
+ /*   if( action == DRAW ) return;
     Model *model = widget->getModel();
     int vertexSize = model->vertexNumber;
     int triangleSize = model->triangleNumber;
@@ -939,12 +691,12 @@ void toolPlaneFunction( GLWidget *widget, Action action, QMouseEvent
                 model->vertex[ vertexSize - i ].setSelected( true );
             }
         }
-    }
+    }*/
 }
 
 void toolBoxFunction( GLWidget *widget, Action action, QMouseEvent *event, VertexAndIndexData *data )
 {
-    if( action == DRAW ) return;
+  /*  if( action == DRAW ) return;
     Model *model = widget->getModel();
     int vertexSize = model->vertexNumber;
     int triangleSize = model->triangleNumber;
@@ -955,7 +707,6 @@ void toolBoxFunction( GLWidget *widget, Action action, QMouseEvent *event, Verte
         {
             if( widget->getActiveTool()->getElements()->getSpinBox( i + 3 )->value() <= 0 )
             {
-                widget->browser()->append( "Error: Size must be positive" );
                 return;
             }
         }
@@ -1157,12 +908,12 @@ void toolBoxFunction( GLWidget *widget, Action action, QMouseEvent *event, Verte
             model->vertex[ vertexSize + i ].setNewSelected( true );
         }
         widget->setMouseTracking( true );
-    }
+    }*/
 }
 
 void toolEllipseFunction( GLWidget *widget, Action action, QMouseEvent *event, VertexAndIndexData *data )
 {
-    if( action == DRAW ) return;
+ /*   if( action == DRAW ) return;
     Model *model = widget->getModel();
     int vertexSize = model->vertexNumber;
     int triangleSize = model->triangleNumber;
@@ -1306,12 +1057,12 @@ void toolEllipseFunction( GLWidget *widget, Action action, QMouseEvent *event, V
                 model->vertex[ vertexSize - i ].setSelected( true );
             }
         }
-    }
+    }*/
 }
 
 void toolCylinderFunction( GLWidget *widget, Action action, QMouseEvent *event, VertexAndIndexData *data )
 {
-    if( action == DRAW ) return;
+ /*   if( action == DRAW ) return;
     Model *model = widget->getModel();
     int vertexSize = model->vertexNumber;
     int triangleSize = model->triangleNumber;
@@ -1545,7 +1296,7 @@ void toolCylinderFunction( GLWidget *widget, Action action, QMouseEvent *event, 
         model->triangleNumber += 3 * segments;
 
         widget->setMouseTracking( true );
-    }
+    }*/
 }
 
 bool isSelected( QMatrix4x4 finalMatrix, QVector3D vertex,

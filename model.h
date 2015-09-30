@@ -14,7 +14,7 @@ using namespace std;
 class Model
 {
 public:
-    Model( QTextBrowser *browser );
+    Model();
     bool load( const char *fileName );
     void clear();
     void save();
@@ -31,7 +31,6 @@ public:
     bool loaded = false;
 
 private:
-    QTextBrowser *_browser;
 };
 
 #endif // MODEL_H

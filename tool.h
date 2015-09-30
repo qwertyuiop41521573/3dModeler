@@ -7,6 +7,7 @@
 #include <QtOpenGL>
 
 //#include "model.h"
+
 #include "widgetelements.h"
 
 #include <iostream>
@@ -39,62 +40,39 @@ struct VertexAndIndexData
 typedef enum { START, STOP, EXECUTE, DRAW, FINAL, STAGE2 } Action;
 
 typedef void ( *toolFunction )( GLWidget *widget, Action action,
-                            QMouseEvent *event, VertexAndIndexData *data );
+                  QMouseEvent *event, VertexAndIndexData *data );
+
+class MainWindow;
 
 class Tool : public QObject
 {
     Q_OBJECT
 public:
-    Tool( QString buttonText, toolFunction newFunction, Qt::
-          CursorShape cursor, QWidget *widget = 0, WidgetElements
-          *newElements = 0, QString finalButtonText = 0, bool hasStage2 = false );
+    Tool(MainWindow *mainWindow, QString buttonText);
 
-    void setActive( bool value );
-    void ( *function )( GLWidget *widget, Action action, QMouseEvent
-                        *event, VertexAndIndexData *data );
+    virtual void setActive(bool value);
+    virtual void function(Action action, QMouseEvent *event,
+                          VertexAndIndexData *data) {};
+    virtual bool stage2() {};
 
     QPushButton *getButton()
     { return button; };
 
-    QWidget *getWidget()
-    { return _widget; };
-
-    bool elementsExist();
-
-    WidgetElements *getElements()
-    { return elements; }
-
-    QCursor cursor()
-    { return _cursor; };
-
-    QPushButton *getFinalButton()
-    { return finalButton; };
-
     bool hasStage2()
     { return _hasStage2; };
 
-    void setStage2( bool value )
-    { _stage2 = value; };
-
-    bool stage2()
-    { return _stage2; };
-
-signals:
-    void makeMeActive( Tool *tool );
-    void changeCursor( bool closedCursor );
+protected:
+    MainWindow *_mainWindow;
+    bool _hasStage2 = false;
+    GLWidget **_activeWidget;
 
 private slots:
     void handleClick( bool pressed );
 
 private:
     QPushButton *button;
-    QPushButton *finalButton;
+
     bool _isActive = false;
-    QWidget *_widget;
-    WidgetElements *elements;
-    QCursor _cursor;
-    bool _hasStage2;
-    bool _stage2 = false;
 };
 
 #endif // TOOL_H

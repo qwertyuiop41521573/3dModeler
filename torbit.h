@@ -1,11 +1,15 @@
 #ifndef TORBIT_H
 #define TORBIT_H
 
+#include "tool.h"
 
 class TOrbit : public Tool
 {
 public:
-    TOrbit();
+    TOrbit(MainWindow *mainWindow, QString buttonText);
+
+    void function(Action action, QMouseEvent
+                  *event, VertexAndIndexData *data);
 
 signals:
 

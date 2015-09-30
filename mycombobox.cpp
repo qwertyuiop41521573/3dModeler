@@ -2,6 +2,6 @@
 
 MyComboBox::MyComboBox()
 {
-
+    setMaximumWidth(150);
 }
 

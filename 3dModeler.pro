@@ -14,7 +14,14 @@ SOURCES += \
     glwidget.cpp \
     mypushbutton.cpp \
     camera.cpp \
-    functions.cpp
+    functions.cpp \
+    mycombobox.cpp \
+    tpan.cpp \
+    tzoom.cpp \
+    trotatecamera.cpp \
+    torbit.cpp \
+    tselect.cpp \
+    toolwithwidget.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -27,7 +34,14 @@ HEADERS += \
     glwidget.h \
     mypushbutton.h \
     camera.h \
-    functions.h
+    functions.h \
+    mycombobox.h \
+    tpan.h \
+    tzoom.h \
+    trotatecamera.h \
+    torbit.h \
+    tselect.h \
+    toolwithwidget.h
 
 RESOURCES += \
     shaders.qrc
@@ -95,3 +109,10 @@ RESOURCES += \
 # tool sphere
 # tool Cylinder!!! - FINAL ( height )
 # function reverseCap for cylinder and box
+
+
+
+
+
+# tool.cpp, h - setupButton()
+
