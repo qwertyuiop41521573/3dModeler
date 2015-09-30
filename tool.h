@@ -51,8 +51,7 @@ public:
     Tool(MainWindow *mainWindow);
 
     virtual void setActive(bool value);
-    virtual void function(Action action, QMouseEvent *event,
-                          VertexAndIndexData *data) {};
+    virtual void function(Action action, QMouseEvent *event = 0) {};
     virtual bool stage2() {};
 
     QPushButton *getButton()

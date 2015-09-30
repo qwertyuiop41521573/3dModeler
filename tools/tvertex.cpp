@@ -25,18 +25,16 @@ TVertex::TVertex(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     _widget->hide();
 }
 
-void TVertex::function(Action action, QMouseEvent *event,
-                       VertexAndIndexData *data)
+void TVertex::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action == DRAW ) return;
-        Model *model = widget->getModel();
         if( action == START || action == FINAL )
         {
             QVector3D newVertex;
             if( action == START ) newVertex = fromScreenToWorld( event, widget );
             else for( int i = 0; i < 3; i++ ) newVertex[ i ]
-                = getElements()->getSpinBox( i )->
+                = elements->getSpinBox( i )->
                     value();
             model->vertex.push_back( newVertex );
             model->vertex[ model->vertexNumber ].setNewSelected( true );

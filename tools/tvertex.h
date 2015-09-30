@@ -8,8 +8,7 @@ class TVertex : public ToolWithWidget
 public:
     TVertex(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent *event,
-                  VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event);
 signals:
 
 public slots:

@@ -369,7 +369,7 @@ void GLWidget::drawAdittional()
     {
         if( toolIsOn )
         {
-            ( *activeTool )->function(DRAW, 0, &toolData );
+            (*activeTool)->function(DRAW);
             int vertexNumber = toolData.vertices.size();
             int indexNumber = toolData.indices.size();
             for( i = 0; i < vertexNumber; i++ ) toolData.vertices[ i ].
@@ -424,6 +424,7 @@ void GLWidget::initShaders()
                            Fragment, ":/texture.frag") )
         close();
 }
+
 /*
 void GLWidget::initTextures()
 {
@@ -460,7 +461,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             //               hasStage2 == false
             //  hasStage2 ? !stage2 : true
             if(aT->hasStage2() ? !aT->stage2() : true) aT->function(
-                        START, event, 0);
+                        START, event);
 
 
             break;
@@ -485,7 +486,7 @@ void GLWidget::mouseMoveEvent( QMouseEvent *event )
     if( event->buttons() & Qt::LeftButton || quickAccess || ( *activeTool )->stage2() )
     {
         toolIsOn = true;
-        (*activeTool)->function(EXECUTE, event, 0);
+        (*activeTool)->function(EXECUTE, event);
         lastPosition = currentPosition = QVector2D( event->x() -
                           halfWidth, halfHeight - event->y() );
     }
@@ -503,9 +504,8 @@ void GLWidget::mouseReleaseEvent( QMouseEvent *event )
     {
         toolIsOn = false;
         Tool *aT = *activeTool;
-        if(aT->hasStage2() && !aT->stage2()) aT->function(STAGE2, 0,
-                                                         0);
-        else aT->function(STOP, 0, 0 );
+        if(aT->hasStage2() && !aT->stage2()) aT->function(STAGE2);
+        else aT->function(STOP);
     }
 }
 

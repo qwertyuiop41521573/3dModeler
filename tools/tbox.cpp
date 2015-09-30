@@ -44,12 +44,10 @@ TBox::TBox(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     _hasStage2 = true;
 }
 
-void TBox::function(Action action, QMouseEvent *event,
-                    VertexAndIndexData *data)
+void TBox::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action == DRAW ) return;
-        Model *model = widget->getModel();
         int vertexSize = model->vertexNumber;
         int triangleSize = model->triangleNumber;
         if( action == FINAL )
@@ -57,7 +55,7 @@ void TBox::function(Action action, QMouseEvent *event,
             int i;
             for( i = 0; i < 3; i++ )
             {
-                if(getElements()->getSpinBox( i + 3 )->value() <= 0 )
+                if(elements->getSpinBox( i + 3 )->value() <= 0 )
                 {
                     return;
                 }
@@ -67,8 +65,8 @@ void TBox::function(Action action, QMouseEvent *event,
             QVector3D center, halfDiagonal;
             for( i = 0; i < 3; i++ )
             {
-                center[ i ] = getElements()->getSpinBox( i )->value();
-                halfDiagonal[ i ] = getElements()->getSpinBox( i + 3 )->value();
+                center[ i ] = elements->getSpinBox( i )->value();
+                halfDiagonal[ i ] = elements->getSpinBox( i + 3 )->value();
             }
             halfDiagonal /= 2;
 
@@ -120,7 +118,7 @@ void TBox::function(Action action, QMouseEvent *event,
         }
         if( action == EXECUTE )
         {
-            if( widget->getActiveTool()->stage2() )
+            if(_stage2)
             {
                 double dy = ( widget->getHalfHeight() - event->y() - widget->getLastPosition().y() ) / double( 100 );
                 Camera *camera = widget->getCamera();
@@ -129,7 +127,7 @@ void TBox::function(Action action, QMouseEvent *event,
                                   cos( inRadians( camera->rotation().x() ) ) * sin( inRadians( camera->rotation().z() ) ),
                                   sin( inRadians( camera->rotation().x() ) ) );
 
-                if( getElements()->getCheckBox( 1 )->isChecked() && dy != 0 )
+                if( elements->getCheckBox( 1 )->isChecked() && dy != 0 )
                 {
                     QVector3D dh = normal *
                    sign( dy ) * ( model->vertex[ vertexSize - 2 ].getPosition() - model->vertex[ vertexSize - 4 ].getPosition() ).length() / qSqrt( 2 );
@@ -156,8 +154,8 @@ void TBox::function(Action action, QMouseEvent *event,
             {
                 QVector2D diagonal;
                 QVector3D posA, posB;
-                bool square = getElements()->getCheckBox( 0 )->isChecked() ||
-                        getElements()->getCheckBox( 1 )->isChecked();
+                bool square = elements->getCheckBox( 0 )->isChecked() ||
+                        elements->getCheckBox( 1 )->isChecked();
                 if( widget->getProjection() == PERSPECTIVE )
                 {
                     double height = model->vertex[ vertexSize - 4 ].getPosition().z();

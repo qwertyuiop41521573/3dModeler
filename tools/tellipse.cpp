@@ -56,14 +56,13 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(
     _widget->hide();
 }
 
-void TEllipse::function(Action action, QMouseEvent *event, VertexAndIndexData *data)
+void TEllipse::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action == DRAW ) return;
-        Model *model = widget->getModel();
         int vertexSize = model->vertexNumber;
         int triangleSize = model->triangleNumber;
-        int segments = getElements()->getSpinBox( 0 )->value();
+        int segments = elements->getSpinBox( 0 )->value();
         if( action == START || action == FINAL )
         {
             int i;
@@ -91,13 +90,13 @@ void TEllipse::function(Action action, QMouseEvent *event, VertexAndIndexData *d
             else
             {
                 QVector3D normal;
-                for( i = 0; i < 3; i++ ) normal[ i ] = getElements()->getSpinBox( 4 + i )->value();
+                for( i = 0; i < 3; i++ ) normal[ i ] = elements->getSpinBox( 4 + i )->value();
                 if( normal.length() == 0 ) return;
                 normal.normalize();
-                double radius = getElements()->getSpinBox( 7 )->value();
+                double radius = elements->getSpinBox( 7 )->value();
                 if( radius == 0 ) return;
                 QVector3D center;
-                for( i = 0; i < 3; i++ ) center[ i ] = getElements()->getSpinBox( 1 + i )->value();
+                for( i = 0; i < 3; i++ ) center[ i ] = elements->getSpinBox( 1 + i )->value();
 
                 widget->countFinalInverseMatrix( false );//?
                 model->vertex[ vertexSize + segments ].setPosition( center );
@@ -123,7 +122,7 @@ void TEllipse::function(Action action, QMouseEvent *event, VertexAndIndexData *d
         if( action == EXECUTE )
         {
             Projection projection = widget->getProjection();
-            bool circle = getElements()->getCheckBox( 0 )->isChecked();
+            bool circle = elements->getCheckBox( 0 )->isChecked();
             if( projection == PERSPECTIVE )
             {
                 QVector3D start = widget->startPosition3D();

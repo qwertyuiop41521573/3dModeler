@@ -23,14 +23,12 @@ TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
 }
 
-void TSelect::function(Action action, QMouseEvent *event,
-                       VertexAndIndexData *data)
+void TSelect::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     int i;
     WidgetElements *workWithElements = widget->
             getWorkWithElements();
-    Model *model = widget->getModel();
     if(action == START)
     {
         QVector2D min, max;
@@ -75,15 +73,16 @@ void TSelect::function(Action action, QMouseEvent *event,
     }
     if(action == DRAW)
     {
+        VertexAndIndexData *data = widget->getToolData();
         data->vertices.resize(4);
 
         QVector2D min, max;
         QVector2D startPosition = widget->getStartPosition();
         QVector2D currentPosition = widget->getCurrentPosition();
-        min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);
-        min.setY(qMin(startPosition.y(), currentPosition.y()) - 5);
-        max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);
-        max.setY(qMax(startPosition.y(), currentPosition.y()) + 5);
+        min.setX(qMin(startPosition.x(), currentPosition.x()) - 1);
+        min.setY(qMin(startPosition.y(), currentPosition.y()) - 1);
+        max.setX(qMax(startPosition.x(), currentPosition.x()) + 1);
+        max.setY(qMax(startPosition.y(), currentPosition.y()) + 1);
 
         data->vertices[0].position = min;
         data->vertices[1].position.setX(max.x());
@@ -133,7 +132,7 @@ void TSelect::function(Action action, QMouseEvent *event,
     }
     if( action == STOP  )
     {
-        WidgetElements *toolElements = getElements();
+        WidgetElements *toolElements = elements;
         if( workWithElements->getRadioButton( 0 )->isChecked() )
         {
             int amount = 0;

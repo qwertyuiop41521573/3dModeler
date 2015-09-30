@@ -44,12 +44,10 @@ TPlane::TPlane(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     //_widget->hide();
 }
 
-void TPlane::function(Action action, QMouseEvent *event,
-                      VertexAndIndexData *data)
+void TPlane::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action == DRAW ) return;
-        Model *model = widget->getModel();
         int vertexSize = model->vertexNumber;
         int triangleSize = model->triangleNumber;
         if( action == START || action == FINAL )
@@ -70,7 +68,7 @@ void TPlane::function(Action action, QMouseEvent *event,
             }
             else
             {
-                WidgetElements *elements = getElements();
+                WidgetElements *elements = elements;
                 for( i = 0; i < 4; i++ )
                     model->vertex[ vertexSize + i ].setPosition(
                         elements->getSpinBox( 3 * i )->value(),
@@ -86,7 +84,7 @@ void TPlane::function(Action action, QMouseEvent *event,
         {
             QVector2D diagonal;
             QVector3D posA, posB;
-            bool square = getElements()->getCheckBox( 0 )->isChecked();
+            bool square = elements->getCheckBox( 0 )->isChecked();
             if( widget->getProjection() == PERSPECTIVE )
             {
                 double height = model->vertex[ vertexSize - 4 ].getPosition().z();

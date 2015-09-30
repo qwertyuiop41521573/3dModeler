@@ -9,8 +9,8 @@
 #include "model.h"
 #include "tool.h"
 #include "functions.h"
-#include "mypushbutton.h"
-#include "mycombobox.h"
+#include "gui/mypushbutton.h"
+#include "gui/mycombobox.h"
 
 
 #include <iostream>
@@ -70,7 +70,7 @@ private slots:
     void deleteSlot();
 
     void final()
-    { toolActive->function(FINAL, 0, 0 ); };
+    { toolActive->function(FINAL); };
 
     void changeRenderingMode(int mode)
     { widgetActive->setRenderingMode(RenderingMode(mode)); };

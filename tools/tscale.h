@@ -8,8 +8,7 @@ class TScale : public ToolWithWidget
 public:
     TScale(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent *event,
-                  VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event);
 
 signals:
 

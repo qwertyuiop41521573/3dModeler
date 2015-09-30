@@ -7,8 +7,7 @@ TRotateCamera::TRotateCamera(MainWindow *mainWindow) : Tool(
     button->setText("Rotate");
 }
 
-void TRotateCamera::function(Action action,
-                     QMouseEvent *event, VertexAndIndexData *data)
+void TRotateCamera::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if(action != EXECUTE || widget->getProjection() != PERSPECTIVE)

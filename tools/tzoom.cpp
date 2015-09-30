@@ -7,8 +7,7 @@ TZoom::TZoom(MainWindow *mainWindow) : Tool(mainWindow)
     button->setText("Zoom");
 }
 
-void TZoom::function(Action action, QMouseEvent
-                     *event, VertexAndIndexData *data)
+void TZoom::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if(action != EXECUTE) return;

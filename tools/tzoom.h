@@ -8,8 +8,7 @@ class TZoom : public Tool
 public:
     TZoom(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent
-                  *event, VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event);
 
 signals:
 

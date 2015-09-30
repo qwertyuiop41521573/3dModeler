@@ -8,8 +8,7 @@ class TSelect : public ToolWithWidget
 public:
     TSelect(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent *event,
-                  VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event);
 
 signals:
 

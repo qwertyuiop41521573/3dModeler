@@ -6,8 +6,7 @@ TOrbit::TOrbit(MainWindow *mainWindow) : Tool(mainWindow)
     button->setText("Orbit");
 }
 
-void TOrbit::function(Action action, QMouseEvent *event,
-                      VertexAndIndexData *data)
+void TOrbit::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if(action != EXECUTE || widget->getProjection() != PERSPECTIVE)

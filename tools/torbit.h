@@ -8,8 +8,7 @@ class TOrbit : public Tool
 public:
     TOrbit(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent *event,
-                  VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event);
 
 signals:
 

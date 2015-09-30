@@ -26,13 +26,11 @@ TScale::TScale(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
 }
 
-void TScale::function(Action action, QMouseEvent *event,
-                      VertexAndIndexData *data)
+void TScale::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action == STOP ) return;
-        WidgetElements *toolElements = getElements();
-        Model *model = widget->getModel();
+        WidgetElements *toolElements = elements;
         int i, j, k;
         WidgetElements *workWithElements = widget->
                 getWorkWithElements();
@@ -152,6 +150,7 @@ void TScale::function(Action action, QMouseEvent *event,
                 scaleFactor[ i ] = exp( drTransformed[ i ] / 50000 );
             if( action == DRAW )
             {
+                VertexAndIndexData *data = widget->getToolData();
                 data->vertices.resize( 2 );
                 data->vertices[ 0 ].position = lastPosition;
                 data->vertices[ 1 ].position = currentPosition;

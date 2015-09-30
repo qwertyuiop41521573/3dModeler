@@ -16,12 +16,10 @@ TTriangle::TTriangle(MainWindow *mainWindow) : ToolWithWidget(
     _widget->hide();
 }
 
-void TTriangle::function(Action action, QMouseEvent *event,
-                         VertexAndIndexData *data)
+void TTriangle::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action != START && action != FINAL ) return;
-    Model *model = widget->getModel();
     int i;
     if( action == START )
     {

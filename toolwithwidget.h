@@ -2,14 +2,12 @@
 #define TOOLWITHWIDGET_H
 
 #include "tool.h"
+#include "model.h"
 
 class ToolWithWidget : public Tool
 {
 public:
     ToolWithWidget(MainWindow *mainWindow);
-
-    virtual void function(Action action, QMouseEvent *event,
-                          VertexAndIndexData *data) {};
 
     void setActive(bool value);
 
@@ -39,12 +37,12 @@ protected:
     QGridLayout *layout;
     WidgetElements *elements;
     QPushButton *finalButton;
+    Model *model;
+    bool _stage2 = false;
 
 private:
 
 
-
-    bool _stage2 = false;
 
 };
 

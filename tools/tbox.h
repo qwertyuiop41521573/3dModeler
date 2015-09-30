@@ -8,8 +8,7 @@ class TBox : public ToolWithWidget
 public:
     TBox(MainWindow *mainWindow);
 
-  void function(Action action, QMouseEvent *event,
-                VertexAndIndexData *data);
+  void function(Action action, QMouseEvent *event);
 
 
 signals:

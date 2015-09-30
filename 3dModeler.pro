@@ -10,12 +10,9 @@ SOURCES += \
     vertex.cpp \
     widgetelements.cpp \
     triangle.cpp \
-    mycheckbox.cpp \
     glwidget.cpp \
-    mypushbutton.cpp \
     camera.cpp \
     functions.cpp \
-    mycombobox.cpp \
     toolwithwidget.cpp \
                     \
     tools/tpan.cpp \
@@ -31,7 +28,11 @@ SOURCES += \
     tools/ttriangle.cpp \
     tools/tvertex.cpp \
     tools/tzoom.cpp \
-    tools/tellipse.cpp
+    tools/tellipse.cpp \
+                        \
+    gui/mycheckbox.cpp \
+    gui/mycombobox.cpp \
+    gui/mypushbutton.cpp
 
 
 HEADERS += \
@@ -41,12 +42,9 @@ HEADERS += \
     vertex.h \
     widgetelements.h \
     triangle.h \
-    mycheckbox.h \
     glwidget.h \
-    mypushbutton.h \
     camera.h \
     functions.h \
-    mycombobox.h \
     toolwithwidget.h \
                   \
     tools/tpan.h \
@@ -62,7 +60,11 @@ HEADERS += \
     tools/ttriangle.h \
     tools/tvertex.h \
     tools/tzoom.h \
-    tools/tellipse.h
+    tools/tellipse.h \
+                        \
+    gui/mycheckbox.h \
+    gui/mycombobox.h \
+    gui/mypushbutton.h
 
 
 RESOURCES += \
@@ -141,3 +143,4 @@ RESOURCES += \
 # separate functions.h, cpp
 # tool widgets - separate button width
 # tPlane->widget() is not hidden as it is the biggest widget
+# tool elements - remove

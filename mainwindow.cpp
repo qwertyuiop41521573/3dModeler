@@ -403,7 +403,6 @@ void MainWindow::quickAccessToolPan()
 {
     lastTool = toolActive;
     setActiveTool(tPan);
-    tPan->function(START, 0, 0);
 }
 
 void MainWindow::handleSelectClick( MyCheckBox *myCheckBox )

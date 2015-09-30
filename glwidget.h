@@ -134,6 +134,9 @@ public:
     void setStartPosition3D( QVector3D vector )
     { _startPosition3D = vector; };
 
+    VertexAndIndexData *getToolData()
+    { return &toolData; };
+
     QVector2D transform( QVector3D vector, bool point );
     void countFinalInverseMatrix( bool perspective );
     void countRotationMatrices();

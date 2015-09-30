@@ -7,8 +7,7 @@ TPan::TPan(MainWindow *mainWindow) : Tool(mainWindow)
     button->setText("Pan");
 }
 
-void TPan::function(Action action, QMouseEvent
-                    *event, VertexAndIndexData *data)
+void TPan::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if(action == EXECUTE)

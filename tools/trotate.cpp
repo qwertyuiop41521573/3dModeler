@@ -32,15 +32,13 @@ TRotate::TRotate(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     _widget->hide();
 }
 
-void TRotate::function(Action action, QMouseEvent *event,
-                       VertexAndIndexData *data)
+void TRotate::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
     if( action == STOP ) return;
-        WidgetElements *toolElements = getElements();
+        WidgetElements *toolElements = elements;
         WidgetElements *workWithElements = widget->
                 getWorkWithElements();
-        Model *model = widget->getModel();
         int i, j, k;
 
         if( action == START || action == FINAL )
@@ -148,6 +146,7 @@ void TRotate::function(Action action, QMouseEvent *event,
                 angle *= -1;
             if( action == DRAW )
             {
+                VertexAndIndexData *data = widget->getToolData();
                 data->vertices.resize( 3 );
                 data->vertices[ 0 ].position = lastPosition;
                 data->vertices[ 1 ].position = pivotTransformed;

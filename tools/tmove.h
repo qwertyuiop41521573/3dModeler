@@ -8,8 +8,7 @@ class TMove : public ToolWithWidget
 public:
     TMove(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent *event,
-                  VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event);
 
 signals:
 

@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <QDoubleSpinBox>
 #include <QRadioButton>
-#include "mycheckbox.h"
+#include "gui/mycheckbox.h"
 
 class WidgetElements
 {
