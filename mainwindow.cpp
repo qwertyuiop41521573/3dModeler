@@ -408,7 +408,7 @@ MainWindow::MainWindow()
 
 
     toolActive = tSelect;
-    setActiveTool(tSelect);
+    setActiveTool(tPan);
 
     // TOOLS END
 
@@ -665,9 +665,12 @@ void MainWindow::setActiveWidget(GLWidget *widget)
 
 void MainWindow::setActiveTool(Tool *tool)
 {
+
+    //cerr << tool->getButton()->text().toStdString();
     toolActive->setActive(false);
     toolActive = tool;
     tool->setActive(true);
+
 }
 
 bool MainWindow::saveRequest()

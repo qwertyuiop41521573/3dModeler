@@ -67,7 +67,7 @@ protected:
     GLWidget **_activeWidget;
 
 private slots:
-    void handleClick( bool pressed );
+    void handleClick(bool pressed);
 
 private:
     QPushButton *button;

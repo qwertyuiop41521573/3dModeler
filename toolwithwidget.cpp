@@ -16,6 +16,7 @@ ToolWithWidget::ToolWithWidget(MainWindow *mainWindow, QString
 
 void ToolWithWidget::setActive(bool value)
 {
+    Tool::setActive(value);
     if( _widget )
     {
         if( value ) _widget->show();

@@ -5,7 +5,7 @@
 TSelect::TSelect(MainWindow *mainWindow, QString buttonText,
     QWidget *widget, WidgetElements *newElements, QString
     finalButtonText, bool hasStage2) : ToolWithWidget(mainWindow,
-    buttonText, widget, newElements,finalButtonText,  hasStage2)
+    buttonText, widget, newElements,finalButtonText, hasStage2)
 {
 
 }
