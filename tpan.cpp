@@ -2,10 +2,9 @@
 #include "glwidget.h"
 #include "functions.h"
 
-TPan::TPan(MainWindow *mainWindow, QString buttonText) : Tool(
-                                     mainWindow, buttonText)
+TPan::TPan(MainWindow *mainWindow) : Tool(mainWindow)
 {
-
+    button->setText("Pan");
 }
 
 void TPan::function(Action action, QMouseEvent

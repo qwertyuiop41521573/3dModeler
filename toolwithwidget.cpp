@@ -1,9 +1,8 @@
 #include "toolwithwidget.h"
 #include "mainwindow.h"
 
-ToolWithWidget::ToolWithWidget(MainWindow *mainWindow, QString
-    buttonText, QWidget *widget, WidgetElements *newElements, QString
-    finalButtonText, bool hasStage2) : Tool(mainWindow, buttonText)
+ToolWithWidget::ToolWithWidget(MainWindow *mainWindow, QWidget *widget, WidgetElements *newElements, QString
+    finalButtonText, bool hasStage2) : Tool(mainWindow)
 {
     _widget = widget;
     elements = newElements;

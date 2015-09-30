@@ -6,7 +6,7 @@
 class TRotateCamera : public Tool
 {
 public:
-    TRotateCamera(MainWindow *mainWindow, QString buttonText);
+    TRotateCamera(MainWindow *mainWindow);
 
     void function(Action action, QMouseEvent
                   *event, VertexAndIndexData *data);

@@ -21,7 +21,10 @@ SOURCES += \
     trotatecamera.cpp \
     torbit.cpp \
     tselect.cpp \
-    toolwithwidget.cpp
+    toolwithwidget.cpp \
+    tmove.cpp \
+    tscale.cpp \
+    trotate.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -41,7 +44,10 @@ HEADERS += \
     trotatecamera.h \
     torbit.h \
     tselect.h \
-    toolwithwidget.h
+    toolwithwidget.h \
+    tmove.h \
+    tscale.h \
+    trotate.h
 
 RESOURCES += \
     shaders.qrc

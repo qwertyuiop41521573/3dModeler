@@ -1,12 +1,12 @@
-#ifndef TSELECT_H
-#define TSELECT_H
+#ifndef TROTATE_H
+#define TROTATE_H
 
 #include "toolwithwidget.h"
 
-class TSelect : public ToolWithWidget
+class TRotate : public ToolWithWidget
 {
 public:
-    TSelect(MainWindow *mainWindow,
+    TRotate(MainWindow *mainWindow,
             QWidget *widget = 0, WidgetElements *newElements = 0,
             QString finalButtonText = 0, bool hasStage2 = false);
 
@@ -18,4 +18,4 @@ signals:
 public slots:
 };
 
-#endif // TSELECT_H
+#endif // TROTATE_H

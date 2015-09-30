@@ -20,8 +20,11 @@
 #include "trotatecamera.h"
 #include "torbit.h"
 #include "tselect.h"
+#include "tmove.h"
+#include "tscale.h"
+#include "trotate.h"
 
-#include "toolwithwidget.h"
+
 
 using namespace std;
 
@@ -129,6 +132,9 @@ private:
     TRotateCamera *tRotateCamera;
     TOrbit *tOrbit;
     TSelect *tSelect;
+    TMove *tMove;
+    TScale *tScale;
+    TRotate *tRotate;
 
 };
 

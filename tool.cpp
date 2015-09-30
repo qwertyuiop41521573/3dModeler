@@ -2,10 +2,10 @@
 #include "mainwindow.h"
 
 
-Tool::Tool(MainWindow *mainWindow, QString buttonText)
+Tool::Tool(MainWindow *mainWindow)
 {
     _mainWindow = mainWindow;
-    button = new QPushButton(buttonText);
+    button = new QPushButton;
     button->setMaximumWidth(70);
     button->setCheckable(true);
     connect(button, SIGNAL(clicked(bool)), this, SLOT(handleClick(

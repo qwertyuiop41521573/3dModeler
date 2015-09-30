@@ -14,12 +14,8 @@ void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue );
 
 
 
-void toolMoveFunction( GLWidget *widget, Action action, QMouseEvent
-                      *event = 0, VertexAndIndexData *data = 0 );
-void toolScaleFunction( GLWidget *widget, Action action, QMouseEvent
-                       *event, VertexAndIndexData *data );
-void toolRotateFunction( GLWidget *widget, Action action, QMouseEvent
-                         *event, VertexAndIndexData *data );
+
+
 void toolVertexFunction( GLWidget *widget, Action action, QMouseEvent
                          *event, VertexAndIndexData *data = 0 );
 void toolTriangleFunction( GLWidget *widget, Action action,

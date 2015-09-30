@@ -18,10 +18,10 @@ MainWindow::MainWindow()
 
     // TOOLS
 
-    tPan = new TPan(this, "Pan");
-    tZoom = new TZoom(this, "Zoom");
-    tRotateCamera = new TRotateCamera(this, "Rotate");
-    tOrbit = new TOrbit(this, "Orbit");
+    tPan = new TPan(this);
+    tZoom = new TZoom(this);
+    tRotateCamera = new TRotateCamera(this);
+    tOrbit = new TOrbit(this);
 
     //toolSelect
     QWidget *toolSelectWidget = new QWidget;
@@ -45,7 +45,7 @@ MainWindow::MainWindow()
         }
 
         toolSelectWidget->setLayout( toolSelectLayout );
-        tSelect = new TSelect(this, "Select", toolSelectWidget,
+        tSelect = new TSelect(this, toolSelectWidget,
                               toolSelectElements);
     }
 
@@ -70,12 +70,12 @@ MainWindow::MainWindow()
         }
 
         toolMoveWidget->setLayout( toolMoveLayout );
-        toolMove = new ToolWithWidget(this, "Move",
-                    toolMoveWidget, toolMoveElements, "Move" );
-        toolMoveLayout->addWidget( toolMove->getFinalButton(), 3, 0,
+        tMove = new TMove(this, toolMoveWidget,
+                          toolMoveElements, "Move");
+        toolMoveLayout->addWidget( tMove->getFinalButton(), 3, 0,
                                    1, 2 );
 
-        connect( toolMove->getFinalButton(), SIGNAL( clicked() ),
+        connect( tMove->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
 
@@ -100,13 +100,12 @@ MainWindow::MainWindow()
 
 
         toolScaleWidget->setLayout( toolScaleLayout );
-        toolScale = new ToolWithWidget(this, "Scale",
-            toolScaleWidget, toolScaleElements,
-                              "Scale" );
-        toolScaleLayout->addWidget( toolScale->getFinalButton(), 3,
+        tScale = new TScale(this, toolScaleWidget,
+                            toolScaleElements, "Scale");
+        toolScaleLayout->addWidget( tScale->getFinalButton(), 3,
                                     0, 1, 2 );
 
-        connect( toolScale->getFinalButton(), SIGNAL( clicked() ),
+        connect( tScale->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
 
@@ -137,13 +136,12 @@ MainWindow::MainWindow()
         toolRotateLayout->addWidget( toolRotateElements->
                                      getMyCheckBox( 0 ), 5, 0, 1, 2 );
         toolRotateWidget->setLayout( toolRotateLayout );
-        toolRotate = new ToolWithWidget(this, "Rotate",
-                 toolRotateWidget, toolRotateElements,
+        tRotate = new TRotate(this, toolRotateWidget, toolRotateElements,
                                "Rotate" );
-        toolRotateLayout->addWidget( toolRotate->getFinalButton(), 4,
+        toolRotateLayout->addWidget( tRotate->getFinalButton(), 4,
                                      0, 1, 2 );
 
-        connect( toolRotate->getFinalButton(), SIGNAL( clicked() ),
+        connect( tRotate->getFinalButton(), SIGNAL( clicked() ),
                  this, SLOT( final() ) );
     }
 
@@ -166,7 +164,7 @@ MainWindow::MainWindow()
         }
 
         toolVertexWidget->setLayout( toolVertexLayout );
-        toolVertex = new ToolWithWidget(this, "Vertex",
+        toolVertex = new ToolWithWidget(this,
                 toolVertexWidget, toolVertexElements,
                                "Create Vertex" );
         toolVertexLayout->addWidget( toolVertex->getFinalButton(),
@@ -183,7 +181,7 @@ MainWindow::MainWindow()
         WidgetElements *toolTriangleElements = new WidgetElements( 0, 0,
                                                                    0, 0, 0 );
         toolTriangleWidget->setLayout( toolTriangleLayout );
-        toolTriangle = new ToolWithWidget(this, "Triangle",
+        toolTriangle = new ToolWithWidget(this,
              toolTriangleWidget, toolTriangleElements,
                                  "Cancel" );
         toolTriangleLayout->addWidget( toolTriangle->getFinalButton(),
@@ -227,7 +225,7 @@ MainWindow::MainWindow()
         toolPlaneLayout->addWidget( toolPlaneVLine, 1, 3, 7, 1 );
 
         toolPlaneWidget->setLayout( toolPlaneLayout );
-        toolPlane = new ToolWithWidget(this, "Plane",
+        toolPlane = new ToolWithWidget(this,
                             toolPlaneWidget, toolPlaneElements,
                               "Create Plane" );
         toolPlaneLayout->addWidget( toolPlane->getFinalButton(), 9,
@@ -243,7 +241,7 @@ MainWindow::MainWindow()
         QGridLayout *toolBoxLayout = new QGridLayout;
         WidgetElements *toolBoxElements = new WidgetElements( 0, 6, 0, 0, 2 );
         toolBoxWidget->setLayout( toolBoxLayout );
-        toolBox = new ToolWithWidget(this, "Box", toolBoxWidget, toolBoxElements,
+        toolBox = new ToolWithWidget(this, toolBoxWidget, toolBoxElements,
                             "Create Box", true );
         toolBoxElements->getCheckBox( 0 )->setText( "Square" );
         toolBoxElements->getCheckBox( 0 )->setMaximumWidth( 130 );
@@ -282,7 +280,7 @@ MainWindow::MainWindow()
         QGridLayout *toolEllipseLayout = new QGridLayout;
         WidgetElements *toolEllipseElements = new WidgetElements( 0, 8, 0, 0, 1 );
         toolEllipseWidget->setLayout( toolEllipseLayout );
-        toolEllipse = new ToolWithWidget(this, "Ellipse", toolEllipseWidget, toolEllipseElements, "Create Ellipse" );
+        toolEllipse = new ToolWithWidget(this, toolEllipseWidget, toolEllipseElements, "Create Ellipse" );
 
         toolEllipseElements->getSpinBox( 0 )->setMaximumWidth( 50 );
         toolEllipseElements->getSpinBox( 0 )->setMinimum( 3 );
@@ -338,7 +336,7 @@ MainWindow::MainWindow()
         QGridLayout *toolCylinderLayout = new QGridLayout;
         WidgetElements *toolCylinderElements = new WidgetElements( 0, 8, 0, 0, 1 );
         toolCylinderWidget->setLayout( toolCylinderLayout );
-        toolCylinder = new ToolWithWidget(this, "Cylinder", toolCylinderWidget,
+        toolCylinder = new ToolWithWidget(this, toolCylinderWidget,
                                  toolCylinderElements, "Create Cylinder", true );
 
         toolCylinderElements->getSpinBox( 0 )->setMaximumWidth( 50 );
@@ -408,7 +406,7 @@ MainWindow::MainWindow()
 
 
     toolActive = tSelect;
-    setActiveTool(tPan);
+    setActiveTool(tSelect);
 
     // TOOLS END
 
@@ -500,11 +498,11 @@ MainWindow::MainWindow()
     scrollAreaLayout->addWidget(line[1], 11, 0, 1, 4);
     scrollAreaLayout->addWidget(tSelect->getButton(), 12, 0,
                                  1, 2);
-    scrollAreaLayout->addWidget(toolMove->getButton(), 12, 2,
+    scrollAreaLayout->addWidget(tMove->getButton(), 12, 2,
                                  1, 2);
-    scrollAreaLayout->addWidget(toolScale->getButton(), 13, 0,
+    scrollAreaLayout->addWidget(tScale->getButton(), 13, 0,
                                  1, 2);
-    scrollAreaLayout->addWidget(toolRotate->getButton(), 13, 2,
+    scrollAreaLayout->addWidget(tRotate->getButton(), 13, 2,
                                  1, 2);
     scrollAreaLayout->addWidget(line[2], 14, 0, 1, 4);
     scrollAreaLayout->addWidget(toolVertex->getButton(), 15, 0,

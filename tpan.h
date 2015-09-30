@@ -6,10 +6,10 @@
 class TPan : public Tool
 {
 public:
-    TPan(MainWindow *mainWindow, QString buttonText);
+    TPan(MainWindow *mainWindow);
 
-    void function(Action action, QMouseEvent
-                  *event, VertexAndIndexData *data);
+    void function(Action action, QMouseEvent *event,
+                  VertexAndIndexData *data);
 
 signals:
 

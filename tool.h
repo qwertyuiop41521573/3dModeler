@@ -48,7 +48,7 @@ class Tool : public QObject
 {
     Q_OBJECT
 public:
-    Tool(MainWindow *mainWindow, QString buttonText);
+    Tool(MainWindow *mainWindow);
 
     virtual void setActive(bool value);
     virtual void function(Action action, QMouseEvent *event,
@@ -65,12 +65,13 @@ protected:
     MainWindow *_mainWindow;
     bool _hasStage2 = false;
     GLWidget **_activeWidget;
+    QPushButton *button;
 
 private slots:
     void handleClick(bool pressed);
 
 private:
-    QPushButton *button;
+
 
     bool _isActive = false;
 };

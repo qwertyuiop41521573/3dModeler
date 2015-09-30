@@ -6,7 +6,7 @@
 class TZoom : public Tool
 {
 public:
-    TZoom(MainWindow *mainWindow, QString buttonText);
+    TZoom(MainWindow *mainWindow);
 
     void function(Action action, QMouseEvent
                   *event, VertexAndIndexData *data);

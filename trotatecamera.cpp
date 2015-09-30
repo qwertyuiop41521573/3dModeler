@@ -1,10 +1,10 @@
 #include "trotatecamera.h"
 #include "glwidget.h"
 
-TRotateCamera::TRotateCamera(MainWindow *mainWindow, QString
-                      buttonText) : Tool(mainWindow, buttonText)
+TRotateCamera::TRotateCamera(MainWindow *mainWindow) : Tool(
+                                                           mainWindow)
 {
-
+    button->setText("Rotate");
 }
 
 void TRotateCamera::function(Action action,
