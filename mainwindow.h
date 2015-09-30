@@ -15,16 +15,20 @@
 
 #include <iostream>
 
-#include "tpan.h"
-#include "tzoom.h"
-#include "trotatecamera.h"
-#include "torbit.h"
-#include "tselect.h"
-#include "tmove.h"
-#include "tscale.h"
-#include "trotate.h"
-
-
+#include "tools/tpan.h"
+#include "tools/tzoom.h"
+#include "tools/trotatecamera.h"
+#include "tools/torbit.h"
+#include "tools/tselect.h"
+#include "tools/tmove.h"
+#include "tools/tscale.h"
+#include "tools/trotate.h"
+#include "tools/tvertex.h"
+#include "tools/ttriangle.h"
+#include "tools/tplane.h"
+#include "tools/tbox.h"
+#include "tools/tellipse.h"
+#include "tools/tcylinder.h"
 
 using namespace std;
 
@@ -123,10 +127,6 @@ private:
     bool saveRequest();
     bool openFileDialog( QString title );
 
-    ToolWithWidget *toolSelect, *toolMove, *toolScale, *toolRotate;
-    ToolWithWidget *toolVertex, *toolPlane, *toolTriangle, *toolBox, *toolEllipse, *toolCylinder;
-
-
     TPan *tPan;
     TZoom *tZoom;
     TRotateCamera *tRotateCamera;
@@ -135,6 +135,12 @@ private:
     TMove *tMove;
     TScale *tScale;
     TRotate *tRotate;
+    TVertex *tVertex;
+    TTriangle *tTriangle;
+    TPlane *tPlane;
+    TBox *tBox;
+    TEllipse *tEllipse;
+    TCylinder *tCylinder;
 
 };
 

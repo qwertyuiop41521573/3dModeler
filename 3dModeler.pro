@@ -16,15 +16,23 @@ SOURCES += \
     camera.cpp \
     functions.cpp \
     mycombobox.cpp \
-    tpan.cpp \
-    tzoom.cpp \
-    trotatecamera.cpp \
-    torbit.cpp \
-    tselect.cpp \
     toolwithwidget.cpp \
-    tmove.cpp \
-    tscale.cpp \
-    trotate.cpp
+                    \
+    tools/tpan.cpp \
+    tools/tplane.cpp \
+    tools/tbox.cpp \
+    tools/tcylinder.cpp \
+    tools/tmove.cpp \
+    tools/torbit.cpp \
+    tools/trotate.cpp \
+    tools/trotatecamera.cpp \
+    tools/tscale.cpp \
+    tools/tselect.cpp \
+    tools/ttriangle.cpp \
+    tools/tvertex.cpp \
+    tools/tzoom.cpp \
+    tools/tellipse.cpp
+
 
 HEADERS += \
     mainwindow.h \
@@ -39,15 +47,23 @@ HEADERS += \
     camera.h \
     functions.h \
     mycombobox.h \
-    tpan.h \
-    tzoom.h \
-    trotatecamera.h \
-    torbit.h \
-    tselect.h \
     toolwithwidget.h \
-    tmove.h \
-    tscale.h \
-    trotate.h
+                  \
+    tools/tpan.h \
+    tools/tbox.h \
+    tools/tcylinder.h \
+    tools/tmove.h \
+    tools/torbit.h \
+    tools/tplane.h \
+    tools/trotate.h \
+    tools/trotatecamera.h \
+    tools/tscale.h \
+    tools/tselect.h \
+    tools/ttriangle.h \
+    tools/tvertex.h \
+    tools/tzoom.h \
+    tools/tellipse.h
+
 
 RESOURCES += \
     shaders.qrc
@@ -121,4 +137,7 @@ RESOURCES += \
 
 
 # tool.cpp, h - setupButton()
-
+# rotate around custom axis
+# separate functions.h, cpp
+# tool widgets - separate button width
+# tPlane->widget() is not hidden as it is the biggest widget

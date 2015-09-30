@@ -15,16 +15,6 @@ void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue );
 
 
 
-
-void toolVertexFunction( GLWidget *widget, Action action, QMouseEvent
-                         *event, VertexAndIndexData *data = 0 );
-void toolTriangleFunction( GLWidget *widget, Action action,
-             QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolPlaneFunction( GLWidget *widget, Action action, QMouseEvent
-                      *event, VertexAndIndexData *data = 0 );
-void toolBoxFunction( GLWidget *widget, Action action, QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolEllipseFunction( GLWidget *widget, Action action, QMouseEvent *event, VertexAndIndexData *data = 0 );
-void toolCylinderFunction( GLWidget *widget, Action action, QMouseEvent *event, VertexAndIndexData *data = 0 );
 bool isSelected( QMatrix4x4 finalMatrix, QVector3D vertex,
                  bool perspective, QVector2D min, QVector2D max );
 bool getAxis( WidgetElements *toolElements, QMatrix4x4 *rotation,

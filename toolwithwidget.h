@@ -6,9 +6,7 @@
 class ToolWithWidget : public Tool
 {
 public:
-    ToolWithWidget(MainWindow *mainWindow, QWidget *widget = 0,
-        WidgetElements *newElements = 0, QString finalButtonText = 0,
-                   bool hasStage2 = false);
+    ToolWithWidget(MainWindow *mainWindow);
 
     virtual void function(Action action, QMouseEvent *event,
                           VertexAndIndexData *data) {};
@@ -36,10 +34,15 @@ signals:
 
 public slots:
 
-private:
+protected:
     QWidget *_widget;
+    QGridLayout *layout;
     WidgetElements *elements;
     QPushButton *finalButton;
+
+private:
+
+
 
     bool _stage2 = false;
 

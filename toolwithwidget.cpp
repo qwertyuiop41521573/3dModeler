@@ -1,16 +1,11 @@
 #include "toolwithwidget.h"
 #include "mainwindow.h"
 
-ToolWithWidget::ToolWithWidget(MainWindow *mainWindow, QWidget *widget, WidgetElements *newElements, QString
-    finalButtonText, bool hasStage2) : Tool(mainWindow)
+ToolWithWidget::ToolWithWidget(MainWindow *mainWindow) : Tool(mainWindow)
 {
-    _widget = widget;
-    elements = newElements;
-    if(!finalButtonText.isNull()) finalButton = new QPushButton(
-                finalButtonText);
-     _hasStage2 = hasStage2;
-
-
+    _widget = new QWidget;
+    layout = new QGridLayout;
+    _widget->setLayout(layout);
 }
 
 void ToolWithWidget::setActive(bool value)

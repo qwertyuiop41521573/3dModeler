@@ -15,377 +15,23 @@ MainWindow::MainWindow()
 
     model = new Model;
 
-
-    // TOOLS
-
+    //tools
     tPan = new TPan(this);
     tZoom = new TZoom(this);
     tRotateCamera = new TRotateCamera(this);
     tOrbit = new TOrbit(this);
 
-    //toolSelect
-    QWidget *toolSelectWidget = new QWidget;
-    {
-        QGridLayout *toolSelectLayout = new QGridLayout;
-        WidgetElements *toolSelectElements = new
-                WidgetElements( 0, 0, 0, 2, 0 );
+    tSelect = new TSelect(this);
+    tMove = new TMove(this);
+    tScale = new TScale(this);
+    tRotate = new TRotate(this);
+    tVertex = new TVertex(this);
+    tTriangle = new TTriangle(this);
+    tPlane = new TPlane(this);
+    tBox = new TBox(this);
+    tEllipse = new TEllipse(this);
+    tCylinder = new TCylinder(this);
 
-        toolSelectElements->getMyCheckBox( 0 )->
-                setText( "Add" );
-        toolSelectElements->getMyCheckBox( 1 )->
-                setText( "Remove" );
-
-        for( i = 0; i < 2; i++ )
-        {
-            connect( toolSelectElements->getMyCheckBox( i ), SIGNAL(
-                    handledClick( MyCheckBox* ) ), this, SLOT(
-                    handleSelectClick( MyCheckBox* ) ) );
-            toolSelectLayout->addWidget( toolSelectElements->
-                                        getMyCheckBox( i ), 0, i );
-        }
-
-        toolSelectWidget->setLayout( toolSelectLayout );
-        tSelect = new TSelect(this, toolSelectWidget,
-                              toolSelectElements);
-    }
-
-
-    //toolMove
-    QWidget *toolMoveWidget = new QWidget;
-    {
-        QGridLayout *toolMoveLayout = new QGridLayout;
-        WidgetElements *toolMoveElements = new
-                WidgetElements( 3, 3, 0, 0, 0 );
-
-        toolMoveElements->getPushButton( 0 )->setText( "X" );
-        toolMoveElements->getPushButton( 1 )->setText( "Y" );
-        toolMoveElements->getPushButton( 2 )->setText( "Z" );
-
-        for( i = 0; i < 3; i++ )
-        {
-            toolMoveLayout->addWidget(
-                        toolMoveElements->getPushButton( i ), i, 0 );
-            toolMoveLayout->addWidget(
-                        toolMoveElements->getSpinBox( i ), i, 1 );
-        }
-
-        toolMoveWidget->setLayout( toolMoveLayout );
-        tMove = new TMove(this, toolMoveWidget,
-                          toolMoveElements, "Move");
-        toolMoveLayout->addWidget( tMove->getFinalButton(), 3, 0,
-                                   1, 2 );
-
-        connect( tMove->getFinalButton(), SIGNAL( clicked() ),
-                 this, SLOT( final() ) );
-    }
-
-    //toolScale
-    QWidget *toolScaleWidget = new QWidget;
-    {
-        QGridLayout *toolScaleLayout = new QGridLayout;
-        WidgetElements *toolScaleElements = new
-                WidgetElements( 3, 3, 0, 0, 1 );
-
-        toolScaleElements->getPushButton( 0 )->setText( "X" );
-        toolScaleElements->getPushButton( 1 )->setText( "Y" );
-        toolScaleElements->getPushButton( 2 )->setText( "Z" );
-
-        for( i = 0; i < 3; i++ )
-        {
-            toolScaleLayout->addWidget(
-                        toolScaleElements->getPushButton( i ), i, 0 );
-            toolScaleLayout->addWidget(
-                        toolScaleElements->getSpinBox( i ), i, 1 );
-        }
-
-
-        toolScaleWidget->setLayout( toolScaleLayout );
-        tScale = new TScale(this, toolScaleWidget,
-                            toolScaleElements, "Scale");
-        toolScaleLayout->addWidget( tScale->getFinalButton(), 3,
-                                    0, 1, 2 );
-
-        connect( tScale->getFinalButton(), SIGNAL( clicked() ),
-                 this, SLOT( final() ) );
-    }
-
-    //toolRotate
-    QWidget *toolRotateWidget = new QWidget;
-    {
-        QGridLayout *toolRotateLayout = new QGridLayout;
-        WidgetElements *toolRotateElements = new WidgetElements(
-                    0, 4, 0, 1, 0 );
-
-        QLabel *toolRotateLabels[ 4 ];
-        toolRotateLabels[ 0 ] = new QLabel( "Angle:" );
-        for( i = 1; i < 4; i++ ) toolRotateLabels[ i ] = new QLabel(
-                        QString( 'W' + i ) + ':' );
-        for( i = 0; i < 4; i++ )
-        {
-            toolRotateLabels[ i ]->setMaximumWidth( 50 );
-            toolRotateLabels[ i ]->setAlignment( Qt::AlignRight );
-            toolRotateLayout->addWidget( toolRotateLabels[ i ], i, 0 );
-            toolRotateLayout->addWidget( toolRotateElements->
-                                      getSpinBox( i ), i, 1 );
-        }
-        toolRotateElements->getSpinBox( 0 )->setMaximum( 360 );
-        toolRotateElements->getSpinBox( 0 )->setMinimum(-360 );
-
-        toolRotateElements->getMyCheckBox( 0 )->setText( "Custom Axis" );
-        toolRotateElements->getMyCheckBox( 0 )->setChecked( true );
-        toolRotateLayout->addWidget( toolRotateElements->
-                                     getMyCheckBox( 0 ), 5, 0, 1, 2 );
-        toolRotateWidget->setLayout( toolRotateLayout );
-        tRotate = new TRotate(this, toolRotateWidget, toolRotateElements,
-                               "Rotate" );
-        toolRotateLayout->addWidget( tRotate->getFinalButton(), 4,
-                                     0, 1, 2 );
-
-        connect( tRotate->getFinalButton(), SIGNAL( clicked() ),
-                 this, SLOT( final() ) );
-    }
-
-    //toolVertex
-    QWidget *toolVertexWidget = new QWidget;
-    {
-        QGridLayout *toolVertexLayout = new QGridLayout;
-        WidgetElements *toolVertexElements = new WidgetElements( 0, 3,
-                                                                 0, 0, 0 );
-        QLabel *toolVertexLabels[ 3 ];
-        for( i = 0; i < 3; i++ ) toolVertexLabels[ i ] = new QLabel(
-                        QString( 'X' + i ) + ':' );
-        for( i = 0; i < 3; i++ )
-        {
-            toolVertexLabels[ i ]->setMaximumWidth( 50 );
-            toolVertexLabels[ i ]->setAlignment( Qt::AlignRight );
-            toolVertexLayout->addWidget( toolVertexLabels[ i ], i, 0 );
-            toolVertexLayout->addWidget( toolVertexElements->
-                                      getSpinBox( i ), i, 1 );
-        }
-
-        toolVertexWidget->setLayout( toolVertexLayout );
-        toolVertex = new ToolWithWidget(this,
-                toolVertexWidget, toolVertexElements,
-                               "Create Vertex" );
-        toolVertexLayout->addWidget( toolVertex->getFinalButton(),
-                                     3, 0, 1, 2 );
-
-        connect( toolVertex->getFinalButton(), SIGNAL( clicked() ),
-                 this, SLOT( final() ) );
-    }
-
-    //toolTriangle
-    QWidget *toolTriangleWidget = new QWidget;
-    {
-        QGridLayout *toolTriangleLayout = new QGridLayout;
-        WidgetElements *toolTriangleElements = new WidgetElements( 0, 0,
-                                                                   0, 0, 0 );
-        toolTriangleWidget->setLayout( toolTriangleLayout );
-        toolTriangle = new ToolWithWidget(this,
-             toolTriangleWidget, toolTriangleElements,
-                                 "Cancel" );
-        toolTriangleLayout->addWidget( toolTriangle->getFinalButton(),
-                                       0, 0 );
-
-        connect( toolTriangle->getFinalButton(), SIGNAL( clicked() ),
-                 this, SLOT( final() ) );
-    }
-
-    //toolPlane
-    QWidget *toolPlaneWidget = new QWidget;
-    {
-        QGridLayout *toolPlaneLayout = new QGridLayout;
-        WidgetElements *toolPlaneElements = new WidgetElements( 0, 12, 0, 0, 1 );
-        toolPlaneElements->getCheckBox( 0 )->setText( "Square" );
-        toolPlaneElements->getCheckBox( 0 )->setMaximumWidth( 130 );
-        toolPlaneLayout->addWidget( toolPlaneElements->getCheckBox( 0 ), 0, 0, 1, 6 );
-        QLabel *toolPlaneLabels[ 12 ];
-        for( i = 0; i < 12; i++ )
-        {
-            toolPlaneLabels[ i ] = new QLabel( QString( 'X' + i % 3 )
-                                               + ':' );
-            toolPlaneLabels[ i ]->setMaximumWidth( 25 );
-            toolPlaneLabels[ i ]->setAlignment( Qt::AlignRight );
-            int x = 4 * ( ( i % 6 ) / 3 ), y = 4 * ( i / 6 ) + i % 3 + 1;
-            toolPlaneLayout->addWidget( toolPlaneLabels[ i ], y, x );
-            toolPlaneElements->getSpinBox( i )->setMaximumWidth( 50 );
-            toolPlaneLayout->addWidget( toolPlaneElements->getSpinBox( i ), y, x + 1 );
-        }
-        QFrame *toolPlaneHLine = new QFrame();
-        toolPlaneHLine->setFrameShape( QFrame::HLine );
-        toolPlaneHLine->setFrameShadow( QFrame::Sunken );
-        toolPlaneHLine->setMaximumWidth( 150 );
-        toolPlaneHLine->setFixedHeight( 5 );
-        toolPlaneLayout->addWidget( toolPlaneHLine, 4, 0, 1, 6 );
-        QFrame *toolPlaneVLine = new QFrame();
-        toolPlaneVLine->setFrameShape( QFrame::VLine );
-        toolPlaneVLine->setFrameShadow( QFrame::Sunken );
-        toolPlaneVLine->setMaximumHeight( 200 );
-        toolPlaneVLine->setFixedWidth( 5 );
-        toolPlaneLayout->addWidget( toolPlaneVLine, 1, 3, 7, 1 );
-
-        toolPlaneWidget->setLayout( toolPlaneLayout );
-        toolPlane = new ToolWithWidget(this,
-                            toolPlaneWidget, toolPlaneElements,
-                              "Create Plane" );
-        toolPlaneLayout->addWidget( toolPlane->getFinalButton(), 9,
-                                    0, 1, 6 );
-
-        connect( toolPlane->getFinalButton(), SIGNAL( clicked() ),
-                 this, SLOT( final() ) );
-    }
-
-    //toolBox
-    QWidget *toolBoxWidget = new QWidget;
-    {
-        QGridLayout *toolBoxLayout = new QGridLayout;
-        WidgetElements *toolBoxElements = new WidgetElements( 0, 6, 0, 0, 2 );
-        toolBoxWidget->setLayout( toolBoxLayout );
-        toolBox = new ToolWithWidget(this, toolBoxWidget, toolBoxElements,
-                            "Create Box", true );
-        toolBoxElements->getCheckBox( 0 )->setText( "Square" );
-        toolBoxElements->getCheckBox( 0 )->setMaximumWidth( 130 );
-        toolBoxElements->getCheckBox( 1 )->setText( "Cube" );
-        toolBoxElements->getCheckBox( 1 )->setMaximumWidth( 130 );
-        QLabel *toolBoxCenter = new QLabel( "Center" );
-        QLabel *toolBoxSize = new QLabel( "Size" );
-        QLabel *toolBoxLabels[ 6 ];
-        for( i = 0; i < 6; i++ )
-        {
-            toolBoxLabels[ i ] = new QLabel( QString( 'X' + i % 3 )
-                                               + ':' );
-            toolBoxLabels[ i ]->setMaximumWidth( 25 );
-            toolBoxLabels[ i ]->setAlignment( Qt::AlignRight );
-            toolBoxElements->getSpinBox( i )->setMaximumWidth( 50 );
-        }
-        toolBoxLayout->addWidget( toolBoxElements->getCheckBox( 0 ), 0, 0, 1, 4 );
-        toolBoxLayout->addWidget( toolBoxElements->getCheckBox( 1 ), 1, 0, 1, 4 );
-        toolBoxLayout->addWidget( toolBoxCenter, 2, 0, 1, 4 );
-        toolBoxLayout->addWidget( toolBoxSize, 2, 2, 1, 4 );
-        for( i = 0; i < 3; i++ )
-        {
-            toolBoxLayout->addWidget( toolBoxLabels[ i ], 3 + i, 0 );
-            toolBoxLayout->addWidget( toolBoxElements->getSpinBox( i ), 3 + i, 1 );
-            toolBoxLayout->addWidget( toolBoxLabels[ i + 3 ], 3 + i, 2 );
-            toolBoxLayout->addWidget( toolBoxElements->getSpinBox( i + 3 ), 3 + i, 3 );
-        }
-        toolBoxLayout->addWidget( toolBox->getFinalButton(), 6, 0, 1, 4 );
-
-        connect( toolBox->getFinalButton(), SIGNAL( clicked() ), this, SLOT( final() ) );
-    }
-
-    //toolEllipse
-    QWidget *toolEllipseWidget = new QWidget;
-    {
-        QGridLayout *toolEllipseLayout = new QGridLayout;
-        WidgetElements *toolEllipseElements = new WidgetElements( 0, 8, 0, 0, 1 );
-        toolEllipseWidget->setLayout( toolEllipseLayout );
-        toolEllipse = new ToolWithWidget(this, toolEllipseWidget, toolEllipseElements, "Create Ellipse" );
-
-        toolEllipseElements->getSpinBox( 0 )->setMaximumWidth( 50 );
-        toolEllipseElements->getSpinBox( 0 )->setMinimum( 3 );
-        toolEllipseElements->getSpinBox( 0 )->setValue( 18 );
-        QLabel *toolEllipseSegments = new QLabel( "Segments:" );
-        toolEllipseSegments->setAlignment( Qt::AlignRight );
-        toolEllipseSegments->setMaximumWidth( 70 );
-
-        toolEllipseElements->getCheckBox( 0 )->setText( "Circle" );
-        toolEllipseElements->getCheckBox( 0 )->setMaximumWidth( 130 );
-
-        QLabel *toolEllipseCenter = new QLabel( "Center" );
-        QLabel *toolEllipseNormal = new QLabel( "Normal" );
-        QLabel *toolEllipseLabels[ 6 ];
-        for( i = 0; i < 6; i++ )
-        {
-            toolEllipseLabels[ i ] = new QLabel( QString( 'X' + i % 3 ) + ':' );
-            toolEllipseLabels[ i ]->setMaximumWidth( 25 );
-            toolEllipseLabels[ i ]->setAlignment( Qt::AlignRight );
-            toolEllipseElements->getSpinBox( 1 + i )->setMaximumWidth( 50 );
-        }
-        QLabel *toolEllipseRadius = new QLabel( "Radius:" );
-        toolEllipseRadius->setAlignment( Qt::AlignRight );
-        toolEllipseRadius->setMaximumWidth( 70 );
-
-        toolEllipseElements->getSpinBox( 7 )->setMinimum( 0 );
-        toolEllipseElements->getSpinBox( 7 )->setValue( 1 );
-
-        toolEllipseLayout->addWidget( toolEllipseSegments, 0, 0, 1, 2 );
-        toolEllipseLayout->addWidget( toolEllipseElements->getSpinBox( 0 ), 0, 2, 1, 2 );
-        toolEllipseLayout->addWidget( toolEllipseElements->getCheckBox( 0 ), 1, 0, 1, 4 );
-        toolEllipseLayout->addWidget( toolEllipseCenter, 2, 0, 1, 4 );
-        toolEllipseLayout->addWidget( toolEllipseNormal, 2, 2, 1, 4 );
-        for( i = 0; i < 3; i++ )
-        {
-            toolEllipseLayout->addWidget( toolEllipseLabels[ i ], 3 + i, 0 );
-            toolEllipseLayout->addWidget( toolEllipseElements->getSpinBox( 1 + i ), 3 + i, 1 );
-            toolEllipseLayout->addWidget( toolEllipseLabels[ i + 3 ], 3 + i, 2 );
-            toolEllipseLayout->addWidget( toolEllipseElements->getSpinBox( 4 + i ), 3 + i, 3 );
-        }
-        toolEllipseLayout->addWidget( toolEllipseRadius, 6, 0, 1, 2 );
-        toolEllipseLayout->addWidget( toolEllipseElements->getSpinBox( 7 ), 6, 2, 1, 2 );
-        toolEllipseLayout->addWidget( toolEllipse->getFinalButton(), 7, 0, 1, 4 );
-
-
-
-        connect( toolEllipse->getFinalButton(), SIGNAL( clicked() ), this, SLOT( final() ) );
-    }
-
-    //toolCylinder
-    QWidget *toolCylinderWidget = new QWidget;
-    {
-        QGridLayout *toolCylinderLayout = new QGridLayout;
-        WidgetElements *toolCylinderElements = new WidgetElements( 0, 8, 0, 0, 1 );
-        toolCylinderWidget->setLayout( toolCylinderLayout );
-        toolCylinder = new ToolWithWidget(this, toolCylinderWidget,
-                                 toolCylinderElements, "Create Cylinder", true );
-
-        toolCylinderElements->getSpinBox( 0 )->setMaximumWidth( 50 );
-        toolCylinderElements->getSpinBox( 0 )->setMinimum( 3 );
-        toolCylinderElements->getSpinBox( 0 )->setValue( 18 );
-        QLabel *toolCylinderSegments = new QLabel( "Segments:" );
-        toolCylinderSegments->setAlignment( Qt::AlignRight );
-        toolCylinderSegments->setMaximumWidth( 70 );
-
-        toolCylinderElements->getCheckBox( 0 )->setText( "Circle" );
-        toolCylinderElements->getCheckBox( 0 )->setMaximumWidth( 130 );
-
-        QLabel *toolCylinderCenter = new QLabel( "Center" );
-        QLabel *toolCylinderNormal = new QLabel( "Normal" );
-        QLabel *toolCylinderLabels[ 6 ];
-        for( i = 0; i < 6; i++ )
-        {
-            toolCylinderLabels[ i ] = new QLabel( QString( 'X' + i % 3 ) + ':' );
-            toolCylinderLabels[ i ]->setMaximumWidth( 25 );
-            toolCylinderLabels[ i ]->setAlignment( Qt::AlignRight );
-            toolCylinderElements->getSpinBox( 1 + i )->setMaximumWidth( 50 );
-        }
-        QLabel *toolCylinderRadius = new QLabel( "Radius:" );
-        toolCylinderRadius->setAlignment( Qt::AlignRight );
-        toolCylinderRadius->setMaximumWidth( 70 );
-
-        toolCylinderElements->getSpinBox( 7 )->setMinimum( 0 );
-        toolCylinderElements->getSpinBox( 7 )->setValue( 1 );
-
-        toolCylinderLayout->addWidget( toolCylinderSegments, 0, 0, 1, 2 );
-        toolCylinderLayout->addWidget( toolCylinderElements->getSpinBox( 0 ), 0, 2, 1, 2 );
-        toolCylinderLayout->addWidget( toolCylinderElements->getCheckBox( 0 ), 1, 0, 1, 4 );
-        toolCylinderLayout->addWidget( toolCylinderCenter, 2, 0, 1, 4 );
-        toolCylinderLayout->addWidget( toolCylinderNormal, 2, 2, 1, 4 );
-        for( i = 0; i < 3; i++ )
-        {
-            toolCylinderLayout->addWidget( toolCylinderLabels[ i ], 3 + i, 0 );
-            toolCylinderLayout->addWidget( toolCylinderElements->getSpinBox( 1 + i ), 3 + i, 1 );
-            toolCylinderLayout->addWidget( toolCylinderLabels[ i + 3 ], 3 + i, 2 );
-            toolCylinderLayout->addWidget( toolCylinderElements->getSpinBox( 4 + i ), 3 + i, 3 );
-        }
-        toolCylinderLayout->addWidget( toolCylinderRadius, 6, 0, 1, 2 );
-        toolCylinderLayout->addWidget( toolCylinderElements->getSpinBox( 7 ), 6, 2, 1, 2 );
-        toolCylinderLayout->addWidget( toolCylinder->getFinalButton(), 7, 0, 1, 4 );
-
-
-
-        connect( toolCylinder->getFinalButton(), SIGNAL( clicked() ), this, SLOT( final() ) );
-    }
 
     QWidget *workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;
@@ -399,7 +45,6 @@ MainWindow::MainWindow()
         workWithLayout->addWidget( workWithElements->
                                 getRadioButton( i ), i, 0 );
 
-
     workWithElements->getRadioButton( 0 )->setChecked( true );
 
     workWithWidget->setLayout( workWithLayout );
@@ -408,19 +53,17 @@ MainWindow::MainWindow()
     toolActive = tSelect;
     setActiveTool(tSelect);
 
-    // TOOLS END
-
-
     //layouts and gui elements
     QGridLayout *centralLayout = new QGridLayout;
 
-    //scrollarea
+        //scrollarea
     QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setHorizontalScrollBarPolicy(
                 Qt::ScrollBarAlwaysOff);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setFixedWidth(190);
     QWidget *scrollAreaWidget = new QWidget;
+    scrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     QGridLayout *scrollAreaLayout = new QGridLayout;
 
     renderingMode = new MyComboBox;
@@ -505,48 +148,50 @@ MainWindow::MainWindow()
     scrollAreaLayout->addWidget(tRotate->getButton(), 13, 2,
                                  1, 2);
     scrollAreaLayout->addWidget(line[2], 14, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolVertex->getButton(), 15, 0,
+    scrollAreaLayout->addWidget(tVertex->getButton(), 15, 0,
                                  1, 2);
-    scrollAreaLayout->addWidget(toolTriangle->getButton(), 15, 2,
+    scrollAreaLayout->addWidget(tTriangle->getButton(), 15, 2,
                                  1, 2);
-    scrollAreaLayout->addWidget(toolPlane->getButton(), 16, 0, 1,
+    scrollAreaLayout->addWidget(tPlane->getButton(), 16, 0, 1,
                                 2);
-    scrollAreaLayout->addWidget(toolBox->getButton(), 16, 2, 1, 2);
-    scrollAreaLayout->addWidget(toolEllipse->getButton(), 17, 0, 1,
+    scrollAreaLayout->addWidget(tBox->getButton(), 16, 2, 1, 2);
+    scrollAreaLayout->addWidget(tEllipse->getButton(), 17, 0, 1,
                                 2);
-    scrollAreaLayout->addWidget(toolCylinder->getButton(), 17, 2, 1,
+    scrollAreaLayout->addWidget(tCylinder->getButton(), 17, 2, 1,
                                 2);
     scrollAreaLayout->addWidget(line[3], 18, 0, 1, 4);
     scrollAreaLayout->addWidget(workWithWidget, 19, 0, 1, 4);
     scrollAreaLayout->addWidget(line[4], 20, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolSelectWidget, 21, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolMoveWidget, 22, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolScaleWidget, 23, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolRotateWidget, 24, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolVertexWidget, 25, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolTriangleWidget, 26, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolPlaneWidget, 27, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolBoxWidget, 28, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolEllipseWidget, 23, 0, 1, 4);
-    scrollAreaLayout->addWidget(toolCylinderWidget, 24, 0, 1, 4);
+    scrollAreaLayout->addWidget(tSelect->getWidget(), 21, 0, 1, 4);
+    scrollAreaLayout->addWidget(tMove->getWidget(), 22, 0, 1, 4);
+    scrollAreaLayout->addWidget(tScale->getWidget(), 23, 0, 1, 4);
+    scrollAreaLayout->addWidget(tRotate->getWidget(), 24, 0, 1, 4);
+    scrollAreaLayout->addWidget(tVertex->getWidget(), 25, 0, 1, 4);
+    scrollAreaLayout->addWidget(tTriangle->getWidget(), 26, 0, 1, 4);
+    scrollAreaLayout->addWidget(tPlane->getWidget(), 27, 0, 1, 4);
+    scrollAreaLayout->addWidget(tBox->getWidget(), 28, 0, 1, 4);
+    scrollAreaLayout->addWidget(tEllipse->getWidget(), 23, 0, 1, 4);
+    scrollAreaLayout->addWidget(tCylinder->getWidget(), 24, 0, 1, 4);
+
+
 
     scrollAreaLayout->addItem(spacer, 40, 0, 1, 4);
 
     scrollAreaWidget->setLayout(scrollAreaLayout);
     scrollArea->setWidget(scrollAreaWidget);
+        //scrollarea end
+    tSelect->getWidget()->hide();
+    tMove->getWidget()->hide();
+    tScale->getWidget()->hide();
+    tRotate->getWidget()->hide();
+    tVertex->getWidget()->hide();
+    tTriangle->getWidget()->hide();
+    tPlane->getWidget()->hide();
+    tBox->getWidget()->hide();
+    tEllipse->getWidget()->hide();
+    tCylinder->getWidget()->hide();
 
-    toolMoveWidget->hide();
-    toolScaleWidget->hide();
-    toolRotateWidget->hide();
-    toolVertexWidget->hide();
-    toolTriangleWidget->hide();
-    toolPlaneWidget->hide();
-    toolBoxWidget->hide();
-    toolEllipseWidget->hide();
-    toolCylinderWidget->hide();
-    //scrollarea end
-
-    //viewports
+        //viewports
     QWidget *viewportWidget = new QWidget;
     QGridLayout *viewportLayout = new QGridLayout;
 
@@ -563,7 +208,7 @@ MainWindow::MainWindow()
     for(i = 0; i < 4; i++) viewportLayout->addWidget(widget[i],
                                                      i / 2, i % 2);
     viewportWidget->setLayout(viewportLayout);
-    //viewports end
+        //viewports end
 
     //add viewports and scrollarea to window
     centralLayout->addWidget(viewportWidget, 0, 0);
@@ -575,8 +220,6 @@ MainWindow::MainWindow()
     createMenus();
 
     setWindowTitle("3d Modeler");
-
-
 
  //  model->load( "/path/to/model.mdl" );
 }
