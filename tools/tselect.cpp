@@ -14,9 +14,8 @@ TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
     for(int i = 0; i < 2; i++)
     {
-        connect(elements->getMyCheckBox(i), SIGNAL(handledClick(
-            MyCheckBox*)), _mainWindow, SLOT(handleSelectClick(
-                                          MyCheckBox*)));
+        elements->getMyCheckBox(i)->setNeighbor(elements->
+                                                getMyCheckBox(!i));
         layout->addWidget(elements->getMyCheckBox(i), 0, i);
     }
     _widget->hide();

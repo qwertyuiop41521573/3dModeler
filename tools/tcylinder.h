@@ -2,6 +2,8 @@
 #define TCYLINDER_H
 
 #include "toolwithwidget.h"
+#include "gui/myspinbox.h"
+#include "gui/mycheckboxmw.h"
 
 class TCylinder : public ToolWithWidget
 {
@@ -13,6 +15,10 @@ public:
 signals:
 
 public slots:
+
+private:
+       MySpinBox **spinBox;
+       MyCheckBoxMW *checkBox;
 };
 
 #endif // TCYLINDER_H

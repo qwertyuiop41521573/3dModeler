@@ -8,15 +8,18 @@ class MyCheckBox : public QCheckBox
     Q_OBJECT
 public:
     explicit MyCheckBox()
-    { connect( this, SIGNAL( clicked( bool ) ), this, SLOT(
-                   handleClick( bool ) ) ); }
+    { connect(this, SIGNAL(clicked(bool)), this, SLOT(handleClick(
+                                                       bool))); };
 
-signals:
-    void handledClick( MyCheckBox *myCheckBox );
+    void setNeighbor(MyCheckBox *neighbor)
+    { _neighbor = neighbor; };
 
-public slots:
-    void handleClick( bool value )
-    { if( value ) emit handledClick( this ); };
+private:
+    MyCheckBox *_neighbor;
+
+private slots:
+    void handleClick(bool value)
+    { if(value) _neighbor->setChecked(false); };
 
 };
 

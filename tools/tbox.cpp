@@ -8,37 +8,40 @@ TBox::TBox(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     button->setText("Box");
     finalButton = new QPushButton("Create Box");
 
-    elements = new WidgetElements( 0, 6, 0, 0, 2 );
-    elements->getCheckBox( 0 )->setText( "Square" );
-    elements->getCheckBox( 0 )->setMaximumWidth( 130 );
-    elements->getCheckBox( 1 )->setText( "Cube" );
-    elements->getCheckBox( 1 )->setMaximumWidth( 130 );
-    QLabel *toolBoxCenter = new QLabel( "Center" );
-    QLabel *toolBoxSize = new QLabel( "Size" );
-    QLabel *toolBoxLabels[ 6 ];
-    for(int i = 0; i < 6; i++ )
-    {
-        toolBoxLabels[ i ] = new QLabel( QString( 'X' + i % 3 )
-                                           + ':' );
-        toolBoxLabels[ i ]->setMaximumWidth( 25 );
-        toolBoxLabels[ i ]->setAlignment( Qt::AlignRight );
-        elements->getSpinBox( i )->setMaximumWidth( 50 );
-    }
-    layout->addWidget( elements->getCheckBox( 0 ), 0, 0, 1, 4 );
-    layout->addWidget( elements->getCheckBox( 1 ), 1, 0, 1, 4 );
-    layout->addWidget( toolBoxCenter, 2, 0, 1, 4 );
-    layout->addWidget( toolBoxSize, 2, 2, 1, 4 );
-    for(int i = 0; i < 3; i++ )
-    {
-        layout->addWidget( toolBoxLabels[ i ], 3 + i, 0 );
-        layout->addWidget( elements->getSpinBox( i ), 3 + i, 1 );
-        layout->addWidget( toolBoxLabels[ i + 3 ], 3 + i, 2 );
-        layout->addWidget( elements->getSpinBox( i + 3 ), 3 + i, 3 );
-    }
-    layout->addWidget(finalButton, 6, 0, 1, 4 );
+    int i;
 
-    connect(finalButton, SIGNAL( clicked() ), _mainWindow, SLOT(
-                final() ) );
+    checkBox = new MyCheckBoxMW*[2];
+    for(i = 0; i < 2; i++)
+    {
+        checkBox[i] = new MyCheckBoxMW;
+        layout->addWidget(checkBox[i], i, 0, 1, 4);
+    }
+
+    checkBox[0]->setText("Square");
+    checkBox[1]->setText("Cube");
+
+    QLabel *center = new QLabel("Center");
+    QLabel *size = new QLabel("Size");
+    spinBox = new MySpinBox*[6];
+    MyLabel *label[6];
+    for(i = 0; i < 6; i++)
+    {
+        spinBox[i] = new MySpinBox;
+        label[i] = new MyLabel(QString('X' + i % 3) + ':', 25);
+    }
+
+    layout->addWidget(center, 2, 0, 1, 4);
+    layout->addWidget(size, 2, 2, 1, 4);
+    for(i = 0; i < 3; i++ )
+    {
+        layout->addWidget(label[i], 3 + i, 0);
+        layout->addWidget(spinBox[i], 3 + i, 1);
+        layout->addWidget(label[i + 3], 3 + i, 2);
+        layout->addWidget(spinBox[i + 3], 3 + i, 3);
+    }
+    layout->addWidget(finalButton, 6, 0, 1, 4);
+    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
+                final()));
     _widget->hide();
 
     _hasStage2 = true;
@@ -55,7 +58,7 @@ void TBox::function(Action action, QMouseEvent *event)
             int i;
             for( i = 0; i < 3; i++ )
             {
-                if(elements->getSpinBox( i + 3 )->value() <= 0 )
+                if(spinBox[i + 3]->value() <= 0 )
                 {
                     return;
                 }
@@ -65,8 +68,8 @@ void TBox::function(Action action, QMouseEvent *event)
             QVector3D center, halfDiagonal;
             for( i = 0; i < 3; i++ )
             {
-                center[ i ] = elements->getSpinBox( i )->value();
-                halfDiagonal[ i ] = elements->getSpinBox( i + 3 )->value();
+                center[ i ] = spinBox[i]->value();
+                halfDiagonal[ i ] = spinBox[i + 3]->value();
             }
             halfDiagonal /= 2;
 
@@ -127,7 +130,7 @@ void TBox::function(Action action, QMouseEvent *event)
                                   cos( inRadians( camera->rotation().x() ) ) * sin( inRadians( camera->rotation().z() ) ),
                                   sin( inRadians( camera->rotation().x() ) ) );
 
-                if( elements->getCheckBox( 1 )->isChecked() && dy != 0 )
+                if( checkBox[1]->isChecked() && dy != 0 )
                 {
                     QVector3D dh = normal *
                    sign( dy ) * ( model->vertex[ vertexSize - 2 ].getPosition() - model->vertex[ vertexSize - 4 ].getPosition() ).length() / qSqrt( 2 );
@@ -154,8 +157,8 @@ void TBox::function(Action action, QMouseEvent *event)
             {
                 QVector2D diagonal;
                 QVector3D posA, posB;
-                bool square = elements->getCheckBox( 0 )->isChecked() ||
-                        elements->getCheckBox( 1 )->isChecked();
+                bool square = checkBox[0]->isChecked() ||
+                        checkBox[1]->isChecked();
                 if( widget->getProjection() == PERSPECTIVE )
                 {
                     double height = model->vertex[ vertexSize - 4 ].getPosition().z();

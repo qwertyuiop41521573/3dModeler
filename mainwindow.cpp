@@ -180,7 +180,6 @@ MainWindow::MainWindow()
     scrollAreaWidget->setLayout(scrollAreaLayout);
     scrollArea->setWidget(scrollAreaWidget);
         //scrollarea end
-    tSelect->getWidget()->hide();
     tMove->getWidget()->hide();
     tScale->getWidget()->hide();
     tRotate->getWidget()->hide();

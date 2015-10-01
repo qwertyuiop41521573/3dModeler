@@ -2,6 +2,8 @@
 #define TELLIPSE_H
 
 #include "toolwithwidget.h"
+#include "gui/myspinbox.h"
+#include "gui/mycheckboxmw.h"
 
 class TEllipse : public ToolWithWidget
 {
@@ -13,6 +15,10 @@ public:
 signals:
 
 public slots:
+
+private:
+    MySpinBox **spinBox;
+    MyCheckBoxMW *checkBox;
 };
 
 #endif // TELLIPSE_H

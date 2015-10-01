@@ -9,50 +9,44 @@ TCylinder::TCylinder(MainWindow *mainWindow) : ToolWithWidget(
     button->setText("Cylinder");
     finalButton = new QPushButton("Create Cylinder");
 
-    elements = new WidgetElements( 0, 8, 0, 0, 1 );
-    elements->getSpinBox( 0 )->setMaximumWidth( 50 );
-    elements->getSpinBox( 0 )->setMinimum( 3 );
-    elements->getSpinBox( 0 )->setValue( 18 );
-    QLabel *toolCylinderSegments = new QLabel( "Segments:" );
-    toolCylinderSegments->setAlignment( Qt::AlignRight );
-    toolCylinderSegments->setMaximumWidth( 70 );
+    int i;
+    spinBox = new MySpinBox*[8];
+    for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
 
-    elements->getCheckBox( 0 )->setText( "Circle" );
-    elements->getCheckBox( 0 )->setMaximumWidth( 130 );
+    spinBox[0]->setMinimum(3);
+    spinBox[0]->setValue(18);
+    MyLabel *segments = new MyLabel("Segments:", 70);
 
-    QLabel *toolCylinderCenter = new QLabel( "Center" );
-    QLabel *toolCylinderNormal = new QLabel( "Normal" );
-    QLabel *toolCylinderLabels[ 6 ];
-    for(int i = 0; i < 6; i++ )
+    checkBox = new MyCheckBoxMW;
+    checkBox->setText("Circle");
+
+    QLabel *center = new QLabel("Center");
+    QLabel *normal = new QLabel("Normal");
+    MyLabel *label[6];
+    for(i = 0; i < 6; i++ ) label[i] = new MyLabel(QString('X' + i
+                                                   % 3) + ':', 25);
+    MyLabel *radius = new MyLabel("Radius:", 70);
+
+    spinBox[7]->setMinimum(0);
+    spinBox[7]->setValue(1);
+
+    layout->addWidget(segments, 0, 0, 1, 2);
+    layout->addWidget(spinBox[0], 0, 2, 1, 2);
+    layout->addWidget(checkBox, 1, 0, 1, 4);
+    layout->addWidget(center, 2, 0, 1, 4);
+    layout->addWidget(normal, 2, 2, 1, 4);
+    for(i = 0; i < 3; i++)
     {
-        toolCylinderLabels[ i ] = new QLabel( QString( 'X' + i % 3 ) + ':' );
-        toolCylinderLabels[ i ]->setMaximumWidth( 25 );
-        toolCylinderLabels[ i ]->setAlignment( Qt::AlignRight );
-        elements->getSpinBox( 1 + i )->setMaximumWidth( 50 );
+        layout->addWidget(label[i], 3 + i, 0);
+        layout->addWidget(spinBox[1 + i], 3 + i, 1);
+        layout->addWidget(label[i + 3], 3 + i, 2);
+        layout->addWidget(spinBox[4 + i], 3 + i, 3);
     }
-    QLabel *toolCylinderRadius = new QLabel( "Radius:" );
-    toolCylinderRadius->setAlignment( Qt::AlignRight );
-    toolCylinderRadius->setMaximumWidth( 70 );
-
-    elements->getSpinBox( 7 )->setMinimum( 0 );
-    elements->getSpinBox( 7 )->setValue( 1 );
-
-    layout->addWidget( toolCylinderSegments, 0, 0, 1, 2 );
-    layout->addWidget( elements->getSpinBox( 0 ), 0, 2, 1, 2 );
-    layout->addWidget( elements->getCheckBox( 0 ), 1, 0, 1, 4 );
-    layout->addWidget( toolCylinderCenter, 2, 0, 1, 4 );
-    layout->addWidget( toolCylinderNormal, 2, 2, 1, 4 );
-    for(int i = 0; i < 3; i++ )
-    {
-        layout->addWidget( toolCylinderLabels[ i ], 3 + i, 0 );
-        layout->addWidget( elements->getSpinBox( 1 + i ), 3 + i, 1 );
-        layout->addWidget( toolCylinderLabels[ i + 3 ], 3 + i, 2 );
-        layout->addWidget( elements->getSpinBox( 4 + i ), 3 + i, 3 );
-    }
-    layout->addWidget( toolCylinderRadius, 6, 0, 1, 2 );
-    layout->addWidget( elements->getSpinBox( 7 ), 6, 2, 1, 2 );
-    layout->addWidget(finalButton, 7, 0, 1, 4 );
-    connect(finalButton, SIGNAL( clicked() ), _mainWindow, SLOT( final() ) );
+    layout->addWidget(radius, 6, 0, 1, 2);
+    layout->addWidget(spinBox[7], 6, 2, 1, 2);
+    layout->addWidget(finalButton, 7, 0, 1, 4);
+    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
+                final()));
     _widget->hide();
 
     _hasStage2 = true;
@@ -64,7 +58,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     if( action == DRAW ) return;
         int vertexSize = model->vertexNumber;
         int triangleSize = model->triangleNumber;
-        int segments = elements->getSpinBox( 0 )->value();
+        int segments = spinBox[0]->value();
         if( action == START || action == FINAL )
         {
             int i;
@@ -95,13 +89,13 @@ void TCylinder::function(Action action, QMouseEvent *event)
             else
             {
                 QVector3D normal;
-                for( i = 0; i < 3; i++ ) normal[ i ] = elements->getSpinBox( 4 + i )->value();
+                for( i = 0; i < 3; i++ ) normal[ i ] = spinBox[4 + i]->value();
                 if( normal.length() == 0 ) return;
                 normal.normalize();
-                double radius = elements->getSpinBox( 7 )->value();
+                double radius = spinBox[7]->value();
                 if( radius == 0 ) return;
                 QVector3D center;
-                for( i = 0; i < 3; i++ ) center[ i ] = elements->getSpinBox( 1 + i )->value();
+                for( i = 0; i < 3; i++ ) center[ i ] = spinBox[1 + i]->value();
 
                 widget->countFinalInverseMatrix( false );//?
                 model->vertex[ vertexSize + segments         ].setPosition( center          );
@@ -179,7 +173,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             else
             {
                 Projection projection = widget->getProjection();
-                bool circle = elements->getCheckBox( 0 )->isChecked();
+                bool circle = checkBox->isChecked();
                 if( projection == PERSPECTIVE )
                 {
                     QVector3D start = widget->startPosition3D();

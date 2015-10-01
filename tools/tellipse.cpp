@@ -9,50 +9,44 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(
     button->setText("Ellipse");
     finalButton = new QPushButton("Create Ellipse");
 
-    elements = new WidgetElements( 0, 8, 0, 0, 1 );
-    elements->getSpinBox( 0 )->setMaximumWidth( 50 );
-    elements->getSpinBox( 0 )->setMinimum( 3 );
-    elements->getSpinBox( 0 )->setValue( 18 );
-    QLabel *toolEllipseSegments = new QLabel( "Segments:" );
-    toolEllipseSegments->setAlignment( Qt::AlignRight );
-    toolEllipseSegments->setMaximumWidth( 70 );
+    int i;
+    spinBox = new MySpinBox*[8];
+    for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
+    spinBox[0]->setMinimum(3);
+    spinBox[0]->setValue(18);
 
-    elements->getCheckBox( 0 )->setText( "Circle" );
-    elements->getCheckBox( 0 )->setMaximumWidth( 130 );
+    MyLabel *segments = new MyLabel("Segments:", 70);
 
-    QLabel *toolEllipseCenter = new QLabel( "Center" );
-    QLabel *toolEllipseNormal = new QLabel( "Normal" );
-    QLabel *toolEllipseLabels[ 6 ];
-    for(int i = 0; i < 6; i++ )
+    checkBox = new MyCheckBoxMW;
+    checkBox->setText("Circle");
+
+    QLabel *center = new QLabel("Center");
+    QLabel *normal = new QLabel("Normal");
+    MyLabel *label[6];
+    for(int i = 0; i < 6; i++) label[i] = new MyLabel(QString( 'X'
+                                              + i % 3 ) + ':', 25);
+    MyLabel *radius = new MyLabel("Radius:", 70);
+
+    spinBox[7]->setMinimum(0);
+    spinBox[7]->setValue(1);
+
+    layout->addWidget(segments, 0, 0, 1, 2);
+    layout->addWidget(spinBox[0], 0, 2, 1, 2);
+    layout->addWidget(checkBox, 1, 0, 1, 4);
+    layout->addWidget(center, 2, 0, 1, 4);
+    layout->addWidget(normal, 2, 2, 1, 4);
+    for(int i = 0; i < 3; i++)
     {
-        toolEllipseLabels[ i ] = new QLabel( QString( 'X' + i % 3 ) + ':' );
-        toolEllipseLabels[ i ]->setMaximumWidth( 25 );
-        toolEllipseLabels[ i ]->setAlignment( Qt::AlignRight );
-        elements->getSpinBox( 1 + i )->setMaximumWidth( 50 );
+        layout->addWidget(label[i], 3 + i, 0);
+        layout->addWidget(spinBox[1 + i], 3 + i, 1);
+        layout->addWidget(label[i + 3], 3 + i, 2);
+        layout->addWidget(spinBox[4 + i], 3 + i, 3);
     }
-    QLabel *toolEllipseRadius = new QLabel( "Radius:" );
-    toolEllipseRadius->setAlignment( Qt::AlignRight );
-    toolEllipseRadius->setMaximumWidth( 70 );
-
-    elements->getSpinBox( 7 )->setMinimum( 0 );
-    elements->getSpinBox( 7 )->setValue( 1 );
-
-    layout->addWidget( toolEllipseSegments, 0, 0, 1, 2 );
-    layout->addWidget( elements->getSpinBox( 0 ), 0, 2, 1, 2 );
-    layout->addWidget( elements->getCheckBox( 0 ), 1, 0, 1, 4 );
-    layout->addWidget( toolEllipseCenter, 2, 0, 1, 4 );
-    layout->addWidget( toolEllipseNormal, 2, 2, 1, 4 );
-    for(int i = 0; i < 3; i++ )
-    {
-        layout->addWidget( toolEllipseLabels[ i ], 3 + i, 0 );
-        layout->addWidget( elements->getSpinBox( 1 + i ), 3 + i, 1 );
-        layout->addWidget( toolEllipseLabels[ i + 3 ], 3 + i, 2 );
-        layout->addWidget( elements->getSpinBox( 4 + i ), 3 + i, 3 );
-    }
-    layout->addWidget( toolEllipseRadius, 6, 0, 1, 2 );
-    layout->addWidget( elements->getSpinBox( 7 ), 6, 2, 1, 2 );
-    layout->addWidget(finalButton, 7, 0, 1, 4 );
-    connect(finalButton, SIGNAL( clicked() ), _mainWindow, SLOT( final() ) );
+    layout->addWidget(radius, 6, 0, 1, 2);
+    layout->addWidget(spinBox[7], 6, 2, 1, 2);
+    layout->addWidget(finalButton, 7, 0, 1, 4);
+    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
+                final()));
     _widget->hide();
 }
 
@@ -62,7 +56,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     if( action == DRAW ) return;
         int vertexSize = model->vertexNumber;
         int triangleSize = model->triangleNumber;
-        int segments = elements->getSpinBox( 0 )->value();
+        int segments = spinBox[0]->value();
         if( action == START || action == FINAL )
         {
             int i;
@@ -90,13 +84,13 @@ void TEllipse::function(Action action, QMouseEvent *event)
             else
             {
                 QVector3D normal;
-                for( i = 0; i < 3; i++ ) normal[ i ] = elements->getSpinBox( 4 + i )->value();
+                for( i = 0; i < 3; i++ ) normal[ i ] = spinBox[4 + i]->value();
                 if( normal.length() == 0 ) return;
                 normal.normalize();
-                double radius = elements->getSpinBox( 7 )->value();
+                double radius = spinBox[7]->value();
                 if( radius == 0 ) return;
                 QVector3D center;
-                for( i = 0; i < 3; i++ ) center[ i ] = elements->getSpinBox( 1 + i )->value();
+                for( i = 0; i < 3; i++ ) center[ i ] = spinBox[1 + i]->value();
 
                 widget->countFinalInverseMatrix( false );//?
                 model->vertex[ vertexSize + segments ].setPosition( center );
@@ -122,7 +116,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         if( action == EXECUTE )
         {
             Projection projection = widget->getProjection();
-            bool circle = elements->getCheckBox( 0 )->isChecked();
+            bool circle = checkBox->isChecked();
             if( projection == PERSPECTIVE )
             {
                 QVector3D start = widget->startPosition3D();

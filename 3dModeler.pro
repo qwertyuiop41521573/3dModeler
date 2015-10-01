@@ -32,7 +32,10 @@ SOURCES += \
                         \
     gui/mycheckbox.cpp \
     gui/mycombobox.cpp \
-    gui/mypushbutton.cpp
+    gui/mypushbutton.cpp \
+    gui/myspinbox.cpp \
+    gui/mycheckboxmw.cpp \
+    gui/mylabel.cpp
 
 
 HEADERS += \
@@ -64,7 +67,10 @@ HEADERS += \
                         \
     gui/mycheckbox.h \
     gui/mycombobox.h \
-    gui/mypushbutton.h
+    gui/mypushbutton.h \
+    gui/myspinbox.h \
+    gui/mycheckboxmw.h \
+    gui/mylabel.h
 
 
 RESOURCES += \
@@ -144,3 +150,6 @@ RESOURCES += \
 # tool widgets - separate button width
 # tPlane->widget() is not hidden as it is the biggest widget
 # tool elements - remove
+# remove most signals
+# make cylinder : ellipse
+# ellipse and cylinder: normal = (-1, 0, 0) - FIX!!
