@@ -10,7 +10,6 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(
     finalButton = new QPushButton("Create Ellipse");
 
     int i;
-    spinBox = new MySpinBox*[8];
     for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
     spinBox[0]->setMinimum(3);
     spinBox[0]->setValue(18);

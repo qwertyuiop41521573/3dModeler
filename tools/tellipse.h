@@ -17,7 +17,7 @@ signals:
 public slots:
 
 private:
-    MySpinBox **spinBox;
+    MySpinBox *spinBox[8];
     MyCheckBoxMW *checkBox;
 };
 

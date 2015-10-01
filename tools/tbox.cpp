@@ -9,8 +9,6 @@ TBox::TBox(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     finalButton = new QPushButton("Create Box");
 
     int i;
-
-    checkBox = new MyCheckBoxMW*[2];
     for(i = 0; i < 2; i++)
     {
         checkBox[i] = new MyCheckBoxMW;
@@ -22,7 +20,6 @@ TBox::TBox(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
     QLabel *center = new QLabel("Center");
     QLabel *size = new QLabel("Size");
-    spinBox = new MySpinBox*[6];
     MyLabel *label[6];
     for(i = 0; i < 6; i++)
     {

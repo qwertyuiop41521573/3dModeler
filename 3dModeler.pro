@@ -35,7 +35,8 @@ SOURCES += \
     gui/mypushbutton.cpp \
     gui/myspinbox.cpp \
     gui/mycheckboxmw.cpp \
-    gui/mylabel.cpp
+    gui/mylabel.cpp \
+    gui/mypushbuttonmw.cpp
 
 
 HEADERS += \
@@ -70,7 +71,8 @@ HEADERS += \
     gui/mypushbutton.h \
     gui/myspinbox.h \
     gui/mycheckboxmw.h \
-    gui/mylabel.h
+    gui/mylabel.h \
+    gui/mypushbuttonmw.h
 
 
 RESOURCES += \

@@ -10,7 +10,6 @@ TCylinder::TCylinder(MainWindow *mainWindow) : ToolWithWidget(
     finalButton = new QPushButton("Create Cylinder");
 
     int i;
-    spinBox = new MySpinBox*[8];
     for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
 
     spinBox[0]->setMinimum(3);

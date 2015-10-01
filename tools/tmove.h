@@ -2,6 +2,8 @@
 #define TMOVE_H
 
 #include "toolwithwidget.h"
+#include "gui/mypushbuttonmw.h"
+#include "gui/myspinbox.h"
 
 class TMove : public ToolWithWidget
 {
@@ -13,6 +15,10 @@ public:
 signals:
 
 public slots:
+
+private:
+    MyPushButtonMW *pushButton[3];
+    MySpinBox *spinBox[3];
 };
 
 #endif // TMOVE_H
