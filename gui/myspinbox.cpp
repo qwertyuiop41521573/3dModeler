@@ -2,7 +2,7 @@
 
 MySpinBox::MySpinBox()
 {
-    setMaximumWidth(50);
+    setMaximumWidth(55);
     setMaximum(1000);
     setMinimum(-1000);
 }

@@ -3,69 +3,71 @@
 #include "functions.h"
 #include "mainwindow.h"
 
-TRotate::TRotate(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+TRotate::TRotate(MainWindow *mainWindow) : ToolWithWidget(
+                                               mainWindow)
 {
     button->setText("Rotate");
     finalButton = new QPushButton("Rotate");
 
-    elements = new WidgetElements(0, 4, 0, 1, 0);
-    QLabel *toolRotateLabels[4];
-    toolRotateLabels[0] = new QLabel("Angle:");
-    for(int i = 1; i < 4; i++) toolRotateLabels[i] = new QLabel(
-                QString('W' + i) + ':');
-    for(int i = 0; i < 4; i++)
+    int i;
+    MyLabel *label[4];
+    label[0] = new MyLabel("Angle:", 50);
+    for(i = 1; i < 4; i++) label[i] = new MyLabel(QString('W' + i)
+                                                 + ':', 50);
+    for(i = 0; i < 4; i++)
     {
-        toolRotateLabels[i]->setMaximumWidth(50);
-        toolRotateLabels[i]->setAlignment(Qt::AlignRight);
-        layout->addWidget(toolRotateLabels[i], i, 0);
-        layout->addWidget(elements->getSpinBox(i), i, 1);
+        spinBox[i] = new MySpinBox;
+        layout->addWidget(spinBox[i], i, 1);
+        layout->addWidget(label[i], i, 0);
     }
-    elements->getSpinBox(0)->setMaximum(360);
-    elements->getSpinBox(0)->setMinimum(-360);
+    spinBox[0]->setMaximum(360);
+    spinBox[0]->setMinimum(-360);
 
-    elements->getMyCheckBox(0)->setText("Custom Axis");
-    elements->getMyCheckBox(0)->setChecked(true);
-    layout->addWidget( elements->getMyCheckBox( 0 ), 5, 0, 1, 2 );
-    layout->addWidget( finalButton, 4, 0, 1, 2 );
-    connect(finalButton, SIGNAL( clicked() ), _mainWindow, SLOT(
-                final() ) );
-    _widget->hide();
+    checkBox = new MyCheckBoxMW;
+    checkBox->setText("Custom Axis");
+    checkBox->setChecked(true);
+    layout->addWidget(checkBox, 5, 0, 1, 2);
+    layout->addWidget(finalButton, 4, 0, 1, 2);
+    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
+                final()));
 }
 
 void TRotate::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexSize = vertex.size();
+    int triangleSize = triangle.size();
+
     if( action == STOP ) return;
-        WidgetElements *toolElements = elements;
-        WidgetElements *workWithElements = widget->
-                getWorkWithElements();
         int i, j, k;
 
         if( action == START || action == FINAL )
         {
             QVector3D min, max;
             QVector3D center;
-            if( workWithElements->getRadioButton( 0 )->isChecked() )
+            if( workWithElements[0]->isChecked() )
             {
-                for( i = 0; i < model->vertexNumber; i++ )
+                for( i = 0; i < vertexSize; i++ )
                 {
-                    if( model->vertex[ i ].isSelected() )
+                    if( vertex[ i ].isSelected() )
                     {
-                        min = max = model->vertex[ i ].getPosition();
+                        min = max = vertex[ i ].getPosition();
                         break;
                     }
                 }
-                for( i++; i < model->vertexNumber; i++ )
+                for( i++; i < vertexSize; i++ )
                 {
-                    if( model->vertex[ i ].isSelected() )
+                    if( vertex[ i ].isSelected() )
                     {
                         for( j = 0; j < 3; j++ )
                         {
-                            if( model->vertex[ i ].getPosition()[ j ] >
-                                    max[ j ] ) max[ j ] = model->
+                            if( vertex[ i ].getPosition()[ j ] >
+                                    max[ j ] ) max[ j ] =
                                     vertex[ i ].getPosition()[ j ];
-                            if( model->vertex[ i ].getPosition()[ j ] <
-                                    min[ j ] ) min[ j ] = model->
+                            if( vertex[ i ].getPosition()[ j ] <
+                                    min[ j ] ) min[ j ] =
                                     vertex[ i ].getPosition()[ j ];
                         }
                     }
@@ -74,35 +76,35 @@ void TRotate::function(Action action, QMouseEvent *event)
             else
             {
                 int index;
-                bool *checked = new bool[ model->vertexNumber ];
-                for( i = 0; i < model->vertexNumber; i++ ) checked[ i ] = false;
-                for( i = 0; i < model->triangleNumber; i++ )
+                bool *checked = new bool[ vertexSize ];
+                for( i = 0; i < vertexSize; i++ ) checked[ i ] = false;
+                for( i = 0; i < triangleSize; i++ )
                 {
-                    if( model->triangle[ i ].isSelected() )
+                    if( triangle[ i ].isSelected() )
                     {
-                        min = max = model->vertex[ model->triangle[ i ].
+                        min = max = vertex[ triangle[ i ].
                                 getIndex( 0 ) ].getPosition();
                         break;
                     }
                 }
 
-                for( ; i < model->triangleNumber; i++ )
+                for( ; i < triangleSize; i++ )
                 {
-                    if( model->triangle[ i ].isSelected() )
+                    if( triangle[ i ].isSelected() )
                     {
                         for( j = 0; j < 3; j++ )
                         {
-                            index = model->triangle[ i ].getIndex( j );
+                            index = triangle[ i ].getIndex( j );
                             if( !checked[ index ] )
                             {
                                 for( k = 0; k < 3; k++ )
                                 {
                                     checked[ index ] = true;
-                                    if( model->vertex[ index ].getPosition()[ k ] >
-                                            max[ k ] ) max[ k ] = model->
+                                    if( vertex[ index ].getPosition()[ k ] >
+                                            max[ k ] ) max[ k ] =
                                             vertex[ index ].getPosition()[ k ];
-                                    if( model->vertex[ index ].getPosition()[ k ] <
-                                            min[ k ] ) min[ k ] = model->
+                                    if( vertex[ index ].getPosition()[ k ] <
+                                            min[ k ] ) min[ k ] =
                                             vertex[ index ].getPosition()[ k ];
                                 }
                             }
@@ -123,8 +125,8 @@ void TRotate::function(Action action, QMouseEvent *event)
         rotation.setToIdentity();
         if( action == FINAL )
         {
-            angle = toolElements->getSpinBox( 0 )->value();
-            if( !getAxis( toolElements, &rotation, angle ) ) return;
+            angle = spinBox[0]->value();
+            if(!getAxis(spinBox, &rotation, angle)) return;
         }
         else
         {
@@ -158,10 +160,10 @@ void TRotate::function(Action action, QMouseEvent *event)
                 data->indices[ 2 ] = 1;
                 data->indices[ 3 ] = 2;
 
-                toolElements->getSpinBox( 0 )->setValue( angle );
+                spinBox[0]->setValue(angle);
                 return;
             }
-            if( toolElements->getMyCheckBox( 0 )->isChecked() )
+            if( checkBox->isChecked() )
             {
 
 
@@ -173,7 +175,7 @@ void TRotate::function(Action action, QMouseEvent *event)
                 rotation *= widget->getRotationMatrix();
 
             }
-            else if( !getAxis( toolElements, &rotation, angle ) ) return;
+            else if( !getAxis( spinBox, &rotation, angle ) ) return;
         }
 
         QMatrix4x4 transformation;
@@ -181,34 +183,34 @@ void TRotate::function(Action action, QMouseEvent *event)
         transformation.translate( widget->getPivot() );
         transformation *= rotation;
         transformation.translate(-widget->getPivot() );
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
+        if( workWithElements[0]->isChecked() )
         {
-            for( i = 0; i < model->vertexNumber; i++ )
+            for( i = 0; i < vertexSize; i++ )
             {
-                if( model->vertex[ i ].isSelected() ) model->
+                if( vertex[ i ].isSelected() )
                         vertex[ i ].multiplyPosition( transformation );
             }
         }
         else
         {
             int index;
-            bool *checked = new bool[ model->vertexNumber ];
-            for( i = 0; i < model->vertexNumber;
+            bool *checked = new bool[ vertexSize ];
+            for( i = 0; i < vertexSize;
                  i++ ) checked[ i ] = false;
 
-            for( i = 0; i < model->triangleNumber;
+            for( i = 0; i < triangleSize;
                  i++ )
             {
-                if( model->triangle[ i ].
+                if( triangle[ i ].
                         isSelected() )
                 {
                     for( j = 0; j < 3; j++ )
                     {
-                        index = model->triangle[ i ].getIndex( j );
+                        index = triangle[ i ].getIndex( j );
                         if( !checked[ index ] )
                         {
                             checked[ index ] = true;
-                            model->vertex[ index ].multiplyPosition(
+                            vertex[ index ].multiplyPosition(
                                         transformation );
                         }
                     }

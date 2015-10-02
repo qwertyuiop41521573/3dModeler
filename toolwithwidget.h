@@ -14,8 +14,6 @@ public:
     QWidget *getWidget()
     { return _widget; };
 
-    bool elementsExist();
-
     QPushButton *getFinalButton()
     { return finalButton; };
 
@@ -25,9 +23,6 @@ public:
     bool stage2()
     { return _stage2; };
 
-    WidgetElements *getElements()
-    { return elements; }
-
 signals:
 
 public slots:
@@ -35,10 +30,10 @@ public slots:
 protected:
     QWidget *_widget;
     QGridLayout *layout;
-    WidgetElements *elements;
     QPushButton *finalButton;
     Model *model;
     bool _stage2 = false;
+    QRadioButton **workWithElements;
 
 private:
 

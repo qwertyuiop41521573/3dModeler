@@ -1,11 +1,11 @@
 #ifndef TCYLINDER_H
 #define TCYLINDER_H
 
-#include "toolwithwidget.h"
+#include "tellipse.h"
 #include "gui/myspinbox.h"
 #include "gui/mycheckboxmw.h"
 
-class TCylinder : public ToolWithWidget
+class TCylinder : public TEllipse
 {
 public:
     TCylinder(MainWindow *mainWindow);
@@ -17,8 +17,7 @@ signals:
 public slots:
 
 private:
-       MySpinBox *spinBox[8];
-       MyCheckBoxMW *checkBox;
+       void createWallsAndSecondCap(QVector3D height);
 };
 
 #endif // TCYLINDER_H

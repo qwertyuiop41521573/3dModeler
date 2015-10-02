@@ -14,6 +14,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
 {
     _mainWindow = mainWindow;
     model = _mainWindow->getModel();
+
     activeTool = _mainWindow->getActiveTool();
     workWithElements = _mainWindow->getWorkWithElements();
 
@@ -196,37 +197,43 @@ void GLWidget::draw( bool wireframe )
     glBindBuffer( GL_ARRAY_BUFFER, modelVboIds[ 0 ] );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, modelVboIds[ 1 ] );
     int i;
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexNumber = vertex.size();
+    int triangleNumber = triangle.size();
+
     switch( renderingMode )
     {
     case WIREFRAME:
     {
         glDisable( GL_CULL_FACE );
         color = black;
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
+        if( workWithElements[0]->isChecked() )
         {
             glPointSize( 4 );
             programColor->bind();
             prepareProgramColor( projectionMatrix );
-            VertexData_Color *vertices = new VertexData_Color[ model->
+            VertexData_Color *vertices = new VertexData_Color[
                     vertexNumber ];
-            GLushort *indices = new GLushort[ model->vertexNumber ];
-            for( i = 0; i < model->vertexNumber; i++ )
+            GLushort *indices = new GLushort[vertexNumber ];
+
+            for( i = 0; i < vertexNumber; i++ )
             {
-                vertices[ i ].position = model->vertex[ i ].
+                vertices[ i ].position = vertex[i].
                         getPosition();
-                if( model->vertex[ i ].newSelected() ||
-                        model->vertex[ i ].isSelected() )
-                    vertices[ i ].color = model->vertex[ i ].
+                if(vertex[i].newSelected() ||
+                        vertex[i].isSelected() )
+                    vertices[ i ].color = vertex[i].
                             newSelected() ? blue : red;
                 else vertices[ i ].color = black;
                 indices[ i ] = i;
             }
-            glBufferData( GL_ARRAY_BUFFER, model->vertexNumber *
+            glBufferData( GL_ARRAY_BUFFER, vertexNumber *
                      vertexData_ColorSize, vertices, GL_STATIC_DRAW );
             glBufferData( GL_ELEMENT_ARRAY_BUFFER,
-                model->vertexNumber * GLushortSize, indices,
+                vertexNumber * GLushortSize, indices,
                           GL_STATIC_DRAW );
-            glDrawElements( GL_POINTS, model->vertexNumber,
+            glDrawElements( GL_POINTS, vertexNumber,
                             GL_UNSIGNED_SHORT, 0 );
         }
         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );  
@@ -265,14 +272,14 @@ void GLWidget::draw( bool wireframe )
     if( renderingMode == TEXTURED && model->textured )
     {
         vertices_tex.clear();
-        for( i = 0; i < model->triangleNumber; i++ )
+        for( i = 0; i < triangleNumber; i++ )
         {
-            if( workWithElements->getRadioButton( 1 )->isChecked()
-               && ( model->triangle[ i ].newSelected() ||
-                    model->triangle[ i ].isSelected() ) )
+            if( workWithElements[1]->isChecked()
+               && ( triangle[ i ].newSelected() ||
+                    triangle[ i ].isSelected() ) )
                 addSelectedFace( i );
             else for( j = 0; j < 3; j++ ) vertices_tex.push_back(
-                { model->vertex[ model->triangle[ i ].getIndex( j )
+                { vertex[ triangle[ i ].getIndex( j )
                   ].getPosition(), { ( rand() % 10 ) / double( 10 ),
                         ( rand() % 10 ) / double( 10 ) } } );
         }
@@ -287,14 +294,14 @@ void GLWidget::draw( bool wireframe )
     else
     {
         vertices_col.clear();
-        for( i = 0; i < model->triangleNumber; i++ )
+        for( i = 0; i < triangleNumber; i++ )
         {
-            if( workWithElements->getRadioButton( 1 )->isChecked()
-               && ( model->triangle[ i ].newSelected() ||
-                    model->triangle[ i ].isSelected() ) )
+            if( workWithElements[1]->isChecked()
+               && ( triangle[ i ].newSelected() ||
+                    triangle[ i ].isSelected() ) )
                 addSelectedFace( i );
             else for( j = 0; j < 3; j++ ) vertices_col.push_back(
-                { model->vertex[ model->triangle[ i ].getIndex( j )
+                { vertex[ triangle[ i ].getIndex( j )
                   ].getPosition(), color } );
         }
         structSize = vertexData_ColorSize;
@@ -403,7 +410,7 @@ void GLWidget::drawAdittional()
     glDrawElements( GL_LINES, 8, GL_UNSIGNED_SHORT, 0 );
 }
 
-void GLWidget::timerEvent( QTimerEvent *event )
+void GLWidget::timerEvent(QTimerEvent *event)
 {
     update();
 }
@@ -547,10 +554,11 @@ void GLWidget::prepareProgramColor( QMatrix4x4 matrix )
 
 void GLWidget::addSelectedFace( int num )
 {
-    QVector3D selectedColor = model->triangle[ num ].newSelected()
+    vector <Triangle> &triangle = model->getTriangle();
+    QVector3D selectedColor = triangle[ num ].newSelected()
             ? blue : red;
     for( int j = 0; j < 3; j++ ) selectedFaces.push_back(
-        VertexData_Color( model->vertex[ model->
+        VertexData_Color( model->getVertex()[
         triangle[ num ].getIndex( j ) ].getPosition(),
                         selectedColor ) );
 }

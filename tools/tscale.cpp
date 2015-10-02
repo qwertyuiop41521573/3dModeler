@@ -7,60 +7,55 @@ TScale::TScale(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     button->setText("Scale");
     finalButton = new QPushButton("Scale");
 
-    elements = new WidgetElements( 3, 3, 0, 0, 1 );
-
-    elements->getPushButton( 0 )->setText( "X" );
-    elements->getPushButton( 1 )->setText( "Y" );
-    elements->getPushButton( 2 )->setText( "Z" );
-
-    for(int i = 0; i < 3; i++ )
+    int i;
+    for(i = 0; i < 3; i++)
     {
-        layout->addWidget(elements->getPushButton( i ), i, 0 );
-        layout->addWidget(elements->getSpinBox( i ), i, 1 );
+        pushButton[i] = new MyPushButtonMW(QString('X' + i));
+        spinBox[i] = new MySpinBox;
+        layout->addWidget(pushButton[i], i, 0);
+        layout->addWidget(spinBox[i], i, 1);
     }
 
-    layout->addWidget( finalButton, 3, 0, 1, 2 );
-    connect(finalButton, SIGNAL( clicked() ), _mainWindow,
-            SLOT( final() ) );
-    _widget->hide();
+    layout->addWidget(finalButton, 3, 0, 1, 2);
+    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
+                final()));
 
 }
 
 void TScale::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexSize = vertex.size();
+    int triangleSize = triangle.size();
     if( action == STOP ) return;
-        WidgetElements *toolElements = elements;
         int i, j, k;
-        WidgetElements *workWithElements = widget->
-                getWorkWithElements();
 
         if( action == START || action == FINAL )
         {
             QVector3D min, max;
             QVector3D center;
-            if( workWithElements->getRadioButton( 0 )->isChecked() )
+            if( workWithElements[0]->isChecked() )
             {
-                for( i = 0; i < model->vertexNumber; i++ )
+                for( i = 0; i < vertexSize; i++ )
                 {
-                    if( model->vertex[ i ].isSelected() )
+                    if( vertex[ i ].isSelected() )
                     {
-                        min = max = model->vertex[ i ].getPosition();
+                        min = max = vertex[ i ].getPosition();
                         break;
                     }
                 }
-                for( i++; i < model->vertexNumber; i++ )
+                for( i++; i < vertexSize; i++ )
                 {
-                    if( model->vertex[ i ].isSelected() )
+                    if( vertex[ i ].isSelected() )
                     {
                         for( j = 0; j < 3; j++ )
                         {
-                            if( model->vertex[ i ].getPosition()[ j ] >
-                                    max[ j ] ) max[ j ] = model->
-                                    vertex[ i ].getPosition()[ j ];
-                            if( model->vertex[ i ].getPosition()[ j ] <
-                                    min[ j ] ) min[ j ] = model->
-                                    vertex[ i ].getPosition()[ j ];
+                            if( vertex[ i ].getPosition()[ j ] >
+                                    max[ j ] ) max[ j ] = vertex[ i ].getPosition()[ j ];
+                            if( vertex[ i ].getPosition()[ j ] <
+                                    min[ j ] ) min[ j ] = vertex[ i ].getPosition()[ j ];
                         }
                     }
                 }
@@ -68,35 +63,35 @@ void TScale::function(Action action, QMouseEvent *event)
             else
             {
                 int index;
-                bool *checked = new bool[ model->vertexNumber ];
-                for( i = 0; i < model->vertexNumber; i++ ) checked[ i ] = false;
-                for( i = 0; i < model->triangleNumber; i++ )
+                bool *checked = new bool[ vertexSize ];
+                for( i = 0; i < vertexSize; i++ ) checked[ i ] = false;
+                for( i = 0; i < triangleSize; i++ )
                 {
-                    if( model->triangle[ i ].isSelected() )
+                    if( triangle[ i ].isSelected() )
                     {
-                        min = max = model->vertex[ model->triangle[ i ].
+                        min = max = vertex[ triangle[ i ].
                                 getIndex( 0 ) ].getPosition();
                         break;
                     }
                 }
 
-                for( ; i < model->triangleNumber; i++ )
+                for( ; i < triangleSize; i++ )
                 {
-                    if( model->triangle[ i ].isSelected() )
+                    if( triangle[ i ].isSelected() )
                     {
                         for( j = 0; j < 3; j++ )
                         {
-                            index = model->triangle[ i ].getIndex( j );
+                            index = triangle[ i ].getIndex( j );
                             if( !checked[ index ] )
                             {
                                 for( k = 0; k < 3; k++ )
                                 {
                                     checked[ index ] = true;
-                                    if( model->vertex[ index ].getPosition()[ k ] >
-                                            max[ k ] ) max[ k ] = model->
+                                    if( vertex[ index ].getPosition()[ k ] >
+                                            max[ k ] ) max[ k ] =
                                             vertex[ index ].getPosition()[ k ];
-                                    if( model->vertex[ index ].getPosition()[ k ] <
-                                            min[ k ] ) min[ k ] = model->
+                                    if( vertex[ index ].getPosition()[ k ] <
+                                            min[ k ] ) min[ k ] =
                                             vertex[ index ].getPosition()[ k ];
                                 }
                             }
@@ -115,7 +110,7 @@ void TScale::function(Action action, QMouseEvent *event)
         if( action == FINAL )
         {
             for( i = 0; i < 3; i++ )
-                scaleFactor[ i ] = toolElements->getSpinBox( i )->
+                scaleFactor[i] = spinBox[i]->
                         value();
         }
         else
@@ -159,13 +154,13 @@ void TScale::function(Action action, QMouseEvent *event)
                 for( i = 0; i < 2; i++ ) data->indices[ i ] = i;
 
                 for( i = 0; i < 3; i++ )
-                    toolElements->getSpinBox( i )->setValue(
+                    spinBox[i]->setValue(
                                 scaleFactor[ i ] );
                 return;
             }
         }
 
-        for( i = 0; i < 3; i++ ) if( toolElements->getPushButton( i )->
+        for( i = 0; i < 3; i++ ) if(pushButton[i]->
                                      isChecked() ) scaleFactor[ i ] = 1;
 
         QVector3D vector;
@@ -174,35 +169,35 @@ void TScale::function(Action action, QMouseEvent *event)
         transformation.translate( widget->getPivot() );
         transformation.scale( scaleFactor );
         transformation.translate(-widget->getPivot() );
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
+        if( workWithElements[0]->isChecked() )
         {
-            for( i = 0; i < model->vertexNumber; i++ )
+            for( i = 0; i < vertexSize; i++ )
             {
-                if( model->vertex[ i ].isSelected() )
-                    model->vertex[ i ].multiplyPosition(
+                if( vertex[ i ].isSelected() )
+                    vertex[ i ].multiplyPosition(
                                 transformation );
             }
         }
         else
         {
             int index;
-            bool *checked = new bool[ model->vertexNumber ];
-            for( i = 0; i < model->vertexNumber;
+            bool *checked = new bool[ vertexSize ];
+            for( i = 0; i < vertexSize;
                  i++ ) checked[ i ] = false;
 
-            for( i = 0; i < model->triangleNumber;
+            for( i = 0; i < triangleSize;
                  i++ )
             {
-                if( model->triangle[ i ].
+                if( triangle[ i ].
                         isSelected() )
                 {
                     for( j = 0; j < 3; j++ )
                     {
-                        index = model->triangle[ i ].getIndex( j );
+                        index = triangle[ i ].getIndex( j );
                         if( !checked[ index ] )
                         {
                             checked[ index ] = true;
-                            model->vertex[ index ].multiplyPosition(
+                            vertex[ index ].multiplyPosition(
                                         transformation );
                         }
                     }

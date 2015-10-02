@@ -3,6 +3,7 @@
 #include <QSpacerItem>
 
 #include "mainwindow.h"
+#include "gui/myframe.h"
 
 #include <iostream>
 
@@ -32,22 +33,17 @@ MainWindow::MainWindow()
     tEllipse = new TEllipse(this);
     tCylinder = new TCylinder(this);
 
-
     QWidget *workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;
-    workWithElements = new
-            WidgetElements( 0, 0, 2, 0, 0 );
+    for(i = 0; i < 2; i++) workWithElements[i] = new QRadioButton;
+    workWithElements[0]->setText("Vertex");
+    workWithElements[1]->setText("Triangle");
 
-    workWithElements->getRadioButton( 0 )->setText( "Vertex" );
-    workWithElements->getRadioButton( 1 )->setText( "Triangle" );
+    for(i = 0; i < 2; i++) workWithLayout->addWidget(
+                workWithElements[i], i, 0);
 
-    for( i = 0; i < 2; i++ )
-        workWithLayout->addWidget( workWithElements->
-                                getRadioButton( i ), i, 0 );
-
-    workWithElements->getRadioButton( 0 )->setChecked( true );
-
-    workWithWidget->setLayout( workWithLayout );
+    workWithElements[0]->setChecked( true );
+    workWithWidget->setLayout(workWithLayout);
 
 
     toolActive = tSelect;
@@ -61,7 +57,7 @@ MainWindow::MainWindow()
     scrollArea->setHorizontalScrollBarPolicy(
                 Qt::ScrollBarAlwaysOff);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scrollArea->setFixedWidth(190);
+    scrollArea->setFixedWidth(215);
     QWidget *scrollAreaWidget = new QWidget;
     scrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     QGridLayout *scrollAreaLayout = new QGridLayout;
@@ -108,14 +104,8 @@ MainWindow::MainWindow()
     connect(maximizeButton, SIGNAL(clicked(bool)), this, SLOT(
                 maximize(bool)));
 
-    QFrame *line[5];
-    for(i = 0; i < 5; i++)
-    {
-        line[i] = new QFrame;
-        line[i]->setFrameShape(QFrame::HLine);
-        line[i]->setFrameShadow(QFrame::Sunken);
-        line[i]->setMaximumWidth(150);
-    }
+    MyFrame *line[5];
+    for(i = 0; i < 5; i++) line[i] = new MyFrame;
 
     QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::
                                    Minimum, QSizePolicy::Expanding);
@@ -180,6 +170,7 @@ MainWindow::MainWindow()
     scrollAreaWidget->setLayout(scrollAreaLayout);
     scrollArea->setWidget(scrollAreaWidget);
         //scrollarea end
+
     tMove->getWidget()->hide();
     tScale->getWidget()->hide();
     tRotate->getWidget()->hide();
@@ -305,8 +296,11 @@ void MainWindow::setActiveWidget(GLWidget *widget)
 
 void MainWindow::setActiveTool(Tool *tool)
 {
-
-    //cerr << tool->getButton()->text().toStdString();
+    if(toolActive->hasStage2() && toolActive->stage2())
+    {
+        tool->getButton()->setChecked(false);
+        return;
+    }
     toolActive->setActive(false);
     toolActive = tool;
     tool->setActive(true);
@@ -355,24 +349,24 @@ void MainWindow::save()
 
 void MainWindow::selectAll()
 {
-    if( workWithElements->getRadioButton( 0 )->isChecked() )
+    if( workWithElements[0]->isChecked() )
     {
-        for( int i = 0; i < model->vertexNumber; i++ )
-            model->vertex[ i ].setSelected( true );
+        for( int i = 0; i < model->getVertex().size(); i++ )
+            model->getVertex()[i].setSelected(true);
     }
-    else for( int i = 0; i < model->triangleNumber; i++ )
-        model->triangle[ i ].setSelected( true );
+    else for( int i = 0; i < model->getTriangle().size(); i++ )
+        model->getTriangle()[ i ].setSelected( true );
 }
 
 void MainWindow::selectNone()
 {
-    if( workWithElements->getRadioButton( 0 )->isChecked() )
+    if( workWithElements[0]->isChecked() )
     {
-        for( int i = 0; i < model->vertexNumber; i++ )
-            model->vertex[ i ].setSelected( false );
+        for( int i = 0; i < model->getVertex().size(); i++ )
+            model->getVertex()[ i ].setSelected( false );
     }
-    else for( int i = 0; i < model->triangleNumber; i++ )
-        model->triangle[ i ].setSelected( false );
+    else for( int i = 0; i < model->getTriangle().size(); i++ )
+        model->getTriangle()[ i ].setSelected( false );
 }
 
 bool MainWindow::openFileDialog( QString action )
@@ -402,18 +396,6 @@ void MainWindow::quickAccessToolPan()
 {
     lastTool = toolActive;
     setActiveTool(tPan);
-}
-
-void MainWindow::handleSelectClick( MyCheckBox *myCheckBox )
-{
-    if( tSelect->getElements()->getMyCheckBox( 0 )->
-        isChecked() && tSelect->getElements()->
-                      getMyCheckBox( 1 )->isChecked() )
-    {
-        for( int i = 0; i < 2; i++ ) tSelect->getElements()->
-                getMyCheckBox( i )->setChecked( false );
-        myCheckBox->setChecked( true );
-    }
 }
 
 void MainWindow::hideViewport(int index)
@@ -446,21 +428,24 @@ void MainWindow::snapTogether()
     int i;
     vector <int> selected;
     QVector3D min, max;
-    for( i = 0; i < model->vertexNumber; i++ )
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexNumber = vertex.size();
+    for( i = 0; i < vertexNumber; i++ )
     {
-        if( model->vertex[ i ].isSelected() )
+        if(vertex[i].isSelected())
         {
-            min = max = model->vertex[ i ].getPosition();
+            min = max = vertex[i].getPosition();
             selected.push_back( i );
             break;
         }
     }
-    for( ; i < model->vertexNumber; i++ )
+    for( ; i < vertexNumber; i++ )
     {
-        if( model->vertex[ i ].isSelected() )
+        if( model->getVertex()[ i ].isSelected() )
         {
             selected.push_back( i );
-            QVector3D vertex = model->vertex[ i ].getPosition();
+            QVector3D vertex = model->getVertex()[ i ].getPosition();
 
             if( vertex.x() > max.x() ) max.setX( vertex.x() );
             if( vertex.y() > max.y() ) max.setY( vertex.y() );
@@ -472,8 +457,8 @@ void MainWindow::snapTogether()
         }
     }
     QVector3D center = ( max + min ) / 2;
-    for( i = 0; i < selected.size(); i++ ) model->vertex[
-            selected[ i ] ].setPosition( center );
+    for(i = 0; i < selected.size(); i++) vertex[selected[
+            i]].setPosition(center);
 }
 
 void MainWindow::deleteSlot()
@@ -482,7 +467,7 @@ void MainWindow::deleteSlot()
     vector <int> deleteList;
     for( i = 0; i < model->triangleNumber; i++ )
     {
-        if( model->triangle[ i ].isSelected() )
+        if( triangle[ i ].isSelected() )
             deleteList.push_back( i );
     }
     int offset = 0;
@@ -495,7 +480,7 @@ void MainWindow::deleteSlot()
                 if( offset + j < deleteList.size() && i + 1 + j != deleteList[ offset + j ] ) break;
             offset += j;
         }
-        if( offset ) model->triangle[ i ] = model->triangle[ i + offset ];
+        if( offset ) triangle[ i ] = triangle[ i + offset ];
     }
     model->triangleNumber -= deleteList.size();*/
 
@@ -524,11 +509,6 @@ void MainWindow::deleteSlot()
 Model *MainWindow::getModel()
 {
     return model;
-}
-
-WidgetElements *MainWindow::getWorkWithElements()
-{
-    return workWithElements;
 }
 
 void MainWindow::stopQuickAccess()

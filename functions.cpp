@@ -6,13 +6,6 @@
 
 using namespace std;
 
-void setupButton( QPushButton *button )
-{
-    button->setCheckable( true );
-    button->setMaximumWidth( 70 );
-    button->setFixedHeight( 20 );
-}
-
 void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue )
 {
     spinBox->setMaximumWidth( 70 );
@@ -39,15 +32,14 @@ bool isSelected( QMatrix4x4 finalMatrix, QVector3D vertex,
     return false;
 }
 
-bool getAxis( WidgetElements *toolElements, QMatrix4x4 *rotation,
-              double angle )
+bool getAxis(MySpinBox **spinBox, QMatrix4x4 *rotation,
+              double angle)
 {
     QVector3D axis;
-    for( int i = 0; i < 3; i++ ) axis[ i ] = toolElements->
-            getSpinBox( i + 1 )->value();
-    if( axis.isNull() ) return false;
+    for(int i = 0; i < 3; i++) axis[i] = spinBox[i + 1]->value();
+    if(axis.isNull()) return false;
     axis.normalize();
-    rotation->rotate( angle, axis );
+    rotation->rotate(angle, axis);
     return true;
 }
 
@@ -125,6 +117,8 @@ void createEllipseCap( QVector4D rotatingVertex, double angle, QVector3D normal,
     for( int i = 0; i < segments; i++ )
     {
         rotatingVertex = rotation * rotatingVertex;
-        model->vertex[ vertexSize - segments - 1 + i ].setPosition( QVector3D( scaleAndTranslate * rotatingVertex ) );
+        model->getVertex()[vertexSize - segments - 1 + i].
+                setPosition(QVector3D(scaleAndTranslate *
+                                      rotatingVertex));
     }
 }

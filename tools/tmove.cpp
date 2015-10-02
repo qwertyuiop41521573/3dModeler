@@ -18,16 +18,14 @@ TMove::TMove(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     layout->addWidget(finalButton, 3, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
                 final()));
-
-    _widget->hide();
 }
 
 void TMove::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
+    vector <Vertex> &vertex = model->getVertex();
+    int vertexSize = vertex.size();
     if( action == START || action == STOP ) return;
-        WidgetElements *workWithElements = widget->
-                getWorkWithElements();
         int i;
         QVector3D drTransformed;
         if( action == FINAL )
@@ -67,33 +65,34 @@ void TMove::function(Action action, QMouseEvent *event)
 
         for( i = 0; i < 3; i++ ) drTransformed[ i ] *=
                 !pushButton[i]->isChecked();
-        if( workWithElements->getRadioButton( 0 )->isChecked() )
+        if( workWithElements[0]->isChecked() )
         {
-            for( i = 0; i < model->vertexNumber; i++ )
+            for( i = 0; i < vertexSize; i++ )
             {
-                if( model->vertex[ i ].isSelected() )
-                    model->vertex[ i ].addToPosition( drTransformed );
+                if( vertex[ i ].isSelected() )
+                    vertex[ i ].addToPosition( drTransformed );
             }
         }
         else
         {
-            bool *checked = new bool[ model->vertexNumber ];
+            bool *checked = new bool[ vertexSize ];
             int index;
-            for( i = 0; i < model->vertexNumber;
+            for( i = 0; i < vertexSize;
                  i++ ) checked[ i ] = false;
             int j;
-            for( i = 0; i < model->triangleNumber; i++ )
+            vector <Triangle> &triangle = model->getTriangle();
+            for( i = 0; i < triangle.size(); i++ )
             {
-                if( model->triangle[ i ].isSelected() )
+                if( triangle[ i ].isSelected() )
                 {
                     for( j = 0; j < 3; j++ )
                     {
-                        index = model->triangle[ i ].
+                        index = triangle[ i ].
                                 getIndex( j );
                         if( !checked[ index ] )
                         {
                             checked[ index ] = true;
-                            model->vertex[ index ].addToPosition(
+                            vertex[ index ].addToPosition(
                                         drTransformed );
                         }
                     }

@@ -3,289 +3,147 @@
 #include "functions.h"
 #include "mainwindow.h"
 
-TCylinder::TCylinder(MainWindow *mainWindow) : ToolWithWidget(
-                                                   mainWindow)
+TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)
 {
     button->setText("Cylinder");
-    finalButton = new QPushButton("Create Cylinder");
-
-    int i;
-    for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
-
-    spinBox[0]->setMinimum(3);
-    spinBox[0]->setValue(18);
-    MyLabel *segments = new MyLabel("Segments:", 70);
-
-    checkBox = new MyCheckBoxMW;
-    checkBox->setText("Circle");
-
-    QLabel *center = new QLabel("Center");
-    QLabel *normal = new QLabel("Normal");
-    MyLabel *label[6];
-    for(i = 0; i < 6; i++ ) label[i] = new MyLabel(QString('X' + i
-                                                   % 3) + ':', 25);
-    MyLabel *radius = new MyLabel("Radius:", 70);
-
-    spinBox[7]->setMinimum(0);
-    spinBox[7]->setValue(1);
-
-    layout->addWidget(segments, 0, 0, 1, 2);
-    layout->addWidget(spinBox[0], 0, 2, 1, 2);
-    layout->addWidget(checkBox, 1, 0, 1, 4);
-    layout->addWidget(center, 2, 0, 1, 4);
-    layout->addWidget(normal, 2, 2, 1, 4);
-    for(i = 0; i < 3; i++)
-    {
-        layout->addWidget(label[i], 3 + i, 0);
-        layout->addWidget(spinBox[1 + i], 3 + i, 1);
-        layout->addWidget(label[i + 3], 3 + i, 2);
-        layout->addWidget(spinBox[4 + i], 3 + i, 3);
-    }
-    layout->addWidget(radius, 6, 0, 1, 2);
-    layout->addWidget(spinBox[7], 6, 2, 1, 2);
-    layout->addWidget(finalButton, 7, 0, 1, 4);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(
-                final()));
-    _widget->hide();
-
+    finalButton->setText("Create Cylinder");
     _hasStage2 = true;
 }
 
 void TCylinder::function(Action action, QMouseEvent *event)
 {
+    //cylinder's STAGE2 has much code from ellipse's STOP
+    if(action != STOP) TEllipse::function(action == STAGE2 ? STOP : action,
+                                          event);
+
+    if(action == DRAW) return;
     GLWidget *widget = *_activeWidget;
-    if( action == DRAW ) return;
-        int vertexSize = model->vertexNumber;
-        int triangleSize = model->triangleNumber;
-        int segments = spinBox[0]->value();
-        if( action == START || action == FINAL )
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexSize = vertex.size();
+    int triangleSize = triangle.size();
+    int segments = spinBox[0]->value();
+    int i;
+
+
+    //all START and most of FINAL (creating first cap) was done in
+    //    TEllipse::function(action, event);
+    if(action == FINAL)
+    {
+        createWallsAndSecondCap(normal);
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].setSelected(
+                        true);
+    }
+    //if(!_stage2) is done in TEllipse::function(action, event);
+    if(action == EXECUTE && _stage2)
+    {
+        Projection projection = widget->getProjection();
+        double dy = (widget->getHalfHeight() - event->y() - widget->
+                     getLastPosition().y()) / double(100);
+        QVector3D normal = createNormal(widget->getCamera()->rotation());
+
+        for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].
+                addToPosition(normal * dy);
+
+        //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
+        QVector3D v1 = vertex[vertexSize - segments - 1].getPosition() -
+                vertex[vertexSize - 1].getPosition();
+        QVector3D v2 = vertex[vertexSize - segments].getPosition() -
+                vertex[vertexSize - 1].getPosition();
+
+        //flip if needed
+        if(QVector3D::dotProduct(normal, vertex[vertexSize - segments - 2].
+            getPosition() - vertex[vertexSize - 1].getPosition()) *
+            QVector3D::dotProduct(normal, QVector3D::crossProduct(v1, v2))
+                > 0)
         {
-            int i;
-            bool start = ( action == START );
-            int newVertices = start ? segments + 1 : 2 * segments + 2;
-            model->vertex.resize( vertexSize + newVertices );
-            model->vertexNumber += newVertices;
-
-            int newTriangles = start ? segments : 4 * segments;
-            model->triangle.resize( triangleSize + newTriangles );
-
-            for( i = 0; i < segments - 1; i++ )
-                model->triangle[ triangleSize + i ].setIndices( vertexSize + i + 1, vertexSize + i, vertexSize + segments );
-            model->triangle[ triangleSize + i ].setIndices( vertexSize, vertexSize + segments - 1, vertexSize + segments );
-
-            model->triangleNumber += newTriangles;
-
-            if( action == START )
+            QVector3D temp;
+            for(i = 0; i < segments / 2; i++)
             {
-                QVector3D worldCoordinates = fromScreenToWorld( event, widget );
-                widget->setStartPosition3D( worldCoordinates );
-                for( i = 0; i <= segments; i++ )
-                {
-                    model->vertex[ vertexSize + i ] = worldCoordinates;
-                    model->vertex[ vertexSize + i ].setNewSelected( true );
-                }
-            }
-            else
-            {
-                QVector3D normal;
-                for( i = 0; i < 3; i++ ) normal[ i ] = spinBox[4 + i]->value();
-                if( normal.length() == 0 ) return;
-                normal.normalize();
-                double radius = spinBox[7]->value();
-                if( radius == 0 ) return;
-                QVector3D center;
-                for( i = 0; i < 3; i++ ) center[ i ] = spinBox[1 + i]->value();
-
-                widget->countFinalInverseMatrix( false );//?
-                model->vertex[ vertexSize + segments         ].setPosition( center          );
-                model->vertex[ vertexSize + 2 * segments + 1 ].setPosition( center + normal );
-                QMatrix4x4 scaleAndTranslate;
-                scaleAndTranslate.setToIdentity();
-                scaleAndTranslate.translate( center );
-                scaleAndTranslate.scale( radius, radius, radius );
-                double angle = 360 / double( segments );
-
-                QMatrix4x4 rotation;
-                rotation.setToIdentity();
-                rotation.rotate( angle, normal );
-                QVector4D rotatingVertex;
-                rotatingVertex = ( normal.x() == 1 ) ? QVector4D( 0.f, 1.f, 0.f, 1.f ) :
-                                                    QVector4D( QVector3D::crossProduct( QVector3D( 1.f, 0.f, 0.f ), normal ).normalized(), 1.f );
-                QVector3D currentVertex;
-                for( i = 0; i < segments; i++ )
-                {
-                    rotatingVertex = rotation * rotatingVertex;
-                    currentVertex = QVector3D( scaleAndTranslate * rotatingVertex );
-                    model->vertex[ vertexSize + i                ].setPosition( currentVertex );
-                    model->vertex[ vertexSize + segments + 1 + i ].setPosition( currentVertex + normal );
-                }
-                for( i = 0; i < 2 * segments + 2; i++ ) model->vertex[ vertexSize + i ].setSelected( true );
-                for( i = 0; i < segments - 1; i++ )
-                {
-                    model->triangle[ triangleSize + segments + i ].setIndices( vertexSize + segments + 1 + i, vertexSize + segments + 1 + i + 1,
-                                                                                   vertexSize + segments + 1 + segments );
-                    model->triangle[ triangleSize + 2 * segments + 2 * i     ].setIndices( vertexSize + segments + 1 + i + 1, vertexSize + segments + 1 + i,
-                                                                                           vertexSize + i );
-                    model->triangle[ triangleSize + 2 * segments + 2 * i + 1 ].setIndices( vertexSize + i, vertexSize + 1 + i, vertexSize  + segments + 1 + i + 1 );
-                }
-                model->triangle[ triangleSize + segments + i ].setIndices( vertexSize + segments + 1 + segments - 1, vertexSize + segments + 1,
-                                                                           vertexSize + segments + 1 + segments );
-                model->triangle[ triangleSize + 2 * segments + 2 * i     ].setIndices( vertexSize + segments + 1, vertexSize + segments - 1 + segments + 1,
-                                                                                       vertexSize + segments + 1 - 2 );
-                model->triangle[ triangleSize + 2 * segments + 2 * i + 1 ].setIndices( vertexSize + segments + 1 - 2, vertexSize, vertexSize + segments + 1 );
-
+                temp = vertex[vertexSize - segments - 1 + i].getPosition();
+                vertex[vertexSize - segments - 1 + i] = vertex[vertexSize -
+                        2 - i];
+                vertex[vertexSize - 2 - i].setPosition(temp);
+                temp = vertex[vertexSize - 2 * segments - 2 + i].
+                        getPosition();
+                vertex[vertexSize - 2 * segments - 2 + i] = vertex[
+                        vertexSize - segments - 3 - i];
+                vertex[vertexSize - segments - 3 - i].setPosition(temp);
             }
         }
-        if( action == EXECUTE )
+    }
+    if(action == STOP)
+    {
+        vertexSize = vertex.size();
+        //if height == 0 we remove cylinder (2 * segments + 2 vertices and 4 *
+        //    segments triangles
+        if(vertex[vertexSize - 1] == vertex[vertexSize - segments - 2])
         {
-            if( widget->getActiveTool()->stage2() )
+            vertex.resize(vertexSize - 2 * segments - 2);
+            triangle.resize(triangle.size() - 4 * segments);
+        }
+        else
+        {
+            for(i = 1; i < 2 * segments + 3; i++)
             {
-                double dy = ( widget->getHalfHeight() - event->y() - widget->getLastPosition().y() ) / double( 100 );
-                Camera *camera = widget->getCamera();
-                QVector3D normal = ( widget->getProjection() == PERSPECTIVE ) ? QVector3D( 0, 0, 1 ) :
-                       QVector3D( cos( inRadians( camera->rotation().x() ) ) * cos( inRadians( camera->rotation().z() ) ),
-                                  cos( inRadians( camera->rotation().x() ) ) * sin( inRadians( camera->rotation().z() ) ),
-                                  sin( inRadians( camera->rotation().x() ) ) );
-
-                int i;
-                for( i = -segments - 1; i < 0; i++ ) model->vertex[ vertexSize + i ].addToPosition( normal * dy );
-
-
-                QVector3D v1 = model->vertex[ vertexSize - segments - 1 ].getPosition() - model->vertex[ vertexSize - 1 ].getPosition();
-                QVector3D v2 = model->vertex[ vertexSize - segments ].getPosition() - model->vertex[ vertexSize - 1 ].getPosition();
-
-                if( QVector3D::dotProduct( normal, model->vertex[ vertexSize - segments - 2 ].getPosition() - model->vertex[ vertexSize - 1 ].getPosition() ) *
-                        QVector3D::dotProduct( normal, QVector3D::crossProduct( v1, v2 ) ) > 0 )
-                {
-                    QVector3D temp;
-                    for( i = 0; i < segments / 2; i++ )
-                    {
-                        temp = model->vertex[ vertexSize - segments - 1 + i ].getPosition();
-                        model->vertex[ vertexSize - segments - 1 + i ] = model->vertex[ vertexSize - 2 - i ];
-                        model->vertex[ vertexSize - 2 - i ].setPosition( temp );
-                        temp = model->vertex[ vertexSize - 2 * segments - 2 + i ].getPosition();
-                        model->vertex[ vertexSize - 2 * segments - 2 + i ] = model->vertex[ vertexSize - segments - 3 - i ];
-                        model->vertex[ vertexSize - segments - 3 - i ].setPosition( temp );
-                    }
-                }
-            }
-            else
-            {
-                Projection projection = widget->getProjection();
-                bool circle = checkBox->isChecked();
-                if( projection == PERSPECTIVE )
-                {
-                    QVector3D start = widget->startPosition3D();
-                    double height = start.z();
-                    QVector3D worldCoordinates = fromScreenToWorld( event, widget, true, height );
-                    QVector2D radius = QVector2D( worldCoordinates - start ) / double( 2 );
-                    QVector3D center = start + radius;
-                    model->vertex[ vertexSize - 1 ].setPosition( center );
-                    QMatrix4x4 scaleAndTranslate;
-                    scaleAndTranslate.setToIdentity();
-                    scaleAndTranslate.translate( center );
-                    if( circle )
-                    {
-                        double length = radius.length();
-                        scaleAndTranslate.scale( length, length, 1.f );
-                    }
-                    else scaleAndTranslate.scale( radius.x(), radius.y(), 1.f );
-
-                    double angle = 360 / double( segments );
-                    if( !circle) angle *= sign( radius.x() * radius.y() );
-                    createEllipseCap( { 1.f, 0.f, 0.f, 1.f }, angle, { 0.f, 0.f, 1.f }, model, vertexSize, segments, scaleAndTranslate );
-                }
-                else
-                {
-                    widget->countFinalInverseMatrix( false );
-                    QVector3D start = widget->startPosition3D();
-                    QVector2D currentPosition = QVector2D( event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y() );
-                    QVector3D worldCoordinates = fromScreenToWorld_vector( currentPosition, widget );
-                    QVector3D radius = ( worldCoordinates - start ) / double( 2 );
-                    QVector3D center = start + radius;
-                    model->vertex[ vertexSize - 1 ].setPosition( center );
-                    QMatrix4x4 scaleAndTranslate;
-                    scaleAndTranslate.setToIdentity();
-                    scaleAndTranslate.translate( center );
-
-                    QVector3D cameraRotation = widget->getCamera()->rotation();
-                    QVector3D normal = ( widget->getProjection() == PERSPECTIVE ) ? QVector3D( 0, 0, 1 ) :
-                           QVector3D( cos( inRadians( cameraRotation.x() ) ) * cos( inRadians( cameraRotation.z() ) ),
-                                      cos( inRadians( cameraRotation.x() ) ) * sin( inRadians( cameraRotation.z() ) ),
-                                      sin( inRadians( cameraRotation.x() ) ) );
-                    int i;
-
-                    if( circle )
-                    {
-                        double length = radius.length();
-                        scaleAndTranslate.scale( length, length, length );
-                    }
-                    else
-                    {
-                        for( i = 0; i < 3; i++ ) if( qAbs( normal[ i ] ) > 0.01 ) radius[ i ] = sign( radius[ i ] );
-                        scaleAndTranslate.scale( radius.x(), radius.y(), radius.z() );
-                    }
-                    double angle = 360 / double( segments ) * sign( radius.x() * radius.y() * radius.z() );
-                    if( projection == TOP || projection == BOTTOM ) angle *= -1;
-                    bool front = projection == FRONT || projection == BACK;
-                    createEllipseCap( { !front, front, 0.f, 1.f }, angle, normal, model, vertexSize, segments, scaleAndTranslate );
-                }
+                vertex[vertexSize - i].setNewSelected(false);
+                vertex[vertexSize - i].setSelected(true);
             }
         }
-        if( action == STOP )
-        {
-            vertexSize = model->vertexNumber;
-            if( model->vertex[ vertexSize - 1 ] == model->vertex[ vertexSize - segments - 2 ] )
-            {
-                model->vertex.resize( vertexSize - 2 * segments - 2 );
-                model->vertexNumber -= 2 * segments + 2;
-                model->triangle.resize( model->triangle.size() - 4 * segments );
-                model->triangleNumber -= 4 * segments;
-            }
-            else
-            {
-                for( int i = 1; i < 2 * segments + 3; i++ )
-                {
-                    model->vertex[ vertexSize - i ].setNewSelected( false );
-                    model->vertex[ vertexSize - i ].setSelected( true );
-                }
-            }
-            widget->setToolIsOn( false );
-            setStage2( false );
-            widget->setMouseTracking( false );
-        }
-        if( action == STAGE2 )
-        {
-            if( QVector3D::crossProduct( model->vertex[ vertexSize - 1 ].getPosition(),
-                                         model->vertex[ vertexSize - 2 ].getPosition() ).length() == 0 )
-            {
-                model->vertex.resize( vertexSize - segments - 1 );
-                model->vertexNumber -= segments + 1;
-                model->triangle.resize( model->triangle.size() - segments );
-                model->triangleNumber -= segments;
-                return;
-            }
-            widget->setToolIsOn( true );
-            setStage2( true );
-            int i;
-            model->vertex.resize( vertexSize + segments + 1 );
-            for( i = 0; i <= segments; i++ ) model->vertex[ vertexSize + i ] = model->vertex[ vertexSize - segments - 1 + i ];
+        widget->setToolIsOn(false);
+        setStage2(false);
+        widget->setMouseTracking(false);
+    }
+    if(action == STAGE2)
+    {
 
-            model->vertexNumber += segments + 1;
+        widget->setToolIsOn(true);
+        setStage2(true);
 
-            model->triangle.resize( triangleSize + 3 * segments );
-            for( i = 0; i < segments - 1; i++ )
-            {
-                model->triangle[ triangleSize + i ].setIndices( vertexSize + i, vertexSize + i + 1, vertexSize + segments );
-                model->triangle[ triangleSize + segments + 2 * i     ].setIndices( vertexSize + i + 1, vertexSize + i, vertexSize - segments - 1 + i );
-                model->triangle[ triangleSize + segments + 2 * i + 1 ].setIndices( vertexSize - segments - 1 + i, vertexSize - segments + i, vertexSize + i + 1 );
-            }
-            model->triangle[ triangleSize + i ].setIndices( vertexSize + segments - 1, vertexSize, vertexSize + segments );
-            model->triangle[ triangleSize + segments + 2 * i     ].setIndices( vertexSize, vertexSize + segments - 1, vertexSize - 2 );
-            model->triangle[ triangleSize + segments + 2 * i + 1 ].setIndices( vertexSize - 2, vertexSize - segments - 1, vertexSize );
+        createWallsAndSecondCap(QVector3D(0, 0, 0));
 
-            model->triangleNumber += 3 * segments;
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].setNewSelected(
+                    true);
 
-            widget->setMouseTracking( true );
-        }
+        widget->setMouseTracking(true);
+    }
+}
+
+void TCylinder::createWallsAndSecondCap(QVector3D height)
+{
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexSize = vertex.size();
+    int triangleSize = triangle.size();
+    int segments = spinBox[0]->value();
+    int i;
+
+    //add vertices for second cap
+    vertex.resize(vertexSize + segments + 1);
+    //second cap
+    for(i = 0; i <= segments; i++) vertex[vertexSize + i].setPosition(
+            vertex[vertexSize - segments - 1 + i].getPosition() + height);
+
+    //add triangles for walls and second cap
+    triangle.resize(triangleSize + 3 * segments);
+
+    for(i = 0; i < segments - 1; i++)
+    {
+        //1 cap element
+        triangle[triangleSize + i].setIndices(vertexSize + i, vertexSize +
+                                              i + 1, vertexSize + segments);
+        //2 wall elements
+        triangle[triangleSize + segments + 2 * i].setIndices(vertexSize + i +
+                        1, vertexSize + i, vertexSize - segments - 1 + i);
+        triangle[triangleSize + segments + 2 * i + 1].setIndices(vertexSize -
+            segments - 1 + i, vertexSize - segments + i, vertexSize + i + 1);
+    }
+    //1 cap element
+    triangle[triangleSize + i].setIndices(vertexSize + segments - 1,
+                                          vertexSize, vertexSize + segments);
+    //2 wall elements
+    triangle[triangleSize + segments + 2 * i].setIndices(vertexSize,
+                                 vertexSize + segments - 1, vertexSize - 2);
+    triangle[triangleSize + segments + 2 * i + 1].setIndices(vertexSize - 2,
+                                      vertexSize - segments - 1, vertexSize);
 }

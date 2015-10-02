@@ -6,10 +6,6 @@
 #include <QVector3D>
 #include <QtOpenGL>
 
-//#include "model.h"
-
-#include "widgetelements.h"
-
 #include <iostream>
 
 using namespace  std;
@@ -17,8 +13,6 @@ using namespace  std;
 //class QString;
 class GLWidget;
 class QPoint;
-
-void setupButton( QPushButton *button );
 
 class VertexData_Color
 {
@@ -67,11 +61,9 @@ protected:
     QPushButton *button;
 
 private slots:
-    void handleClick(bool pressed);
+    void handleClick(bool pressed);\
 
 private:
-
-
     bool _isActive = false;
 };
 

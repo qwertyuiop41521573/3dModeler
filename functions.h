@@ -6,18 +6,15 @@
 #include <QMouseEvent>
 
 #include "glwidget.h"
+#include "gui/myspinbox.h"
 
 struct List;
 struct WidgetElements;
 
 void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue );
-
-
-
-
 bool isSelected( QMatrix4x4 finalMatrix, QVector3D vertex,
                  bool perspective, QVector2D min, QVector2D max );
-bool getAxis( WidgetElements *toolElements, QMatrix4x4 *rotation,
+bool getAxis( MySpinBox **spinBox, QMatrix4x4 *rotation,
               double angle );
 QVector3D fromScreenToWorld_xy( double x, double y, GLWidget *widget );
 QVector3D fromScreenToWorld_vector( QVector2D vector, GLWidget *widget );

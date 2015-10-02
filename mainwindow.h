@@ -41,7 +41,8 @@ public:
     Model *getModel();
     Tool **getActiveTool()
     { return &toolActive; }
-    WidgetElements *getWorkWithElements();
+    QRadioButton **getWorkWithElements()
+    { return workWithElements; };
     void setActiveWidget(GLWidget *widget);
     GLWidget **getActiveWidget()
     { return &widgetActive; };
@@ -52,7 +53,6 @@ public:
 
     void hideViewport(int index);
     void setActiveTool(Tool *tool);
-
 
 private slots:
     void open();
@@ -83,13 +83,6 @@ private slots:
     { widgetActive->setProjection(
                     Projection( newProjection ) ); };
 
-
-
-
-
-
-    void handleSelectClick( MyCheckBox *myCheckBox );
-
     void maximize(bool value);
 
 private:
@@ -102,9 +95,6 @@ private:
     MyComboBox *renderingMode;
     QCheckBox *wireframeOverlay;
     MyComboBox *projection;
-    WidgetElements *workWithElements;
-
-
 
     QMenu *fileMenu, *editMenu;
     QAction *openAction;
@@ -141,6 +131,8 @@ private:
     TBox *tBox;
     TEllipse *tEllipse;
     TCylinder *tCylinder;
+
+    QRadioButton *workWithElements[2];
 
 };
 

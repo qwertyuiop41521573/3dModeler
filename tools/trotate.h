@@ -2,6 +2,8 @@
 #define TROTATE_H
 
 #include "toolwithwidget.h"
+#include "gui/myspinbox.h"
+#include "gui/mycheckboxmw.h"
 
 class TRotate : public ToolWithWidget
 {
@@ -13,6 +15,11 @@ public:
 signals:
 
 public slots:
+
+private:
+    MySpinBox *spinBox[4];
+    MyCheckBoxMW *checkBox;
+
 };
 
 #endif // TROTATE_H

@@ -8,7 +8,6 @@ SOURCES += \
     model.cpp \
     tool.cpp \
     vertex.cpp \
-    widgetelements.cpp \
     triangle.cpp \
     glwidget.cpp \
     camera.cpp \
@@ -36,7 +35,8 @@ SOURCES += \
     gui/myspinbox.cpp \
     gui/mycheckboxmw.cpp \
     gui/mylabel.cpp \
-    gui/mypushbuttonmw.cpp
+    gui/mypushbuttonmw.cpp \
+    gui/myframe.cpp
 
 
 HEADERS += \
@@ -44,7 +44,6 @@ HEADERS += \
     model.h \
     tool.h \
     vertex.h \
-    widgetelements.h \
     triangle.h \
     glwidget.h \
     camera.h \
@@ -72,7 +71,9 @@ HEADERS += \
     gui/myspinbox.h \
     gui/mycheckboxmw.h \
     gui/mylabel.h \
-    gui/mypushbuttonmw.h
+    gui/mypushbuttonmw.h \
+    gui/myhframe.h \
+    gui/myframe.h
 
 
 RESOURCES += \
@@ -81,77 +82,82 @@ RESOURCES += \
 
 # TODO:
 #
-# move and rotate speed
 # options ( colors )
-# basic tools: create(  box, sphere, teapot? ), extrude
 # about
-# isModified
-# ScrollBarAsNeeded ?
-# textures
 # panels can detatch
-# in Model replace traingleNumber with getTriangleNumber();
 # open popular formats
-# light
 # Undo, Redo
+# isModified
+# if model is wrong, viewports should display background
+# read/write textured model, and non-textured too
+# all tools should be in File, Edit...
+# save with .mdl
+# model info
+# grid
+
+# basic tools: create(  box, sphere, teapot? ), extrude
+# textures
+# light
 # select option - ignore backfacing
-# fix flatShaded wireframeOverlay
+# selecting faces in textured
+# weld vertices
+# finish 'delete'
+# when deleting, deleted item swaps with last in vector, if it is last, vector shrinks
+# pivot to orbit
+# items selected label
+
+
 # make class SelectableVector for vertex and triangle;  in toolSelectFunc
 #               if (action == STOP )  -- 2 ifs can be combined
 #               ( for vertices and triangles )
-#
+# unite all setters/getters in classes
+# switch(action) {} in Tool::fuction()
+# separate functions.h, cpp
+
+# in Model replace traingleNumber with getTriangleNumber();
+# fix flatShaded wireframeOverlay
+
 # triangles selected by clicking or drawing rectangle inside them
 # backface of selected triangle has another color
-# if model is wrong, viewports should display background
-# read/write textured model, and non-textured too
-# selecting faces in textured
 # remove #include <iostream>
-# cursor shapes
-# unite all setters/getters in classes
-# items selected label
-# logs
-# brush size can be changed
-# create some functions in funcions.cpp
-# switch(action) {} in fuctions.cpp
-# weld vertices
-# all tools should be in File, Edit...
-# finish 'delete'
-# select triangles
-# when deleting, deleted item swaps with last in vector, if it is last, vector shrinks
-# console
-# show/hide console
-# save with .mdl
-# model info
-# pivot to rotate camera
-# messages in console for tools
-# grid
-# font size can be changed
 # plane - check final
-
-# plane - optin for sqauare ( hold shift )
-# in functions.cpp replace "if" with "switch, case"
-# class for each tool ?
-# toolBox - option for cube ( hold shift )
-# toolBox - capture mouse movement in whole window, now in widget
+# plane - option for sqauare ( hold shift ), toolBox - option for cube ( hold shift )
+# toolBox - capture mouse movement in whole window, not in widget
 # toolElipse!! - create from center, "circle" checkBox
 # toolBox - edit spinBox properties
 # box and plane - segments
-# tool extrude
+# cylinder - no cap option
+# option - flip triangles
 
-# tool teapot
-# tool sphere
+# make cylinder : ellipse - DONE - make the same where possible - box:plane etc.
+# in model->load() replace fscanf with cin
+
 # tool Cylinder!!! - FINAL ( height )
-# function reverseCap for cylinder and box
-
-
-
-
-
-# tool.cpp, h - setupButton()
 # rotate around custom axis
-# separate functions.h, cpp
-# tool widgets - separate button width
-# tPlane->widget() is not hidden as it is the biggest widget
-# tool elements - remove
-# remove most signals
-# make cylinder : ellipse
 # ellipse and cylinder: normal = (-1, 0, 0) - FIX!!
+
+
+# tPlane->widget() is not hidden as it is the biggest widget
+
+# replace * with & !!!
+# halfDiagonal can be <0 - FIX!!
+
+# loading and saving model is corrupted
+
+# tool::function - update (we can now store variables in class) ###
+
+# tool Triangle - FIX!!
+
+# make cosInRadians function
+
+# in tool::function replace calls to widget
+
+# rotate, scale - widget->getPivot ?
+
+# in functions and in glwidget::draw - clean all objects!
+
+# tool gui elements should have names
+
+# correct button width
+
+# plane - rewrite final

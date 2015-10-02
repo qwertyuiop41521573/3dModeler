@@ -2,114 +2,104 @@
 #include "glwidget.h"
 #include "functions.h"
 #include "mainwindow.h"
+#include "gui/mylabel.h"
+#include "gui/myframe.h"
 
 TPlane::TPlane(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
     button->setText("Plane");
     finalButton = new QPushButton("Create Plane");
+    int i;
 
-    elements = new WidgetElements( 0, 12, 0, 0, 1 );
-    elements->getCheckBox( 0 )->setText( "Square" );
-    elements->getCheckBox( 0 )->setMaximumWidth( 130 );
-    layout->addWidget( elements->getCheckBox( 0 ), 0, 0, 1, 6 );
-    QLabel *toolPlaneLabels[ 12 ];
-    for(int i = 0; i < 12; i++ )
+    checkBoxSquare = new MyCheckBoxMW;
+    checkBoxSquare->setText("Square");
+    layout->addWidget(checkBoxSquare, 0, 0, 1, 2);
+
+    QLabel *center = new QLabel("Center");
+    QLabel *size = new QLabel("Size");
+    MyLabel *label[6];
+    for(i = 0; i < 6; i++)
     {
-        toolPlaneLabels[ i ] = new QLabel( QString( 'X' + i % 3 )
-                                           + ':' );
-        toolPlaneLabels[ i ]->setMaximumWidth( 25 );
-        toolPlaneLabels[ i ]->setAlignment( Qt::AlignRight );
-        int x = 4 * ( ( i % 6 ) / 3 ), y = 4 * ( i / 6 ) + i % 3 + 1;
-        layout->addWidget( toolPlaneLabels[ i ], y, x );
-        elements->getSpinBox( i )->setMaximumWidth( 50 );
-        layout->addWidget( elements->getSpinBox( i ), y, x + 1 );
+        spinBox[i] = new MySpinBox;
+        label[i] = new MyLabel(QString('X' + i % 3) + ':', 25);
+        int x = 4 * ((i % 6) / 3), y = 4 * (i / 6) + i % 3 + 1;
+        layout->addWidget(label[i], y, x);
+        layout->addWidget(spinBox[i], y, x + 1);
     }
-    QFrame *toolPlaneHLine = new QFrame();
-    toolPlaneHLine->setFrameShape( QFrame::HLine );
-    toolPlaneHLine->setFrameShadow( QFrame::Sunken );
-    toolPlaneHLine->setMaximumWidth( 150 );
-    toolPlaneHLine->setFixedHeight( 5 );
-    layout->addWidget( toolPlaneHLine, 4, 0, 1, 6 );
-    QFrame *toolPlaneVLine = new QFrame();
-    toolPlaneVLine->setFrameShape( QFrame::VLine );
-    toolPlaneVLine->setFrameShadow( QFrame::Sunken );
-    toolPlaneVLine->setMaximumHeight( 200 );
-    toolPlaneVLine->setFixedWidth( 5 );
-    layout->addWidget( toolPlaneVLine, 1, 3, 7, 1 );
-    layout->addWidget(finalButton, 9,
-                                0, 1, 6 );
 
-    connect(finalButton, SIGNAL( clicked() ),
-             _mainWindow, SLOT( final() ) );
-    //_widget->hide();
+    layout->addWidget(center, 1, 0, 1, 2);
+    layout->addWidget(size, 1, 2, 1, 2);
+
+    for(i = 0; i < 3; i++ )
+    {
+        spinBox[3 + i]->setMinimum(0);
+        layout->addWidget(label[i], 2 + i, 0);
+        layout->addWidget(spinBox[i], 2 + i, 1);
+        layout->addWidget(label[i + 3], 2 + i, 2);
+        layout->addWidget(spinBox[i + 3], 2 + i, 3);
+    }
+
+    layout->addWidget(finalButton, 6, 0, 1, 4);
 }
 
 void TPlane::function(Action action, QMouseEvent *event)
 {
+    if(action == DRAW) return;
+
     GLWidget *widget = *_activeWidget;
-    if( action == DRAW ) return;
-        int vertexSize = model->vertexNumber;
-        int triangleSize = model->triangleNumber;
-        if( action == START || action == FINAL )
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexSize = vertex.size();
+    int triangleSize = triangle.size();
+    int i;
+
+    if(action == START)
+    {
+        //create the cap without other parts
+        vertex.resize(vertexSize + 4);
+        triangle.resize(triangleSize + 2);
+        triangle[triangleSize    ].setIndices(vertexSize, vertexSize + 1,
+                                              vertexSize + 2);
+        triangle[triangleSize + 1].setIndices(vertexSize, vertexSize + 2,
+                                              vertexSize + 3);
+
+        QVector3D worldCoordinates = fromScreenToWorld(event, widget);
+        //all cap vertices are in 1 point
+        for(i = 0; i < 4; i++)
         {
-            int i;
-            model->vertex.resize( vertexSize + 4 );
-            model->vertexNumber += 4;
-
-            model->triangle.resize( triangleSize + 2 );
-            model->triangle[ triangleSize ].setIndices( vertexSize, vertexSize + 1, vertexSize + 2 );
-            model->triangle[ triangleSize + 1 ].setIndices( vertexSize, vertexSize + 2, vertexSize + 3 );
-            model->triangleNumber += 2;
-
-            if( action == START )
-            {
-                QVector3D worldCoordinates = fromScreenToWorld( event, widget );
-                for( i = 0; i < 4; i++ ) model->vertex[ vertexSize + i ] = worldCoordinates;
-            }
-            else
-            {
-                WidgetElements *elements = elements;
-                for( i = 0; i < 4; i++ )
-                    model->vertex[ vertexSize + i ].setPosition(
-                        elements->getSpinBox( 3 * i )->value(),
-                        elements->getSpinBox( 3 * i + 1 )->value(),
-                        elements->getSpinBox( 3 * i + 2 )->value() );
-                action = STOP;
-            }
-            for( i = 0; i < 4; i++ ) model->vertex[ vertexSize + i ].
-                    setNewSelected( true );
-
+            vertex[vertexSize + i] = worldCoordinates;
+            vertex[vertexSize + i].setNewSelected(true);
         }
-        if( action == EXECUTE )
-        {
+    }
+    if(action == EXECUTE)
+    {
             QVector2D diagonal;
             QVector3D posA, posB;
-            bool square = elements->getCheckBox( 0 )->isChecked();
+            bool square = checkBoxSquare->isChecked();
             if( widget->getProjection() == PERSPECTIVE )
             {
-                double height = model->vertex[ vertexSize - 4 ].getPosition().z();
+                double height = vertex[ vertexSize - 4 ].getPosition().z();
                 QVector3D worldCoordinates = fromScreenToWorld( event, widget, true, height );
-                model->vertex[ vertexSize - 2 ].setPosition( worldCoordinates );
-                diagonal = QVector2D( model->vertex[ vertexSize - 2 ].getPosition() - model->vertex[ vertexSize - 4 ].getPosition() );
+                vertex[ vertexSize - 2 ].setPosition( worldCoordinates );
+                diagonal = QVector2D( vertex[ vertexSize - 2 ].getPosition() - vertex[ vertexSize - 4 ].getPosition() );
                 if( square )
                 {
                     QVector2D squareDiagonal( sign( diagonal.x() ), sign( diagonal.y() ) );
                     double length = QVector2D::dotProduct( diagonal, squareDiagonal ) / double( 2 );
                     diagonal = squareDiagonal * length;
-                    model->vertex[ vertexSize - 2 ].setPosition( model->vertex[ vertexSize - 4 ].getPosition() + QVector3D( diagonal, 0 ) );
+                    vertex[ vertexSize - 2 ].setPosition( vertex[ vertexSize - 4 ].getPosition() + QVector3D( diagonal, 0 ) );
                 }
-                posA = QVector3D( model->vertex[ vertexSize - 4 ].getPosition().x(), model->vertex[ vertexSize - 2 ].getPosition().y(), height );
-                posB = QVector3D( model->vertex[ vertexSize - 2 ].getPosition().x(), model->vertex[ vertexSize - 4 ].getPosition().y(), height );
+                posA = QVector3D( vertex[ vertexSize - 4 ].getPosition().x(), vertex[ vertexSize - 2 ].getPosition().y(), height );
+                posB = QVector3D( vertex[ vertexSize - 2 ].getPosition().x(), vertex[ vertexSize - 4 ].getPosition().y(), height );
             }
             else
             {
                 widget->countFinalInverseMatrix( false );
-                QVector2D startPosition = QVector2D( widget->getFinalMatrix() * QVector4D( model->vertex[ vertexSize - 4 ].getPosition(), 1 ) );
-                QVector2D lastPosition = widget->getLastPosition();
+                QVector2D startPosition = QVector2D( widget->getFinalMatrix() * QVector4D( vertex[ vertexSize - 4 ].getPosition(), 1 ) );
                 QVector2D currentPosition = QVector2D( event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y() );
                 diagonal = currentPosition - startPosition;
 
-                model->vertex[ vertexSize - 2 ].setPosition( fromScreenToWorld_vector( currentPosition, widget ) );
+                vertex[ vertexSize - 2 ].setPosition( fromScreenToWorld_vector( currentPosition, widget ) );
                 diagonal = currentPosition - startPosition;
                 if( square )
                 {
@@ -119,34 +109,32 @@ void TPlane::function(Action action, QMouseEvent *event)
                     currentPosition = startPosition + diagonal;
                 }
 
-                model->vertex[ vertexSize - 2 ].setPosition( fromScreenToWorld_vector( currentPosition, widget ) );
+                vertex[ vertexSize - 2 ].setPosition( fromScreenToWorld_vector( currentPosition, widget ) );
                 posA = fromScreenToWorld_xy( startPosition.x(), currentPosition.y(), widget );
                 posB = fromScreenToWorld_xy( currentPosition.x(), startPosition.y(), widget );
             }
             int a = ( diagonal.x() * diagonal.y() > 0 ) ? 1 : 3;
-            model->vertex[ vertexSize - a ].setPosition( posA );
-            model->vertex[ vertexSize - 4 + a ].setPosition( posB );
+            vertex[ vertexSize - a ].setPosition( posA );
+            vertex[ vertexSize - 4 + a ].setPosition( posB );
         }
         if( action == STOP )
         {
-            vertexSize = model->vertexNumber;
-            if( model->vertex[ vertexSize - 1 ] == model->vertex[
+            vertexSize = vertex.size();
+            if( vertex[ vertexSize - 1 ] == vertex[
                     vertexSize - 2 ] ||
-                model->vertex[ vertexSize - 3 ] == model->vertex[
+                vertex[ vertexSize - 3 ] == vertex[
                     vertexSize - 2 ] )
             {
-                model->vertex.resize( vertexSize - 4 );
-                model->vertexNumber -= 4;
-                model->triangle.resize( model->triangle.size() - 2 );
-                model->triangleNumber -= 2;
+                vertex.resize( vertexSize - 4 );
+                triangle.resize( triangle.size() - 2 );
             }
             else
             {
                 for( int i = 1; i < 5; i++ )
                 {
-                    model->vertex[ vertexSize - i ].setNewSelected(
+                    vertex[ vertexSize - i ].setNewSelected(
                                 false );
-                    model->vertex[ vertexSize - i ].setSelected( true );
+                    vertex[ vertexSize - i ].setSelected( true );
                 }
             }
         }

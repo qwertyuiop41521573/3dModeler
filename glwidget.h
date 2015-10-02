@@ -52,9 +52,6 @@ public:
     Tool *getActiveTool()
     { return *activeTool; };
 
-    WidgetElements *getWorkWithElements()
-    { return workWithElements; };
-
     QVector2D getLastPosition()
     { return lastPosition; };
 
@@ -69,9 +66,6 @@ public:
 
     Projection getProjection()
     { return projection; };
-
-    Model *getModel()
-    { return model; };
 
     void multiplyScaleBy( double number )
     { scale *= number; };
@@ -147,7 +141,7 @@ protected:
     void resizeGL( int newWidth, int newHeight );
     void paintGL();
 
-    void timerEvent( QTimerEvent *event );
+    void timerEvent(QTimerEvent *event);
     void mousePressEvent( QMouseEvent *event );
     void mouseMoveEvent( QMouseEvent *event );
     void mouseReleaseEvent( QMouseEvent *event );
@@ -160,6 +154,7 @@ public slots:
 
 private:
     MainWindow *_mainWindow;
+
 
 
 
@@ -182,7 +177,7 @@ private:
     RenderingMode renderingMode = WIREFRAME;
     bool wireframeOverlay = false;
     Tool **activeTool;
-    WidgetElements *workWithElements;
+    QRadioButton **workWithElements;
     QVector2D lastPosition, currentPosition, startPosition;
     QVector3D _startPosition3D;
     Projection projection;

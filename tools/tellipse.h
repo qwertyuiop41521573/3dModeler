@@ -16,9 +16,17 @@ signals:
 
 public slots:
 
-private:
+protected:
     MySpinBox *spinBox[8];
     MyCheckBoxMW *checkBox;
+    QVector3D normal;
+
+    QVector3D createNormal(QVector3D camRot);
+
+private:
+    void createCap(bool flip = false);
+    QMatrix4x4 createScaleAndTranslate(double scaleX, double scaleY, double
+                                               scaleZ, QVector3D center);
 };
 
 #endif // TELLIPSE_H

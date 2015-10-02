@@ -1,21 +1,19 @@
 #ifndef MYCHECKBOX_H
 #define MYCHECKBOX_H
 
-#include <QCheckBox>
+#include "mycheckboxmw.h"
 
-class MyCheckBox : public QCheckBox
+class MyCheckBox : public MyCheckBoxMW
 {
     Q_OBJECT
 public:
-    explicit MyCheckBox()
-    { connect(this, SIGNAL(clicked(bool)), this, SLOT(handleClick(
-                                                       bool))); };
+    explicit MyCheckBox();
 
-    void setNeighbor(MyCheckBox *neighbor)
+    void setNeighbor(QCheckBox *neighbor)
     { _neighbor = neighbor; };
 
 private:
-    MyCheckBox *_neighbor;
+    QCheckBox *_neighbor;
 
 private slots:
     void handleClick(bool value)

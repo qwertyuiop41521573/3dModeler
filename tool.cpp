@@ -10,7 +10,7 @@ Tool::Tool(MainWindow *mainWindow)
     button->setCheckable(true);
     connect(button, SIGNAL(clicked(bool)), this, SLOT(handleClick(
                                                           bool)));
-    _activeWidget = _mainWindow->getActiveWidget();
+    _activeWidget = _mainWindow->getActiveWidget();\
 }
 
 void Tool::setActive(bool value)
@@ -21,7 +21,6 @@ void Tool::setActive(bool value)
 
 void Tool::handleClick(bool pressed)
 {
-   // cerr << pressed << '\n';
     if(pressed) _mainWindow->setActiveTool(this);
     else button->setChecked(true);
 }

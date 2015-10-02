@@ -7,6 +7,7 @@ ToolWithWidget::ToolWithWidget(MainWindow *mainWindow) : Tool(mainWindow)
     layout = new QGridLayout;
     _widget->setLayout(layout);
     model = _mainWindow->getModel();
+    workWithElements = _mainWindow->getWorkWithElements();
 }
 
 void ToolWithWidget::setActive(bool value)
@@ -17,9 +18,4 @@ void ToolWithWidget::setActive(bool value)
         if( value ) _widget->show();
         else _widget->hide();
     }
-}
-
-bool ToolWithWidget::elementsExist()
-{
-    return !(elements == 0);
 }

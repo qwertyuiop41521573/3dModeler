@@ -2,6 +2,7 @@
 #define TVERTEX_H
 
 #include "toolwithwidget.h"
+#include "gui/myspinbox.h"
 
 class TVertex : public ToolWithWidget
 {
@@ -12,6 +13,9 @@ public:
 signals:
 
 public slots:
+
+private:
+    MySpinBox *spinBox[3];
 };
 
 #endif // TVERTEX_H

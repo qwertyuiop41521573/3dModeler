@@ -2,6 +2,8 @@
 #define TPLANE_H
 
 #include "toolwithwidget.h"
+#include "gui/myspinbox.h"
+#include "gui/mycheckboxmw.h"
 
 class TPlane : public ToolWithWidget
 {
@@ -13,6 +15,12 @@ public:
 signals:
 
 public slots:
+    
+protected:
+    MySpinBox *spinBox[6];
+    MyCheckBoxMW *checkBoxSquare;
+
+private:
 };
 
 #endif // TPLANE_H

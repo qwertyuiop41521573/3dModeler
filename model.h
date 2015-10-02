@@ -19,9 +19,9 @@ public:
     void clear();
     void save();
 
-    int vertexNumber = 0, triangleNumber = 0;
-    vector <Vertex> vertex;
-    vector <Triangle> triangle;
+   // int vertexNumber = 0, triangleNumber = 0;
+
+
     bool textured;
     string texture;
 
@@ -30,7 +30,15 @@ public:
     QString fileName;
     bool loaded = false;
 
+    vector <Vertex> &getVertex()
+    { return vertex; };
+
+    vector <Triangle> &getTriangle()
+    { return triangle; };
+
 private:
+    vector <Vertex> vertex;
+    vector <Triangle> triangle;
 };
 
 #endif // MODEL_H
