@@ -20,8 +20,6 @@ protected:
     MyCheckBoxMW *checkBoxSquare;
 
     void countDiagonalForSquare(QVector2D *diagonal);
-
-private:
 };
 
 #endif // TPLANE_H

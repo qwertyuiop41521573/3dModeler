@@ -123,8 +123,8 @@ void TScale::function(Action action, QMouseEvent *event)
         double drTransformed[3];
         for(i = 0; i < 3; i++)
         {
-            e[i] = widget->fromWorldToScreen(QVector3D(i == 0, i == 1, i == 2),
-                                     false);
+            e[i] = widget->fromWorldToScreen(QVector3D(i == 0, i == 1, i ==
+                                                       2), false);
             drTransformed[i] = QVector2D::dotProduct(e[i], dr);
             if(QVector2D::dotProduct(e[i], temp) < 0) drTransformed[i] *= -1;
         }

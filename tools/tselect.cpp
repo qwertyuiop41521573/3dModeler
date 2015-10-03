@@ -161,3 +161,4 @@ void TSelect::function(Action action, QMouseEvent *event)
         }
     }
 }
+

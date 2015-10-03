@@ -6,51 +6,13 @@
 
 using namespace std;
 
-void setupSpinBox( QDoubleSpinBox *spinBox, double defaultValue )
+bool isSelected(QMatrix4x4 finalMatrix, QVector3D vertex, bool perspective,
+                QVector2D min, QVector2D max)
 {
-    spinBox->setMaximumWidth( 70 );
-    spinBox->setFixedHeight( 20 );
-    spinBox->setMaximum( 1000 );
-    spinBox->setMinimum(-1000 );
-    spinBox->setValue( defaultValue );
-}
-
-
-
-bool isSelected( QMatrix4x4 finalMatrix, QVector3D vertex,
-                 bool perspective, QVector2D min, QVector2D max )
-{
-    QVector4D result = finalMatrix * QVector4D( vertex, 1 );
-    if( perspective )
-    {
-        for( int j = 0; j < 2; j++ )
-            result[ j ] /= result[ 3 ];
-    }
-    if( result.x() > min.x() && result.x() < max.x() &&
-        result.y() > min.y() && result.y() < max.y() )
-        return true;
-    return false;
-}
-
-bool getAxis(MySpinBox **spinBox, QMatrix4x4 *rotation,
-              double angle)
-{
-    QVector3D axis;
-    for(int i = 0; i < 3; i++) axis[i] = spinBox[i + 1]->value();
-    if(axis.isNull()) return false;
-    axis.normalize();
-    rotation->rotate(angle, axis);
-    return true;
-}
-
-QVector3D fromScreenToWorld_xy( double x, double y, GLWidget *widget )
-{
-    return _fromScreenToWorld( QVector4D( x, y, 0, 1 ), widget );
-}
-
-QVector3D fromScreenToWorld_vector( QVector2D vector, GLWidget *widget )
-{
-    return _fromScreenToWorld( QVector4D( vector.x(), vector.y(), 0, 1 ), widget );
+    QVector4D result = finalMatrix * QVector4D(vertex, 1);
+    if(perspective) for(int i = 0; i < 2; i++) result[i] /= result[3];
+    return result.x() > min.x() && result.x() < max.x() && result.y() >
+            min.y() && result.y() < max.y();
 }
 
 QVector3D fromScreenToWorld( QMouseEvent *event, GLWidget *widget, bool forcedHeight, double height )
@@ -108,17 +70,3 @@ int sign( double number )
     return ( number > 0 ) ? 1 : -1;
 }
 
-void createEllipseCap( QVector4D rotatingVertex, double angle, QVector3D normal, Model *model, int vertexSize, int segments,
-                       QMatrix4x4 scaleAndTranslate )
-{
-    QMatrix4x4 rotation;
-    rotation.setToIdentity();
-    rotation.rotate( angle, normal );
-    for( int i = 0; i < segments; i++ )
-    {
-        rotatingVertex = rotation * rotatingVertex;
-        model->getVertex()[vertexSize - segments - 1 + i].
-                setPosition(QVector3D(scaleAndTranslate *
-                                      rotatingVertex));
-    }
-}

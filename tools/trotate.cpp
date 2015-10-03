@@ -117,7 +117,7 @@ void TRotate::function(Action action, QMouseEvent *event)
     if(action == FINAL)
     {
         angle = spinBox[0]->value();
-        if(!getAxis(spinBox, &rotation, angle)) return;
+        if(!getAxis(&rotation, angle)) return;
     }
     else
     {
@@ -159,7 +159,7 @@ void TRotate::function(Action action, QMouseEvent *event)
             rotation.rotate(angle, 0, 0, 1);
             rotation *= widget->getRotationMatrix();
         }
-        else if( !getAxis( spinBox, &rotation, angle ) ) return;
+        else if(!getAxis(&rotation, angle)) return;
     }
 
     QMatrix4x4 transformation;
@@ -195,4 +195,14 @@ void TRotate::function(Action action, QMouseEvent *event)
             }
         }
     }
+}
+
+bool TRotate::getAxis(QMatrix4x4 *rotation, double angle)
+{
+    QVector3D axis;
+    for(int i = 0; i < 3; i++) axis[i] = spinBox[i + 1]->value();
+    if(axis.isNull()) return false;
+    axis.normalize();
+    rotation->rotate(angle, axis);
+    return true;
 }

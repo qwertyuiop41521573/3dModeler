@@ -87,12 +87,12 @@ void TPlane::function(Action action, QMouseEvent *event)
                 countDiagonalForSquare(&diagonal);
                 currentPosition = startPosition + diagonal;
             }
-            vertex[vertexSize - 2].setPosition(fromScreenToWorld_vector(
-                                                   currentPosition, widget));
-            posB = fromScreenToWorld_xy(startPosition.x(),
-                                        currentPosition.y(), widget);
-            posA = fromScreenToWorld_xy(currentPosition.x(),
-                                        startPosition.y(), widget);
+            vertex[vertexSize - 2].setPosition(_fromScreenToWorld(
+                              QVector4D(currentPosition, 0, 1), widget));
+            posB = _fromScreenToWorld(QVector4D(startPosition.x(),
+                                        currentPosition.y(), 0, 1), widget);
+            posA = _fromScreenToWorld(QVector4D(currentPosition.x(),
+                                        startPosition.y(), 0, 1), widget);
         }
         //flipping the cap (or not)
         int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;

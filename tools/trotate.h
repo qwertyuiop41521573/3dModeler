@@ -23,6 +23,7 @@ private:
     QVector3D pivot;
     QVector2D pivotOnScreen;
 
+    bool getAxis(QMatrix4x4 *rotation, double angle);
 };
 
 #endif // TROTATE_H

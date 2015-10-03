@@ -94,7 +94,6 @@ RESOURCES += \
 # save with .mdl
 # model info
 # grid
-
 # basic tools: create(  box, sphere, teapot? ), extrude
 # textures
 # light
@@ -102,7 +101,8 @@ RESOURCES += \
 # selecting faces in textured
 # weld vertices
 # finish 'delete'
-# when deleting, deleted item swaps with last in vector, if it is last, vector shrinks
+# when deleting, deleted item swaps with last in vector, if it is last, vector
+#       shrinks
 # pivot to orbit
 # items selected label
 
@@ -155,3 +155,5 @@ RESOURCES += \
 
 
 # remove some variables from widget (like colors)
+
+# plane should be flipped like ellipse

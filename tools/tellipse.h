@@ -25,9 +25,12 @@ protected:
     QVector3D createNormal(QVector3D camRot);
 
 private:
-    void createCap(bool flip = false);
+    void allocateCap(bool flip = false);
+    void createCap(QVector4D rotatingVertex, double angle, QVector3D normal,
+                   QMatrix4x4 scaleAndTranslate);
     QMatrix4x4 createScaleAndTranslate(double scaleX, double scaleY, double
                                                scaleZ, QVector3D center);
+
     QVector3D startPosition3D;
 };
 
