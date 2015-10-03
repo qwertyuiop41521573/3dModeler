@@ -18,7 +18,10 @@ public slots:
 
 private:
     MySpinBox *spinBox[4];
-    MyCheckBoxMW *checkBox;
+    MyCheckBoxMW *checkBoxCustomAxis;
+
+    QVector3D pivot;
+    QVector2D pivotOnScreen;
 
 };
 

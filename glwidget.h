@@ -79,18 +79,6 @@ public:
     QMatrix4x4 getFinalInverseMatrix()
     { return finalMatrixInverse; };
 
-    void setPivot( QVector3D newPivot )
-    { pivot = newPivot; };
-
-    QVector3D getPivot()
-    { return pivot; };
-
-    QVector2D getPivotTransformed()
-    { return pivotTransformed; };
-
-    void setPivotTransformed( QVector2D vector )
-    { pivotTransformed = vector; };
-
     void countFinalMatrix( bool perspective )
     { finalMatrix = ( perspective ? toolMatrixPerspectiveInverse :
         toolMatrixInverse ) * projectionMatrix; };
@@ -122,16 +110,10 @@ public:
     void setToolIsOn( bool value)
     { toolIsOn = value; };
 
-    QVector3D startPosition3D()
-    { return _startPosition3D; };
-
-    void setStartPosition3D( QVector3D vector )
-    { _startPosition3D = vector; };
-
     VertexAndIndexData *getToolData()
     { return &toolData; };
 
-    QVector2D transform( QVector3D vector, bool point );
+    QVector2D fromWorldToScreen( QVector3D vector, bool point );
     void countFinalInverseMatrix( bool perspective );
     void countRotationMatrices();
     void setCurrentPosition( double x, double y );
@@ -155,11 +137,6 @@ public slots:
 private:
     MainWindow *_mainWindow;
 
-
-
-
-
-
     int width, height;
     int halfWidth, halfHeight;
     qreal aspect;
@@ -179,7 +156,6 @@ private:
     Tool **activeTool;
     QRadioButton **workWithElements;
     QVector2D lastPosition, currentPosition, startPosition;
-    QVector3D _startPosition3D;
     Projection projection;
     Camera camera[ 7 ];
     double scale = 100;
@@ -203,8 +179,6 @@ private:
     int vertexData_TextureSize = sizeof( VertexData_Texture );
     int GLushortSize = sizeof( GLushort );
     VertexAndIndexData grid, axis, frame;
-    QVector3D pivot;
-    QVector2D pivotTransformed;
 
     vector <VertexData_Texture> vertices_tex;
     vector <VertexData_Color> vertices_col;

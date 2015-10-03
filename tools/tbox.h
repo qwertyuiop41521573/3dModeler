@@ -19,13 +19,11 @@ signals:
 public slots:
 
 private:
-    MySpinBox *spinBox[6];
     QCheckBox *checkBoxCube;
-
-    void countDiagonalForSquare(QVector2D *diagonal);
+    MySpinBox *spinBox[6];
 
 private slots:
-    void h(bool q) {};
+    void handleCubeClick(bool value);
 };
 
 #endif // TBOX_H

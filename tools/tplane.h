@@ -17,8 +17,9 @@ signals:
 public slots:
     
 protected:
-    MySpinBox *spinBox[6];
     MyCheckBoxMW *checkBoxSquare;
+
+    void countDiagonalForSquare(QVector2D *diagonal);
 
 private:
 };

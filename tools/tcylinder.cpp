@@ -12,11 +12,12 @@ TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)
 
 void TCylinder::function(Action action, QMouseEvent *event)
 {
+    if(action == DRAW) return;
+
     //cylinder's STAGE2 has much code from ellipse's STOP
     if(action != STOP) TEllipse::function(action == STAGE2 ? STOP : action,
                                           event);
 
-    if(action == DRAW) return;
     GLWidget *widget = *_activeWidget;
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();

@@ -120,16 +120,15 @@ RESOURCES += \
 # triangles selected by clicking or drawing rectangle inside them
 # backface of selected triangle has another color
 # remove #include <iostream>
-# plane - check final
-# plane - option for sqauare ( hold shift ), toolBox - option for cube ( hold shift )
+
+# plane - option for sqauare ( hold shift ), toolBox - option for cube
+#       ( hold shift )
 # toolBox - capture mouse movement in whole window, not in widget
-# toolElipse!! - create from center, "circle" checkBox
-# toolBox - edit spinBox properties
+# toolElipse!! - create from center
 # box and plane - segments
 # cylinder - no cap option
 # option - flip triangles
 
-# make cylinder : ellipse - DONE - make the same where possible - box:plane etc.
 # in model->load() replace fscanf with cin
 
 # tool Cylinder!!! - FINAL ( height )
@@ -138,26 +137,21 @@ RESOURCES += \
 
 
 # tPlane->widget() is not hidden as it is the biggest widget
+# loading and saving model is corrupted
+
 
 # replace * with & !!!
 # halfDiagonal can be <0 - FIX!!
-
-# loading and saving model is corrupted
-
-# tool::function - update (we can now store variables in class) ###
-
 # tool Triangle - FIX!!
 
 # make cosInRadians function
-
-# in tool::function replace calls to widget
-
-# rotate, scale - widget->getPivot ?
-
 # in functions and in glwidget::draw - clean all objects!
-
-# tool gui elements should have names
 
 # correct button width
 
-# plane - rewrite final
+
+# common in cylinder and box ?
+# move, rotate and scale have much common code
+
+
+# remove some variables from widget (like colors)

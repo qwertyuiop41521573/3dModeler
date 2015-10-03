@@ -72,7 +72,9 @@ void TSelect::function(Action action, QMouseEvent *event)
     if(action == DRAW)
     {
         VertexAndIndexData *data = widget->getToolData();
-        data->vertices.resize(4);
+        vector <VertexData_Color> &vertices = data->vertices;
+        vector <GLushort> &indices = data->indices;
+        vertices.resize(4);
 
         QVector2D min, max;
         QVector2D startPosition = widget->getStartPosition();
@@ -82,22 +84,22 @@ void TSelect::function(Action action, QMouseEvent *event)
         max.setX(qMax(startPosition.x(), currentPosition.x()) + 1);
         max.setY(qMax(startPosition.y(), currentPosition.y()) + 1);
 
-        data->vertices[0].position = min;
-        data->vertices[1].position.setX(max.x());
-        data->vertices[1].position.setY(min.y());
-        data->vertices[2].position = max;
-        data->vertices[3].position.setX(min.x());
-        data->vertices[3].position.setY(max.y());
+        vertices[0].position = min;
+        vertices[1].position.setX(max.x());
+        vertices[1].position.setY(min.y());
+        vertices[2].position = max;
+        vertices[3].position.setX(min.x());
+        vertices[3].position.setY(max.y());
 
-        data->indices.resize(8);
-        data->indices[0] = 0;
-        data->indices[1] = 1;
-        data->indices[2] = 1;
-        data->indices[3] = 2;
-        data->indices[4] = 2;
-        data->indices[5] = 3;
-        data->indices[6] = 3;
-        data->indices[7] = 0;
+        indices.resize(8);
+        indices[0] = 0;
+        indices[1] = 1;
+        indices[2] = 1;
+        indices[3] = 2;
+        indices[4] = 2;
+        indices[5] = 3;
+        indices[6] = 3;
+        indices[7] = 0;
 
         bool perspective = projection == PERSPECTIVE;
         widget->countFinalMatrix(perspective);
@@ -105,78 +107,56 @@ void TSelect::function(Action action, QMouseEvent *event)
         if(workWithElements[0]->isChecked())
         {
             for(i = 0; i < vertexSize; i++)
-                vertex[i].setNewSelected( isSelected(
-                    widget->getFinalMatrix(), vertex[ i ].
-                           getPosition(), perspective, min, max ) );
+                vertex[i].setNewSelected(isSelected(widget->
+                    getFinalMatrix(), vertex[i].getPosition(), perspective,
+                                                    min, max));
         }
         else
         {
-            for( i = 0; i < triangleSize; i++ )
+            for(i = 0; i < triangleSize; i++)
             {
-                triangle[ i ].setNewSelected( false );
-                for( j = 0; j < 3; j++ )
+                triangle[i].setNewSelected(false);
+                for(j = 0; j < 3; j++)
                 {
-                    if( isSelected( widget->getFinalMatrix(),
-                        vertex[ triangle[ i ].
-                        getIndex( j ) ].getPosition(), perspective,
-                                    min, max ) )
+                    if(isSelected(widget->getFinalMatrix(), vertex[
+                        triangle[i].getIndex(j)].getPosition(), perspective,
+                                    min, max))
                     {
-                        triangle[ i ].setNewSelected( true );
+                        triangle[i].setNewSelected(true);
                         break;
                     }
                 }
             }
         }
     }
-    if( action == STOP  )
+    if(action == STOP)
     {
-        if( workWithElements[0]->isChecked() )
+        if(workWithElements[0]->isChecked())
         {
             int amount = 0;
-            for( i = 0; i < vertexSize; i++ )
+            for(i = 0; i < vertexSize; i++)
             {
-                amount += vertex[ i ].newSelected();
-                if( !checkBox[0]->isChecked()
-                        && !checkBox[1]->
-                        isChecked() )
-                    vertex[ i ].setSelected( vertex[
-                                               i ].newSelected() );
-                if(checkBox[0]->isChecked() )
-                {
-                    if( !vertex[ i ].isSelected() )
-                        vertex[ i ].setSelected(
-                                    vertex[ i ].newSelected() );
-                }
-                if(checkBox[1]->isChecked() )
-                {
-                    if( vertex[ i ].isSelected() )
-                        vertex[ i ].setSelected( !vertex[ i ].newSelected() );
-                }
-                vertex[ i ].setNewSelected( false );
+                amount += vertex[i].newSelected();
+                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
+                    vertex[ i ].setSelected(vertex[i].newSelected());
+                if(checkBox[0]->isChecked() && !vertex[i].isSelected())
+                    vertex[i].setSelected(vertex[i].newSelected());
+                if(checkBox[1]->isChecked() && vertex[i].isSelected())
+                    vertex[i].setSelected(!vertex[i].newSelected());
+                vertex[i].setNewSelected(false);
             }
-
         }
         else
         {
-            for( i = 0; i < triangleSize; i++ )
+            for(i = 0; i < triangleSize; i++)
             {
-                if( !checkBox[0]->isChecked()
-                        && !checkBox[1]->
-                        isChecked() )
-                    triangle[ i ].setSelected(
-                    triangle[ i ].newSelected() );
-                if(checkBox[0]->isChecked() )
-                {
-                    if( !triangle[ i ].isSelected() )
-                        triangle[ i ].setSelected(
-                                      triangle[ i ].newSelected() );
-                }
-                if(checkBox[1]->isChecked() )
-                {
-                    if( triangle[ i ].isSelected() )
-                        triangle[ i ].setSelected( !triangle[ i ].newSelected() );
-                }
-                triangle[ i ].setNewSelected( false );
+                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
+                    triangle[i].setSelected(triangle[i].newSelected());
+                if(checkBox[0]->isChecked() && !triangle[i].isSelected())
+                    triangle[i].setSelected(triangle[i].newSelected());
+                if(checkBox[1]->isChecked() && triangle[i].isSelected())
+                    triangle[i].setSelected(!triangle[i].newSelected());
+                triangle[i].setNewSelected(false);
             }
         }
     }

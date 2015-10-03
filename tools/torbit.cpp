@@ -14,8 +14,8 @@ void TOrbit::function(Action action, QMouseEvent *event)
     Camera *camera = widget->getCamera();
     double rotZ = (-event->x() + widget->getHalfWidth() + widget->
                    getLastPosition().x()) / double(2);
-    double rotX = (widget->getLastPosition().y() - widget->
-                   getHalfHeight() + event->y()) / double(2);
+    double rotX = (widget->getLastPosition().y() - widget->getHalfHeight() +
+                   event->y()) / double(2);
     QMatrix4x4 rotation;
     rotation.setToIdentity();
     rotation.rotate(rotZ, 0, 0, 1);

@@ -19,6 +19,9 @@ public slots:
 private:
     MyPushButtonMW *pushButton[3];
     MySpinBox *spinBox[3];
+
+    QVector3D pivot;
+    QVector2D pivotOnScreen;
 };
 
 #endif // TSCALE_H

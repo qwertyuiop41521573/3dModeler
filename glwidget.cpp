@@ -563,7 +563,7 @@ void GLWidget::addSelectedFace( int num )
                         selectedColor ) );
 }
 
-QVector2D GLWidget::transform( QVector3D vector, bool point )
+QVector2D GLWidget::fromWorldToScreen( QVector3D vector, bool point )
 {
     bool perspective = projection == PERSPECTIVE;
     countFinalMatrix( perspective );
