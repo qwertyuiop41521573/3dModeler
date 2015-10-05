@@ -108,6 +108,7 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glGenBuffers(2, modelVboIds);
+    glPolygonOffset(-1, -1);
     timer->start(0, this);
 }
 
@@ -184,17 +185,13 @@ void GLWidget::draw(bool wireframe)
 
     switch(renderingModeCurrent)
     {
+    //draw vertices
     case WIREFRAME:
     {
         glDisable(GL_CULL_FACE);
         color = BLACK;
         if(workWithElements[0]->isChecked())
         {
-
-
-             //   glColor3f( 0, 0, 1 );
-               // gl::draw( mVboMesh );
-
             glPointSize(4);
             programColor->bind();
             prepareProgramColor(projectionMatrix);
@@ -211,15 +208,14 @@ void GLWidget::draw(bool wireframe)
                      vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber *
                          GLushortSize, indices.data(), GL_STATIC_DRAW);
-            glPolygonOffset(-1, -1);
-            glEnable(GL_POLYGON_OFFSET_LINE);
+
             glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_SHORT, 0);
-            glDisable(GL_POLYGON_OFFSET_FILL);
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(1);
         break;
     }
+        //draw triangles
     case FLAT_SHADED:
     {
         glEnable(GL_CULL_FACE);
@@ -273,8 +269,7 @@ void GLWidget::draw(bool wireframe)
         vertices_col.clear();
         for(i = 0; i < triangleNumber; i++)
         {
-            if(workWithElements[1]->isChecked() && (triangle[i].newSelected()
-                || triangle[i].isSelected())) addSelectedFace(i);
+            if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].isSelected())) addSelectedFace(i);
             else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[
                            triangle[i].getIndex(j)].getPosition(), color });
         }
@@ -299,7 +294,9 @@ void GLWidget::draw(bool wireframe)
     program->setUniformValue("mvp_matrix", projectionMatrix);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLushortSize,
                  indices.data(), GL_STATIC_DRAW);
+    if(wireframe) glEnable(GL_POLYGON_OFFSET_LINE);
     glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_SHORT, 0);
+    glDisable(GL_POLYGON_OFFSET_LINE);
 }
 
 void GLWidget::drawAdittional()
@@ -307,6 +304,8 @@ void GLWidget::drawAdittional()
     programColor->bind();
     prepareProgramColor(projectionMatrix);
     int i;
+
+    //draw selected faces
     int selectedFacesLength = selectedFaces.size();
     if(selectedFacesLength)
     {
@@ -321,6 +320,7 @@ void GLWidget::drawAdittional()
                         GL_UNSIGNED_SHORT, 0);
     }
 
+    //draw axis
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLineWidth(1);
     glBufferData(GL_ARRAY_BUFFER, 6 * vertexData_ColorSize,
@@ -339,6 +339,7 @@ void GLWidget::drawAdittional()
         glDrawElements(GL_LINES, 88, GL_UNSIGNED_SHORT, 0);
     }
 
+    //draw tool marks and select color for frame
     QVector3D color;
     if(_isActive)
     {
@@ -369,6 +370,7 @@ void GLWidget::drawAdittional()
         glLineWidth(2);
     }
 
+    //draw frame
     for(i = 0; i < 4; i++) frame.vertices[i].color = color;
     prepareProgramColor(frameMatrix);
     glBufferData(GL_ARRAY_BUFFER, 4 * vertexData_ColorSize,

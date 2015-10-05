@@ -27,6 +27,8 @@ void TSelect::function(Action action, QMouseEvent *event)
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
     Projection projection = widget->getProjection();
+    //work with vertices
+    bool workWithVert = workWithElements[0]->isChecked();
 
     switch(action)
     {
@@ -45,7 +47,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         bool perspective = projection == PERSPECTIVE;
         widget->countFinalMatrix(perspective);
         int j;
-        if(workWithElements[0]->isChecked())
+        if(workWithVert)
         {
             for(i = 0; i < vertexSize; i++)
                 vertex[i].setNewSelected(isSelected(widget->
@@ -109,7 +111,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         bool perspective = projection == PERSPECTIVE;
         widget->countFinalMatrix(perspective);
         int j;
-        if(workWithElements[0]->isChecked())
+        if(workWithVert)
         {
             for(i = 0; i < vertexSize; i++)
                 vertex[i].setNewSelected(isSelected(widget->
@@ -137,33 +139,22 @@ void TSelect::function(Action action, QMouseEvent *event)
     }
     case STOP:
     {
-        if(workWithElements[0]->isChecked())
+        vector <SelectableObject*> selObj;
+        selObj.resize(workWithVert ? vertexSize : triangleSize);
+        for(i = 0; i < selObj.size(); i++)
         {
-            int amount = 0;
-            for(i = 0; i < vertexSize; i++)
-            {
-                amount += vertex[i].newSelected();
-                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
-                    vertex[ i ].setSelected(vertex[i].newSelected());
-                if(checkBox[0]->isChecked() && !vertex[i].isSelected())
-                    vertex[i].setSelected(vertex[i].newSelected());
-                if(checkBox[1]->isChecked() && vertex[i].isSelected())
-                    vertex[i].setSelected(!vertex[i].newSelected());
-                vertex[i].setNewSelected(false);
-            }
+            if(workWithVert) selObj[i] = &vertex[i];
+            else selObj[i] = &triangle[i];
         }
-        else
+        for(i = 0; i < selObj.size(); i++)
         {
-            for(i = 0; i < triangleSize; i++)
-            {
-                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
-                    triangle[i].setSelected(triangle[i].newSelected());
-                if(checkBox[0]->isChecked() && !triangle[i].isSelected())
-                    triangle[i].setSelected(triangle[i].newSelected());
-                if(checkBox[1]->isChecked() && triangle[i].isSelected())
-                    triangle[i].setSelected(!triangle[i].newSelected());
-                triangle[i].setNewSelected(false);
-            }
+            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
+                selObj[i]->setSelected(selObj[i]->newSelected());
+            if(checkBox[0]->isChecked() && !selObj[i]->isSelected())
+                selObj[i]->setSelected(selObj[i]->newSelected());
+            if(checkBox[1]->isChecked() && selObj[i]->isSelected())
+                selObj[i]->setSelected(!selObj[i]->newSelected());
+            selObj[i]->setNewSelected(false);
         }
         break;
     }

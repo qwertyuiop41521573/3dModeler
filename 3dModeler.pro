@@ -36,7 +36,8 @@ SOURCES += \
     gui/mycheckboxmw.cpp \
     gui/mylabel.cpp \
     gui/mypushbuttonmw.cpp \
-    gui/myframe.cpp
+    gui/myframe.cpp \
+    selectableobject.cpp
 
 
 HEADERS += \
@@ -73,7 +74,8 @@ HEADERS += \
     gui/mylabel.h \
     gui/mypushbuttonmw.h \
     gui/myhframe.h \
-    gui/myframe.h
+    gui/myframe.h \
+    selectableobject.h
 
 
 RESOURCES += \
@@ -117,18 +119,14 @@ RESOURCES += \
 # correct button width
 # flat and smooth shaded should have light
 
-# make class SelectableVector for vertex and triangle;  in toolSelectFunc
-#               if (action == STOP )  -- 2 ifs can be combined
-#               ( for vertices and triangles )
 # unite all setters/getters in classes
 # remove #include <iostream>
 # in model->load() replace fscanf with cin
 # move, rotate and scale have much common code
-# make triangle[i].vertex[j]
 # GLWidget::draw() - textured and not have similar code
 # passing const to methods to avoid copies ?
 # const where possible ?
-# replace hasStage2(true) with _stage2 = true;
+# workWithVert
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis

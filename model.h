@@ -19,9 +19,6 @@ public:
     void clear();
     void save();
 
-   // int vertexNumber = 0, triangleNumber = 0;
-
-
     bool textured;
     string texture;
 

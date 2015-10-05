@@ -6,18 +6,13 @@
 #include <QMatrix4x4>
 
 #include "camera.h"
+#include "selectableobject.h"
 
-class Vertex
+class Vertex : public SelectableObject
 {
 public:
     Vertex( QVector3D newPosition = { 0, 0, 0 } )
     { position = newPosition; };
-
-    void setSelected( bool value )
-    { _isSelected = value; };
-
-    bool isSelected()
-    { return _isSelected; };
 
     QVector3D getPosition()
     { return position; };
@@ -38,18 +33,10 @@ public:
     void setPosition( float x, float y, float z );
     void setUV( float u, float v );
 
-    bool newSelected()
-    { return _newSelected; };
-
-    void setNewSelected( bool value )
-    { _newSelected = value; };
-
     bool operator ==( Vertex vertex )
     { return position == vertex.getPosition(); };
 
 private:
-    bool _isSelected = false;
-    bool _newSelected = false;
     QVector3D position;
     QVector2D UVCoordinates;
 };
