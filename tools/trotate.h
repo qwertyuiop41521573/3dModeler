@@ -22,6 +22,7 @@ private:
 
     QVector3D pivot;
     QVector2D pivotOnScreen;
+     vector <bool> checked;
 
     bool getAxis(QMatrix4x4 *rotation, double angle);
 };

@@ -14,15 +14,20 @@ TTriangle::TTriangle(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
 void TTriangle::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
     if(action != START && action != FINAL) return;
+
     int i;
     vector <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
-    int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
+
     if(action == START)
     {
+        GLWidget *widget = *_activeWidget;
+        vector <Triangle> &triangle = model->getTriangle();
+        int vertexSize = vertex.size();
+        int triangleSize = triangle.size();
+
+        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
+
         QVector2D min, max;
         QVector2D startPosition = widget->getStartPosition();
         QVector2D currentPosition(event->x() - widget->getHalfWidth(),
@@ -35,41 +40,39 @@ void TTriangle::function(Action action, QMouseEvent *event)
         bool perspective = widget->getProjection() == PERSPECTIVE;
         widget->countFinalMatrix(perspective);
         int j;
-        int triangleSize = triangle.size();
-        if(triangleSize == triangleSize)
-        {
-            triangle.push_back({-1,-1,-1 });
-            triangleSize++;
-        }
         for(i = 0; i < vertexSize; i++)
         {
-            if(!vertex[i].newSelected() && isSelected(widget->
-                getFinalMatrix(), vertex[i].getPosition(), perspective, min,
-                                                      max))
+            bool selectedBefore = false;
+            for(j = 0; j < newTriangle.size(); j++)
             {
-                vertex[i].setNewSelected(true);
-                for(j = 0; j < 3; j++)
+                if(i == newTriangle[j])
                 {
-                    if(triangle[triangleSize - 1].getIndex(j) == -1)
-                    {
-                        triangle[triangleSize - 1].setIndex(j, i);
-                        break;
-                    }
+                    selectedBefore = true;
+                    break;
                 }
             }
+            if(!selectedBefore && isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max))
+            {
+                newTriangle.push_back(i);
+                vertex[i].setNewSelected(true);
+            }
         }
-        if(triangle[triangleSize - 1].getIndex(2) != -1)
-            for(i = 0; i < 3; i++) vertex[triangle[triangleSize - 1].
-                    getIndex(i)].setNewSelected(false);
-    }
-    else if(triangle.size() > triangleSize)
-    {
-        for(i = 0; i < 3; i++)
+        if(newTriangle.size() == 3)
         {
-            int index = triangle[triangleSize].getIndex(i);
-            if(index ==-1) break;
-            else vertex[index].setNewSelected(false);
+            triangle.push_back(newTriangle.data());
+            for(i = 0; i < 3; i++) vertex[newTriangle[i]].setNewSelected(false);
+            newTriangle.clear();
         }
-        triangle.resize(triangleSize);
     }
+    else
+    {
+        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(false);
+        newTriangle.clear();
+    }
+}
+
+void TTriangle::setActive(bool value)
+{
+    if(!value) function(FINAL, 0);
+    Tool::setActive(value);
 }

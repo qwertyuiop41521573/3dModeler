@@ -67,7 +67,7 @@ void TMove::function(Action action, QMouseEvent *event)
     }
     else
     {
-        bool *checked = new bool[vertexSize];
+        checked.resize(vertexSize);
         int index;
         for(i = 0; i < vertexSize; i++) checked[i] = false;
         int j;
@@ -87,5 +87,6 @@ void TMove::function(Action action, QMouseEvent *event)
                 }
             }
         }
+        checked.clear();
     }
 }

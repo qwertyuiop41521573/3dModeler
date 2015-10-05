@@ -145,7 +145,6 @@ RESOURCES += \
 # tool Triangle - FIX!!
 
 # make cosInRadians function
-# in functions and in glwidget::draw - clean all objects!
 
 # correct button width
 
@@ -156,4 +155,11 @@ RESOURCES += \
 
 # remove some variables from widget (like colors)
 
-# plane should be flipped like ellipse
+# check all matrices in glwidget
+
+# in tools widgets many values must be integer!
+# make triangle[i].vertex[j]
+
+# GLWidget::draw() - textured and not have similar code
+
+# possible fix for wireframe overlay - render each line once

@@ -63,8 +63,6 @@ void TScale::function(Action action, QMouseEvent *event)
         else
         {
             int index;
-            bool *checked = new bool[vertexSize];
-            for(i = 0; i < vertexSize; i++) checked[i] = false;
             for(i = 0; i < triangleSize; i++)
             {
                 if(triangle[i].isSelected())
@@ -73,6 +71,8 @@ void TScale::function(Action action, QMouseEvent *event)
                     break;
                 }
             }
+            checked.resize(vertexSize);
+            for(i = 0; i < vertexSize; i++) checked[i] = false;
             for( ; i < triangleSize; i++)
             {
                 if(triangle[i].isSelected())
@@ -94,6 +94,7 @@ void TScale::function(Action action, QMouseEvent *event)
                     }
                 }
             }
+            checked.clear();
         }
         center = (min + max);
         for(i = 0; i < 3; i++) center[i] /= 2;
@@ -164,7 +165,7 @@ void TScale::function(Action action, QMouseEvent *event)
     else
     {
         int index;
-        bool *checked = new bool[vertexSize];
+        checked.resize(vertexSize);
         for(i = 0; i < vertexSize; i++) checked[i] = false;
 
         for(i = 0; i < triangleSize; i++)
@@ -182,5 +183,6 @@ void TScale::function(Action action, QMouseEvent *event)
                 }
             }
         }
+        checked.clear();
     }
 }

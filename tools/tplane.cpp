@@ -27,16 +27,11 @@ void TPlane::function(Action action, QMouseEvent *event)
     if(action == START)
     {
         //create the cap without other parts
-        vertex.resize(vertexSize + 4);
-        triangle.resize(triangleSize + 2);
-        triangle[triangleSize    ].setIndices(vertexSize, vertexSize + 1,
-                                              vertexSize + 2);
-        triangle[triangleSize + 1].setIndices(vertexSize, vertexSize + 2,
-                                              vertexSize + 3);
+        allocateCap(_hasStage2);
 
         QVector3D worldCoordinates = fromScreenToWorld(event, widget);
         //all cap vertices are in 1 point
-        for(i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++)
         {
             vertex[vertexSize + i] = worldCoordinates;
             vertex[vertexSize + i].setNewSelected(true);
@@ -126,4 +121,19 @@ void TPlane::countDiagonalForSquare(QVector2D *diagonal)
     double length = QVector2D::dotProduct(*diagonal, squareDiagonal) /
             double(2);
     *diagonal = squareDiagonal * length;
+}
+
+void TPlane::allocateCap(bool flip)
+{
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
+    int vertexSize = vertex.size();
+    int triangleSize = triangle.size();
+
+    vertex.resize(vertexSize + 4);
+    triangle.resize(triangleSize + 2);
+    triangle[triangleSize    ].setIndices(vertexSize + !flip, vertexSize +
+                                          flip, vertexSize + 2);
+    triangle[triangleSize + 1].setIndices(vertexSize + 2 * !flip, vertexSize
+                                          + 2 * flip, vertexSize + 3);
 }

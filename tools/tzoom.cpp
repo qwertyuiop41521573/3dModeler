@@ -18,10 +18,7 @@ void TZoom::function(Action action, QMouseEvent *event)
     if(perspective)
     {
         QVector3D rotation = widget->getCamera()->rotation();
-        double radZ = inRadians(rotation.z());
-        double radX = inRadians(rotation.x());
-        widget->getCamera()->addToPosition(dy * cos(radX) * cos(radZ),
-                         dy * cos(radX) * sin(radZ), -dy * sin(radX));
+        widget->getCamera()->addToPosition(dy * cosR(rotation.x()) * cosR(rotation.z()), dy * cosR(rotation.x()) * sinR(rotation.z()), -dy * sinR(rotation.x()));
     }
     else widget->multiplyScaleBy(exp(dy));
 }

@@ -136,32 +136,40 @@ public slots:
 
 private:
     MainWindow *_mainWindow;
+    Model *model;
+    Tool **activeTool;
+    QRadioButton **workWithElements;
 
     int width, height;
     int halfWidth, halfHeight;
-    qreal aspect;
+    RenderingMode renderingMode = WIREFRAME;
+    bool wireframeOverlay = false;
+    Projection projection;
+    Camera camera[7];
+    double scale = 100;
+
     QBasicTimer *timer;
     QGLShaderProgram *programColor, *programTexture, *program;
-    Model *model;
-    GLuint texture;
+
+
+
     QMatrix4x4 projectionMatrix, projectionWithoutTranslation;
     QMatrix4x4 rotationMatrix, rotationMatrixInverse;
     QMatrix4x4 frameMatrix;
     QMatrix4x4 finalMatrix, toolMatrix, toolMatrixPerspectiveInverse;
     QMatrix4x4 toolMatrixInverse, finalMatrixInverse;
-    const qreal zNear = 0.1, zFar = 1000, fov = 45.0;
-    bool _isActive = false;
-    RenderingMode renderingMode = WIREFRAME;
-    bool wireframeOverlay = false;
-    Tool **activeTool;
-    QRadioButton **workWithElements;
+    qreal aspect;
+    const qreal zNear = 0.1, zFar = 1000, fov = 45.0;    
+
     QVector2D lastPosition, currentPosition, startPosition;
-    Projection projection;
-    Camera camera[ 7 ];
-    double scale = 100;
+
+    bool _isActive = false;
     bool quickAccess = false;
     bool toolIsOn = false;
-    GLuint modelVboIds[ 2 ];
+
+    GLuint texture;
+    GLuint modelVboIds[2];
+
     QVector3D gray = { 0.5, 0.5, 0.5 };
     QVector3D black = { 0, 0, 0 };
     QVector3D red = { 1, 0, 0 };
@@ -174,15 +182,19 @@ private:
     QVector3D white = { 1, 1, 1 };
     QVector3D sRed = { 0.7, 0, 0 };
     QVector3D sBlue = { 0, 0, 0.7 };
-    const void *vectorSize = ( const void* )sizeof( QVector3D );
-    int vertexData_ColorSize = sizeof( VertexData_Color );
-    int vertexData_TextureSize = sizeof( VertexData_Texture );
-    int GLushortSize = sizeof( GLushort );
+
+    const void *vectorSize = (const void*)sizeof(QVector3D);
+    int vertexData_ColorSize = sizeof(VertexData_Color);
+    int vertexData_TextureSize = sizeof(VertexData_Texture);
+    int GLushortSize = sizeof(GLushort);
+
     VertexAndIndexData grid, axis, frame;
 
     vector <VertexData_Texture> vertices_tex;
     vector <VertexData_Color> vertices_col;
     vector <VertexData_Color> selectedFaces;
+    vector <GLushort> indices;
+
 
     bool _oldHidden;
     VertexAndIndexData toolData;

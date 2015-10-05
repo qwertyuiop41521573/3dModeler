@@ -228,11 +228,7 @@ QMatrix4x4 TEllipse::createScaleAndTranslate(double scaleX, double scaleY,
 QVector3D TEllipse::createNormal(QVector3D camRot)
 {
     return ((*_activeWidget)->getProjection() == PERSPECTIVE) ? QVector3D(0,
-        0, 1) : QVector3D(cos(inRadians(camRot.x())) *
-                          cos(inRadians(camRot.z())),
-                          cos(inRadians(camRot.x())) *
-                          sin(inRadians(camRot.z())),
-                          sin(inRadians(camRot.x())));
+        0, 1) : QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
 }
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, QVector3D

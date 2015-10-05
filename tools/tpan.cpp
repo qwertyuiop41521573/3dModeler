@@ -16,11 +16,8 @@ void TPan::function(Action action, QMouseEvent *event)
                 getHalfWidth();
         double dy = widget->getLastPosition().y() - widget->getHalfHeight() +
                 event->y();
-        double radZ = inRadians(widget->getCamera()->rotation().z());
-        double radX = inRadians(widget->getCamera()->rotation().x());
-        QVector3D dr(dx * sin(radZ) + dy * sin(radX) * cos(radZ),
-                     dx *-cos(radZ) + dy * sin(radX) * sin(radZ),
-                     dy * cos(radX));
+        QVector3D rotation = widget->getCamera()->rotation();
+        QVector3D dr(dx * sinR(rotation.z()) + dy * sinR(rotation.x()) * cosR(rotation.z()), dx *-cosR(rotation.z()) + dy * sinR(rotation.x()) * sinR(rotation.z()), dy * cosR(rotation.x()));
         dr /= widget->getProjection() == PERSPECTIVE ? 60 :widget->getScale();
         widget->getCamera()->addToPosition(dr);
     }

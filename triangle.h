@@ -7,6 +7,9 @@ public:
     Triangle( int a =-1, int b =-1, int c =-1 )
     { setIndices( a, b, c ); };
 
+    Triangle(int *values)
+    { for(int i = 0; i < 3; i++) index[i] = values[i]; };
+
     void setSelected( bool value )
     { _isSelected = value; };
 
@@ -30,7 +33,7 @@ public:
 private:
     bool _isSelected = false;
     bool _newSelected = false;
-    int index[ 3 ];
+    int index[3];
 };
 
 #endif // TRIANGLE_H

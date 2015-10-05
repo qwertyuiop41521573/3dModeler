@@ -22,6 +22,8 @@ private:
 
     QVector3D pivot;
     QVector2D pivotOnScreen;
+    vector <bool> checked;
+
 };
 
 #endif // TSCALE_H

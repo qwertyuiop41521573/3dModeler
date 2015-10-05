@@ -6,6 +6,7 @@
 
 using namespace std;
 
+
 bool isSelected(QMatrix4x4 finalMatrix, QVector3D vertex, bool perspective,
                 QVector2D min, QVector2D max)
 {
@@ -70,3 +71,12 @@ int sign( double number )
     return ( number > 0 ) ? 1 : -1;
 }
 
+double cosR(double x)
+{
+    return cos(inRadians(x));
+}
+
+double sinR(double x)
+{
+    return sin(inRadians(x));
+}

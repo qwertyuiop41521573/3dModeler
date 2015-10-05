@@ -5,6 +5,8 @@
 #include "gui/mypushbuttonmw.h"
 #include "gui/myspinbox.h"
 
+using namespace std;
+
 class TMove : public ToolWithWidget
 {
 public:
@@ -19,6 +21,8 @@ public slots:
 private:
     MyPushButtonMW *pushButton[3];
     MySpinBox *spinBox[3];
+
+    vector <bool> checked;
 };
 
 #endif // TMOVE_H

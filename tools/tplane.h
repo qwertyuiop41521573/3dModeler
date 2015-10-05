@@ -19,7 +19,9 @@ public slots:
 protected:
     MyCheckBoxMW *checkBoxSquare;
 
+private:
     void countDiagonalForSquare(QVector2D *diagonal);
+    void allocateCap(bool flip = false);
 };
 
 #endif // TPLANE_H

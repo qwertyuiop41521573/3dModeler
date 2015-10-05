@@ -61,7 +61,7 @@ protected:
     QPushButton *button;
 
 private slots:
-    void handleClick(bool pressed);\
+    void handleClick(bool pressed);
 
 private:
     bool _isActive = false;

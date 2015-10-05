@@ -8,6 +8,7 @@
 #include "glwidget.h"
 #include "gui/myspinbox.h"
 
+
 struct List;
 
 bool isSelected(QMatrix4x4 finalMatrix, QVector3D vertex, bool perspective,
@@ -17,6 +18,9 @@ QVector3D _fromScreenToWorld( QVector4D screenCoordinates, GLWidget *widget, boo
 double inRadians( double value );
 QVector4D screenCoordinatesPerspective( double a[ 4 ][ 4 ], double h, QVector4D screenCoordinates );
 int sign( double number );
+
+double cosR(double x);
+double sinR(double x);
 
 #endif // FUNCTIONS_H
 

@@ -113,13 +113,9 @@ void TBox::function(Action action, QMouseEvent *event)
         double dy = (widget->getHalfHeight() - event->y() - widget->
                      getLastPosition().y()) / double(100);
         Camera *camera = widget->getCamera();
+        QVector3D rotation = camera->rotation();
         QVector3D normal = (projection == PERSPECTIVE) ?
-                    QVector3D(0, 0, 1) : QVector3D(
-                        cos(inRadians(camera->rotation().x())) *
-                        cos(inRadians(camera->rotation().z())),
-                        cos(inRadians(camera->rotation().x())) *
-                        sin(inRadians(camera->rotation().z())),
-                        sin(inRadians(camera->rotation().x())));
+                    QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
 
         //if cube
         if(checkBoxCube->isChecked() && dy != 0)
