@@ -1,13 +1,13 @@
 #ifndef TMOVE_H
 #define TMOVE_H
 
-#include "toolwithwidget.h"
+#include "transformingtool.h"
 #include "gui/mypushbuttonmw.h"
 #include "gui/myspinbox.h"
 
 using namespace std;
 
-class TMove : public ToolWithWidget
+class TMove : public TransformingTool
 {
 public:
     TMove(MainWindow *mainWindow);
@@ -21,8 +21,6 @@ public slots:
 private:
     MyPushButtonMW *pushButton[3];
     MySpinBox *spinBox[3];
-
-    vector <bool> checked;
 };
 
 #endif // TMOVE_H

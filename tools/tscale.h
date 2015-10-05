@@ -1,11 +1,11 @@
 #ifndef TSCALE_H
 #define TSCALE_H
 
-#include "toolwithwidget.h"
+#include "toolwithpivot.h"
 #include "gui/mypushbuttonmw.h"
 #include "gui/myspinbox.h"
 
-class TScale : public ToolWithWidget
+class TScale : public ToolWithPivot
 {
 public:
     TScale(MainWindow *mainWindow);
@@ -19,11 +19,6 @@ public slots:
 private:
     MyPushButtonMW *pushButton[3];
     MySpinBox *spinBox[3];
-
-    QVector3D pivot;
-    QVector2D pivotOnScreen;
-    vector <bool> checked;
-
 };
 
 #endif // TSCALE_H

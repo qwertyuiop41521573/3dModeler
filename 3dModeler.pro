@@ -37,7 +37,9 @@ SOURCES += \
     gui/mylabel.cpp \
     gui/mypushbuttonmw.cpp \
     gui/myframe.cpp \
-    selectableobject.cpp
+    selectableobject.cpp \
+    transformingtool.cpp \
+    toolwithpivot.cpp
 
 
 HEADERS += \
@@ -75,7 +77,9 @@ HEADERS += \
     gui/mypushbuttonmw.h \
     gui/myhframe.h \
     gui/myframe.h \
-    selectableobject.h
+    selectableobject.h \
+    transformingtool.h \
+    toolwithpivot.h
 
 
 RESOURCES += \

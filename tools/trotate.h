@@ -1,11 +1,11 @@
 #ifndef TROTATE_H
 #define TROTATE_H
 
-#include "toolwithwidget.h"
+#include "toolwithpivot.h"
 #include "gui/myspinbox.h"
 #include "gui/mycheckboxmw.h"
 
-class TRotate : public ToolWithWidget
+class TRotate : public ToolWithPivot
 {
 public:
     TRotate(MainWindow *mainWindow);
@@ -19,10 +19,6 @@ public slots:
 private:
     MySpinBox *spinBox[4];
     MyCheckBoxMW *checkBoxCustomAxis;
-
-    QVector3D pivot;
-    QVector2D pivotOnScreen;
-     vector <bool> checked;
 
     bool getAxis(QMatrix4x4 *rotation, double angle);
 };

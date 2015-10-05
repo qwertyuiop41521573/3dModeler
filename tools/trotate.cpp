@@ -3,7 +3,7 @@
 #include "functions.h"
 #include "mainwindow.h"
 
-TRotate::TRotate(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
 {
     button->setText("Rotate");
     finalButton = new QPushButton("Rotate");
@@ -40,77 +40,8 @@ void TRotate::function(Action action, QMouseEvent *event)
     int triangleSize = triangle.size();
     int i, j, k;
 
-    if(action == START || action == FINAL)
-    {
-        QVector3D min, max;
-        QVector3D center;
-        if(workWithElements[0]->isChecked())
-        {
-            for(i = 0; i < vertexSize; i++)
-            {
-                if(vertex[i].isSelected())
-                {
-                    min = max = vertex[i].getPosition();
-                    break;
-                }
-            }
-            for(i++; i < vertexSize; i++)
-            {
-                if(vertex[i].isSelected())
-                {
-                    for(j = 0; j < 3; j++)
-                    {
-                        if(vertex[i].getPosition()[j] > max[j]) max[j] =
-                                    vertex[i].getPosition()[ j ];
-                        if(vertex[i].getPosition()[j] < min[j]) min[j] =
-                                    vertex[i].getPosition()[j];
-                    }
-                }
-            }
-        }
-        else
-        {
-            int index;
-            for(i = 0; i < triangleSize; i++)
-            {
-                if(triangle[i].isSelected())
-                {
-                    min = max = vertex[triangle[i].getIndex(0)].getPosition();
-                    break;
-                }
-            }
-
-            checked.resize(vertexSize);
-            for(i = 0; i < vertexSize; i++) checked[i] = false;
-            for( ; i < triangleSize; i++)
-            {
-                if(triangle[i].isSelected())
-                {
-                    for(j = 0; j < 3; j++)
-                    {
-                        index = triangle[i].getIndex(j);
-                        if(!checked[index])
-                        {
-                            for(k = 0; k < 3; k++)
-                            {
-                                checked[index] = true;
-                                if(vertex[index].getPosition()[k] > max[k])
-                                    max[k] = vertex[index].getPosition()[k];
-                                if(vertex[index].getPosition()[k] < min[k])
-                                    min[k] = vertex[index].getPosition()[k];
-                            }
-                        }
-                    }
-                }
-            }
-            checked.clear();
-        }
-        center = (min + max);
-        for(i = 0; i < 3; i++) center[i] /= 2;
-        pivot = center;
-        pivotOnScreen = widget->fromWorldToScreen(pivot, true);
-        if(action == START) return;
-    }
+    ToolWithPivot::function(action, event);
+    if(action == START) return;
 
     double angle;
     QMatrix4x4 rotation;
@@ -163,40 +94,13 @@ void TRotate::function(Action action, QMouseEvent *event)
         else if(!getAxis(&rotation, angle)) return;
     }
 
-    QMatrix4x4 transformation;
+    //create transformation matrix
     transformation.setToIdentity();
     transformation.translate(pivot);
     transformation *= rotation;
     transformation.translate(-pivot);
 
-    if(workWithElements[0]->isChecked())
-    {
-        for(i = 0; i < vertexSize; i++) if(vertex[i].isSelected())
-            vertex[i].multiplyPosition(transformation);
-    }
-    else
-    {
-        int index;
-        checked.resize(vertexSize);
-        for(i = 0; i < vertexSize; i++) checked[i] = false;
-
-        for(i = 0; i < triangleSize; i++)
-        {
-            if(triangle[i].isSelected())
-            {
-                for(j = 0; j < 3; j++)
-                {
-                    index = triangle[i].getIndex(j);
-                    if(!checked[index])
-                    {
-                        checked[index] = true;
-                        vertex[index].multiplyPosition(transformation);
-                    }
-                }
-            }
-        }
-        checked.clear();
-    }
+    transform();
 }
 
 bool TRotate::getAxis(QMatrix4x4 *rotation, double angle)

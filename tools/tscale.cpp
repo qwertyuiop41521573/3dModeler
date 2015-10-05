@@ -2,7 +2,7 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
-TScale::TScale(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+TScale::TScale(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
 {
     button->setText("Scale");
     finalButton = new QPushButton("Scale");
@@ -32,76 +32,9 @@ void TScale::function(Action action, QMouseEvent *event)
     int triangleSize = triangle.size();
     int i, j, k;
 
-    if(action == START || action == FINAL)
-    {
-        QVector3D min, max;
-        QVector3D center;
-        if(workWithElements[0]->isChecked())
-        {
-            for(i = 0; i < vertexSize; i++)
-            {
-                if(vertex[i].isSelected())
-                {
-                    min = max = vertex[i].getPosition();
-                    break;
-                }
-            }
-            for( i++; i < vertexSize; i++)
-            {
-                if(vertex[i].isSelected())
-                {
-                    for(j = 0; j < 3; j++)
-                    {
-                        if(vertex[i].getPosition()[j] > max[j]) max[j] =
-                                vertex[i].getPosition()[j];
-                        if(vertex[i].getPosition()[j] < min[j]) min[j] =
-                                vertex[i].getPosition()[j];
-                    }
-                }
-            }
-        }
-        else
-        {
-            int index;
-            for(i = 0; i < triangleSize; i++)
-            {
-                if(triangle[i].isSelected())
-                {
-                    min = max = vertex[triangle[i].getIndex(0)].getPosition();
-                    break;
-                }
-            }
-            checked.resize(vertexSize);
-            for(i = 0; i < vertexSize; i++) checked[i] = false;
-            for( ; i < triangleSize; i++)
-            {
-                if(triangle[i].isSelected())
-                {
-                    for(j = 0; j < 3; j++)
-                    {
-                        index = triangle[i].getIndex(j);
-                        if(!checked[index])
-                        {
-                            for(k = 0; k < 3; k++)
-                            {
-                                checked[index] = true;
-                                if(vertex[index].getPosition()[k] > max[k])
-                                    max[k] = vertex[index].getPosition()[k];
-                                if(vertex[index].getPosition()[k] < min[k])
-                                    min[k] = vertex[index].getPosition()[k];
-                            }
-                        }
-                    }
-                }
-            }
-            checked.clear();
-        }
-        center = (min + max);
-        for(i = 0; i < 3; i++) center[i] /= 2;
-        pivot = center;
-        pivotOnScreen = widget->fromWorldToScreen(pivot, true);
-        if(action == START) return;
-    }
+    ToolWithPivot::function(action, event);
+    if(action == START) return;
+
     QVector3D scaleFactor;
     if(action == FINAL) for(i = 0; i < 3; i++) scaleFactor[i] = spinBox[i]->
             value();
@@ -151,38 +84,10 @@ void TScale::function(Action action, QMouseEvent *event)
     for(i = 0; i < 3; i++) if(pushButton[i]->isChecked()) scaleFactor[i] = 1;
 
     QVector3D vector;
-    QMatrix4x4 transformation;
     transformation.setToIdentity();
     transformation.translate(pivot);
     transformation.scale(scaleFactor);
     transformation.translate(-pivot);
 
-    if(workWithElements[0]->isChecked())
-    {
-        for(i = 0; i < vertexSize; i++) if(vertex[i].isSelected())
-            vertex[i].multiplyPosition(transformation);
-    }
-    else
-    {
-        int index;
-        checked.resize(vertexSize);
-        for(i = 0; i < vertexSize; i++) checked[i] = false;
-
-        for(i = 0; i < triangleSize; i++)
-        {
-            if(triangle[i].isSelected())
-            {
-                for(j = 0; j < 3; j++)
-                {
-                    index = triangle[i].getIndex(j);
-                    if(!checked[index])
-                    {
-                        checked[index] = true;
-                        vertex[index].multiplyPosition(transformation);
-                    }
-                }
-            }
-        }
-        checked.clear();
-    }
+    transform();
 }
