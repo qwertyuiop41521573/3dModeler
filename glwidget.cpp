@@ -180,6 +180,11 @@ void GLWidget::draw(bool wireframe)
         color = black;
         if(workWithElements[0]->isChecked())
         {
+
+
+             //   glColor3f( 0, 0, 1 );
+               // gl::draw( mVboMesh );
+
             glPointSize(4);
             programColor->bind();
             prepareProgramColor(projectionMatrix);
@@ -196,7 +201,10 @@ void GLWidget::draw(bool wireframe)
                      vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber *
                          GLushortSize, indices.data(), GL_STATIC_DRAW);
+            glPolygonOffset(-1, -1);
+            glEnable(GL_POLYGON_OFFSET_LINE);
             glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_SHORT, 0);
+            glDisable(GL_POLYGON_OFFSET_FILL);
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(1);

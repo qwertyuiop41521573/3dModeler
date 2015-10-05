@@ -194,6 +194,8 @@ MainWindow::MainWindow()
 
     widgetActive = widget[3];
     setActiveWidget(widget[3]);
+    widget[3]->setRenderingMode(FLAT_SHADED);
+    widget[3]->setWireframeOverlay(true);
 
     for(i = 0; i < 4; i++) viewportLayout->addWidget(widget[i],
                                                      i / 2, i % 2);

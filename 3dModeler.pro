@@ -142,9 +142,6 @@ RESOURCES += \
 
 # replace * with & !!!
 # halfDiagonal can be <0 - FIX!!
-# tool Triangle - FIX!!
-
-# make cosInRadians function
 
 # correct button width
 
@@ -162,4 +159,5 @@ RESOURCES += \
 
 # GLWidget::draw() - textured and not have similar code
 
-# possible fix for wireframe overlay - render each line once
+# flat and smooth shaded should have light
+
