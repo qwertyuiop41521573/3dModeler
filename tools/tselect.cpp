@@ -27,7 +27,10 @@ void TSelect::function(Action action, QMouseEvent *event)
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
     Projection projection = widget->getProjection();
-    if(action == START)
+
+    switch(action)
+    {
+    case START:
     {
         QVector2D min, max;
         QVector2D startPosition = widget->getStartPosition();
@@ -67,9 +70,9 @@ void TSelect::function(Action action, QMouseEvent *event)
                 }
             }*/
         }
-        return;
+        break;
     }
-    if(action == DRAW)
+    case DRAW:
     {
         VertexAndIndexData *data = widget->getToolData();
         vector <VertexData_Color> &vertices = data->vertices;
@@ -101,6 +104,8 @@ void TSelect::function(Action action, QMouseEvent *event)
         indices[6] = 3;
         indices[7] = 0;
 
+        //exept drawing here we check is vertices are selected (inside rectangle)
+        //this should be in EXECUTE, but here "min" and "max" are counted already
         bool perspective = projection == PERSPECTIVE;
         widget->countFinalMatrix(perspective);
         int j;
@@ -128,8 +133,9 @@ void TSelect::function(Action action, QMouseEvent *event)
                 }
             }
         }
+        break;
     }
-    if(action == STOP)
+    case STOP:
     {
         if(workWithElements[0]->isChecked())
         {
@@ -159,6 +165,8 @@ void TSelect::function(Action action, QMouseEvent *event)
                 triangle[i].setNewSelected(false);
             }
         }
+        break;
+    }
     }
 }
 

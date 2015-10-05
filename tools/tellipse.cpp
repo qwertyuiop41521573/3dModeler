@@ -56,123 +56,127 @@ void TEllipse::function(Action action, QMouseEvent *event)
     int segments = spinBox[0]->value();
     int i;
 
-    //START and FINAL have much common code
-    if(action == START || action == FINAL)
+    //argument should be true for cylinder and false for ellipse, so we
+    //    can use _hasStage2 and do not create new variable
+    if(action == START || action == FINAL) allocateCap(_hasStage2);
+    switch(action)
     {
-        //argument should be true for cylinder and false for ellipse, so we
-        //    can use _hasStage2 and do not create new variable
-        allocateCap(_hasStage2);
-
-        if(action == START)
+    case START:
+    {
+        startPosition3D = fromScreenToWorld(event, widget);
+        for(i = 0; i <= segments; i++)
         {
-            startPosition3D = fromScreenToWorld(event, widget);
-            for(i = 0; i <= segments; i++)
-            {
-                vertex[vertexSize + i] = startPosition3D;
-                vertex[vertexSize + i].setNewSelected(true);
-            }
+            vertex[vertexSize + i] = startPosition3D;
+            vertex[vertexSize + i].setNewSelected(true);
         }
-        else
-        {
-            for(i = 0; i < 3; i++) normal[i] = spinBox[4 + i]->value();
-            if(normal.length() == 0) return;
-            normal.normalize();
-            double radius = spinBox[7]->value();
-            if(radius == 0) return;
-            QVector3D center;
-            for(i = 0; i < 3; i++) center[i] = spinBox[1 + i]->value();
-            //widget->countFinalInverseMatrix(false);
-            //center of first cap
-            vertex[vertexSize + segments].setPosition(center);
-
-            //cap is created with rotating "QVector4D rotatingVertex" around
-            //    center with "QMatrix4x4 rotation" (with every iteration, 1
-            //    segment is passed); then "rotation" is copied to "QVector3D
-            //    currentVertex", and it's scaled and moved with "QMatrix4x4
-            //    scaleAndTranslate"
-
-            //if normal is parallel to X axis, than e_y; else [e_x, normal]
-            QVector4D rotatingVertex = (normal.x() == 1) ? QVector4D(0, 1, 0,
-                1) : QVector4D(QVector3D::crossProduct(QVector3D(1, 0, 0),
-                                         normal).normalized(), 1);
-            double angle = 360 / double(segments);
-            QMatrix4x4 scaleAndTranslate = createScaleAndTranslate(radius,
-                                                     radius, radius, center);
-
-            createCap(rotatingVertex, angle, normal, scaleAndTranslate);
-
-            for(i = 0; i <= segments; i++) vertex[vertexSize + i].
-                    setSelected(true);
-        }
+        break;
     }
+    case FINAL:
+    {
+        for(i = 0; i < 3; i++) normal[i] = spinBox[4 + i]->value();
+        if(normal.length() == 0) return;
+        normal.normalize();
+        double radius = spinBox[7]->value();
+        if(radius == 0) return;
+        QVector3D center;
+        for(i = 0; i < 3; i++) center[i] = spinBox[1 + i]->value();
+        //widget->countFinalInverseMatrix(false);
+        //center of first cap
+        vertex[vertexSize + segments].setPosition(center);
+
+        //cap is created with rotating "QVector4D rotatingVertex" around
+        //    center with "QMatrix4x4 rotation" (with every iteration, 1
+        //    segment is passed); then "rotation" is copied to "QVector3D
+        //    currentVertex", and it's scaled and moved with "QMatrix4x4
+        //    scaleAndTranslate"
+
+        //if normal is parallel to X axis, than e_y; else [e_x, normal]
+        QVector4D rotatingVertex = (normal.x() == 1) ? QVector4D(0, 1, 0,
+            1) : QVector4D(QVector3D::crossProduct(QVector3D(1, 0, 0),
+                                     normal).normalized(), 1);
+        double angle = 360 / double(segments);
+        QMatrix4x4 scaleAndTranslate = createScaleAndTranslate(radius,
+                                                 radius, radius, center);
+
+        createCap(rotatingVertex, angle, normal, scaleAndTranslate);
+
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].
+                setSelected(true);
+        break;
+    }
+
     //for cylinder, this is "if(!_stage2)", so it should be done if:
     //    _hasStage2 == false || (_hasStage2 = true && _stage2 == false)
     //    (with _hasStage2 we define if this code is executed by ellipse
     //    (false) or cylinder (true)
-    if(action == EXECUTE && (_hasStage2 ? _stage2 == false : true))
+    case EXECUTE:
     {
-        Projection projection = widget->getProjection();
-        bool circle = checkBoxCircle->isChecked();
-        if(projection == PERSPECTIVE)
+        if(_hasStage2 ? _stage2 == false : true)
         {
-            double height = startPosition3D.z();
-            QVector3D worldCoordinates = fromScreenToWorld(event, widget,
-                                                           true, height);
-            QVector2D radius = QVector2D(worldCoordinates - startPosition3D) /
-                    double(2);
-            QVector3D center = startPosition3D + radius;
-            vertex[vertexSize - 1].setPosition(center);
-            QMatrix4x4 scaleAndTranslate;
-            scaleAndTranslate.setToIdentity();
-            scaleAndTranslate.translate(center);
-            if(circle)
+            Projection projection = widget->getProjection();
+            bool circle = checkBoxCircle->isChecked();
+            if(projection == PERSPECTIVE)
             {
-                double length = radius.length();
-                scaleAndTranslate.scale(length, length, 1);
-            }
-            else scaleAndTranslate.scale(radius.x(), radius.y(), 1);
+                double height = startPosition3D.z();
+                QVector3D worldCoordinates = fromScreenToWorld(event, widget,
+                                                               true, height);
+                QVector2D radius = QVector2D(worldCoordinates - startPosition3D) /
+                        double(2);
+                QVector3D center = startPosition3D + radius;
+                vertex[vertexSize - 1].setPosition(center);
+                QMatrix4x4 scaleAndTranslate;
+                scaleAndTranslate.setToIdentity();
+                scaleAndTranslate.translate(center);
+                if(circle)
+                {
+                    double length = radius.length();
+                    scaleAndTranslate.scale(length, length, 1);
+                }
+                else scaleAndTranslate.scale(radius.x(), radius.y(), 1);
 
-            double angle = 360 / double(segments);
-            if(!circle) angle *= sign(radius.x() * radius.y());
-            createCap({ 1.f, 0.f, 0.f, 1.f }, angle, { 0, 0, 1 },
-                              scaleAndTranslate);
-        }
-        else
-        {
-            widget->countFinalInverseMatrix(false);
-            QVector2D currentPosition = QVector2D(event->x() -
-                widget->getHalfWidth(), widget->getHalfHeight() - event->y());
-            QVector3D worldCoordinates = _fromScreenToWorld(
-                        QVector4D(currentPosition, 0, 1), widget);
-            QVector3D radius = (worldCoordinates - startPosition3D) /
-                    double(2);
-            QVector3D center = startPosition3D + radius;
-            vertex[vertexSize - 1].setPosition(center);
-
-            QVector3D normal = createNormal(widget->getCamera()->rotation());
-            QMatrix4x4 scaleAndTranslate;
-            scaleAndTranslate.setToIdentity();
-            scaleAndTranslate.translate(center);
-            if(circle)
-            {
-                double length = radius.length();
-                scaleAndTranslate.scale(length, length, length);
+                double angle = 360 / double(segments);
+                if(!circle) angle *= sign(radius.x() * radius.y());
+                createCap({ 1.f, 0.f, 0.f, 1.f }, angle, { 0, 0, 1 },
+                                  scaleAndTranslate);
             }
             else
             {
-                for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] =
-                        sign(radius[i]);
-                scaleAndTranslate.scale(radius.x(), radius.y(), radius.z());
+                widget->countFinalInverseMatrix(false);
+                QVector2D currentPosition = QVector2D(event->x() -
+                    widget->getHalfWidth(), widget->getHalfHeight() - event->y());
+                QVector3D worldCoordinates = _fromScreenToWorld(
+                            QVector4D(currentPosition, 0, 1), widget);
+                QVector3D radius = (worldCoordinates - startPosition3D) /
+                        double(2);
+                QVector3D center = startPosition3D + radius;
+                vertex[vertexSize - 1].setPosition(center);
+
+                QVector3D normal = createNormal(widget->getCamera()->rotation());
+                QMatrix4x4 scaleAndTranslate;
+                scaleAndTranslate.setToIdentity();
+                scaleAndTranslate.translate(center);
+                if(circle)
+                {
+                    double length = radius.length();
+                    scaleAndTranslate.scale(length, length, length);
+                }
+                else
+                {
+                    for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] =
+                            sign(radius[i]);
+                    scaleAndTranslate.scale(radius.x(), radius.y(), radius.z());
+                }
+                double angle = 360 / double(segments) * sign(radius.x() *
+                                                         radius.y() * radius.z());
+                if(projection == TOP || projection == BOTTOM) angle *= -1;
+                bool front = projection == FRONT || projection == BACK;
+                createCap({ !front, front, 0.f, 1.f }, angle, normal,
+                                  scaleAndTranslate);
             }
-            double angle = 360 / double(segments) * sign(radius.x() *
-                                                     radius.y() * radius.z());
-            if(projection == TOP || projection == BOTTOM) angle *= -1;
-            bool front = projection == FRONT || projection == BACK;
-            createCap({ !front, front, 0.f, 1.f }, angle, normal,
-                              scaleAndTranslate);
         }
+        break;
     }
-    if(action == STOP)
+    case STOP:
     {
         //if ellipse is a line
         if(QVector3D::crossProduct(vertex[vertexSize - 1].getPosition(),
@@ -181,6 +185,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             //remove cap
             vertex.resize(vertexSize - segments - 1);
             triangle.resize(triangle.size() - segments);
+            ellipseFailed = true;
             return;
         }
 
@@ -189,6 +194,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             vertex[vertexSize - i].setNewSelected(false);
             vertex[vertexSize - i].setSelected(true);
         }
+    }
     }
 }
 

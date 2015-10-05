@@ -21,6 +21,7 @@ protected:
     MyCheckBoxMW *checkBoxCircle;
 
     QVector3D normal;
+    bool ellipseFailed;
 
     QVector3D createNormal(QVector3D camRot);
 

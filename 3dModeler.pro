@@ -105,22 +105,8 @@ RESOURCES += \
 #       shrinks
 # pivot to orbit
 # items selected label
-
-
-# make class SelectableVector for vertex and triangle;  in toolSelectFunc
-#               if (action == STOP )  -- 2 ifs can be combined
-#               ( for vertices and triangles )
-# unite all setters/getters in classes
-# switch(action) {} in Tool::fuction()
-# separate functions.h, cpp
-
-# in Model replace traingleNumber with getTriangleNumber();
-# fix flatShaded wireframeOverlay
-
 # triangles selected by clicking or drawing rectangle inside them
 # backface of selected triangle has another color
-# remove #include <iostream>
-
 # plane - option for sqauare ( hold shift ), toolBox - option for cube
 #       ( hold shift )
 # toolBox - capture mouse movement in whole window, not in widget
@@ -128,36 +114,34 @@ RESOURCES += \
 # box and plane - segments
 # cylinder - no cap option
 # option - flip triangles
+# correct button width
+# flat and smooth shaded should have light
 
+# make class SelectableVector for vertex and triangle;  in toolSelectFunc
+#               if (action == STOP )  -- 2 ifs can be combined
+#               ( for vertices and triangles )
+# unite all setters/getters in classes
+# in Model replace traingleNumber with getTriangleNumber();
+# remove #include <iostream>
 # in model->load() replace fscanf with cin
+# replace * with & !!!
+# common in cylinder and box ?
+# move, rotate and scale have much common code
+# remove some variables from widget (like colors)
+# make triangle[i].vertex[j]
+# GLWidget::draw() - textured and not have similar code
+# passing const to methods to avoid copies ?
+# replace hasStage2(true) with _stage2 = true;
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis
 # ellipse and cylinder: normal = (-1, 0, 0) - FIX!!
+# halfDiagonal can be <0 - FIX!!
+# in tools widgets many values must be integer!
+# box - cube down - fix
 
 
 # tPlane->widget() is not hidden as it is the biggest widget
 # loading and saving model is corrupted
 
-
-# replace * with & !!!
-# halfDiagonal can be <0 - FIX!!
-
-# correct button width
-
-
-# common in cylinder and box ?
-# move, rotate and scale have much common code
-
-
-# remove some variables from widget (like colors)
-
 # check all matrices in glwidget
-
-# in tools widgets many values must be integer!
-# make triangle[i].vertex[j]
-
-# GLWidget::draw() - textured and not have similar code
-
-# flat and smooth shaded should have light
-

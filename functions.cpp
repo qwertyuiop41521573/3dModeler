@@ -16,21 +16,19 @@ bool isSelected(QMatrix4x4 finalMatrix, QVector3D vertex, bool perspective,
             min.y() && result.y() < max.y();
 }
 
-QVector3D fromScreenToWorld( QMouseEvent *event, GLWidget *widget, bool forcedHeight, double height )
+QVector3D fromScreenToWorld(QMouseEvent *event, GLWidget *widget, bool forcedHeight, double height)
 {
-    return _fromScreenToWorld( QVector4D( event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y(),
-                                                                   0, 1 ), widget, forcedHeight, height );
+    return _fromScreenToWorld(QVector4D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y(), 0, 1), widget, forcedHeight, height);
 }
 
 QVector3D _fromScreenToWorld( QVector4D screenCoordinates, GLWidget *widget, bool forcedHeight, double height )
 {
     bool perspective = widget->getProjection() == PERSPECTIVE;
-    widget->countFinalInverseMatrix( perspective );
+    widget->countFinalInverseMatrix(perspective);
     QVector4D worldCoordinates;
-    if( perspective )
+    if(perspective)
     {
-        QMatrix4x4 finalInverseMatrix = widget->
-                getFinalInverseMatrix();
+        QMatrix4x4 finalInverseMatrix = widget->getFinalInverseMatrix();
         double a[ 4 ][ 4 ];
         int i, j;
         for( i = 0; i < 4; i++ ) for( j = 0; j < 4; j++ ) a[ i ][ j ] = finalInverseMatrix.data()[ 4 * j + i ];

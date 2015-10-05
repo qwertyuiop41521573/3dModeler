@@ -41,8 +41,7 @@ void TBox::function(Action action, QMouseEvent *event)
     //    for tool select
     if(action == DRAW) return;
 
-    if(action != STOP) TPlane::function(action == STAGE2 ? STOP : action,
-                                          event);
+    if(action != STOP && action != STAGE2) TPlane::function(action, event);
 
     GLWidget *widget = *_activeWidget;
     vector <Vertex> &vertex = model->getVertex();
@@ -51,8 +50,10 @@ void TBox::function(Action action, QMouseEvent *event)
     int triangleSize = triangle.size();
     int i;
 
+    switch(action)
+    {
     //if "Create Box" was pressed
-    if(action == FINAL)
+    case FINAL:
     {
         for(i = 0; i < 3; i++) if(spinBox[i + 3]->value() == 0) return;
 
@@ -105,51 +106,57 @@ void TBox::function(Action action, QMouseEvent *event)
                                                vertexSize + 5);
         triangle[triangleSize + 11].setIndices(vertexSize + 4, vertexSize + 7,
                                                vertexSize + 6);
+
+        break;
     }
     //if we drag pressed mouse in viewport
-    if(action == EXECUTE && _stage2)
+    case EXECUTE:
     {
-        Projection projection = widget->getProjection();
-        double dy = (widget->getHalfHeight() - event->y() - widget->
-                     getLastPosition().y()) / double(100);
-        Camera *camera = widget->getCamera();
-        QVector3D rotation = camera->rotation();
-        QVector3D normal = (projection == PERSPECTIVE) ?
-                    QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
-
-        //if cube
-        if(checkBoxCube->isChecked() && dy != 0)
+        if(_stage2)
         {
-            QVector3D dh = normal * sign(dy) * (vertex[vertexSize - 2].
-                    getPosition() - vertex[vertexSize - 4].getPosition()).
-                    length() / qSqrt(2);
-            for(i = -4; i < 0; i++) vertex[vertexSize + i].setPosition(
-                        vertex[vertexSize - 4 + i].getPosition() + dh);
-        }
-        else for(i = -4; i < 0; i++) vertex[vertexSize + i].addToPosition(
-                    normal * dy);
+            Projection projection = widget->getProjection();
+            double dy = (widget->getHalfHeight() - event->y() - widget->
+                         getLastPosition().y()) / double(100);
+            Camera *camera = widget->getCamera();
+            QVector3D rotation = camera->rotation();
+            QVector3D normal = (projection == PERSPECTIVE) ?
+                        QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
 
-        QVector3D diagonal = vertex[vertexSize - 2].getPosition() -
-                vertex[vertexSize - 4].getPosition();
-        QVector3D e_x = vertex[vertexSize - 1].getPosition() - vertex[
-                vertexSize - 4].getPosition();
+            //if cube
+            if(checkBoxCube->isChecked() && dy != 0)
+            {
+                QVector3D dh = normal * sign(dy) * (vertex[vertexSize - 2].
+                        getPosition() - vertex[vertexSize - 4].getPosition()).
+                        length() / qSqrt(2);
+                for(i = -4; i < 0; i++) vertex[vertexSize + i].setPosition(
+                            vertex[vertexSize - 4 + i].getPosition() + dh);
+            }
+            else for(i = -4; i < 0; i++) vertex[vertexSize + i].addToPosition(
+                        normal * dy);
 
-        //flip the box if needed
-        if(QVector3D::dotProduct(normal, vertex[vertexSize - 8].
-            getPosition() - vertex[vertexSize - 4].getPosition()) *
-            QVector3D::dotProduct(normal, QVector3D::crossProduct(e_x,
-                                                            diagonal)) > 0)
-        {
-                QVector3D temp = vertex[vertexSize - 7].getPosition();
-                vertex[vertexSize - 7] = vertex[vertexSize - 5];
-                vertex[vertexSize - 5].setPosition(temp);
-                temp = vertex[vertexSize - 3].getPosition();
-                vertex[vertexSize - 3] = vertex[vertexSize - 1];
-                vertex[vertexSize - 1].setPosition(temp);
+            QVector3D diagonal = vertex[vertexSize - 2].getPosition() -
+                    vertex[vertexSize - 4].getPosition();
+            QVector3D e_x = vertex[vertexSize - 1].getPosition() - vertex[
+                    vertexSize - 4].getPosition();
+
+            //flip the box if needed
+            if(QVector3D::dotProduct(normal, vertex[vertexSize - 8].
+                getPosition() - vertex[vertexSize - 4].getPosition()) *
+                QVector3D::dotProduct(normal, QVector3D::crossProduct(e_x,
+                                                                diagonal)) > 0)
+            {
+                    QVector3D temp = vertex[vertexSize - 7].getPosition();
+                    vertex[vertexSize - 7] = vertex[vertexSize - 5];
+                    vertex[vertexSize - 5].setPosition(temp);
+                    temp = vertex[vertexSize - 3].getPosition();
+                    vertex[vertexSize - 3] = vertex[vertexSize - 1];
+                    vertex[vertexSize - 1].setPosition(temp);
+            }
         }
+        break;
     }
     //last click in viewport for this tool
-    if(action == STOP)
+    case STOP:
     {
         vertexSize = vertex.size();
         //if height == 0
@@ -171,13 +178,19 @@ void TBox::function(Action action, QMouseEvent *event)
         widget->setToolIsOn(false);
         setStage2(false);
         widget->setMouseTracking(false);
+        break;
     }
     //"stage1" was dragging pressed mouse (and drawing the cap of box),
     //    stage2 is moving released mouse in vertical direction (changing
     //    the height of box);    STAGE2 is ran once, like START or STOP,
     //    EXECUTE is ran every time GLWidget recieves mouse move event
-    if(action == STAGE2)
+    case STAGE2:
     {
+        //check if plane has zero height or width
+        planeFailed = false;
+        TPlane::function(STOP, event);
+        if(planeFailed) return;
+
         widget->setToolIsOn(true);
         setStage2(true);
 
@@ -214,6 +227,7 @@ void TBox::function(Action action, QMouseEvent *event)
             vertex[vertexSize + i].setNewSelected(true);
         }
         widget->setMouseTracking(true);
+    }
     }
 }
 

@@ -461,7 +461,7 @@ void GLWidget::mouseReleaseEvent( QMouseEvent *event )
         _mainWindow->stopQuickAccess();
         quickAccess = false;
     }
-    else if( event->button() == Qt::LeftButton )
+    else if(event->button() == Qt::LeftButton)
     {
         toolIsOn = false;
         Tool *aT = *activeTool;

@@ -18,6 +18,7 @@ public slots:
     
 protected:
     MyCheckBoxMW *checkBoxSquare;
+    bool planeFailed;
 
 private:
     void countDiagonalForSquare(QVector2D *diagonal);

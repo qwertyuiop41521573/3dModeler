@@ -15,8 +15,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
 
     //cylinder's STAGE2 has much code from ellipse's STOP
-    if(action != STOP) TEllipse::function(action == STAGE2 ? STOP : action,
-                                          event);
+    if(action != STOP && action != STAGE2) TEllipse::function(action, event);
 
     GLWidget *widget = *_activeWidget;
     vector <Vertex> &vertex = model->getVertex();
@@ -27,53 +26,60 @@ void TCylinder::function(Action action, QMouseEvent *event)
     int i;
 
 
+    switch(action)
+    {
     //all START and most of FINAL (creating first cap) was done in
     //    TEllipse::function(action, event);
-    if(action == FINAL)
+    case FINAL:
     {
         createWallsAndSecondCap(normal);
         for(i = 0; i <= segments; i++) vertex[vertexSize + i].setSelected(
                         true);
+        break;
     }
     //if(!_stage2) is done in TEllipse::function(action, event);
-    if(action == EXECUTE && _stage2)
+    case EXECUTE:
     {
-        Projection projection = widget->getProjection();
-        double dy = (widget->getHalfHeight() - event->y() - widget->
-                     getLastPosition().y()) / double(100);
-        QVector3D normal = createNormal(widget->getCamera()->rotation());
-
-        for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].
-                addToPosition(normal * dy);
-
-        //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
-        QVector3D v1 = vertex[vertexSize - segments - 1].getPosition() -
-                vertex[vertexSize - 1].getPosition();
-        QVector3D v2 = vertex[vertexSize - segments].getPosition() -
-                vertex[vertexSize - 1].getPosition();
-
-        //flip if needed
-        if(QVector3D::dotProduct(normal, vertex[vertexSize - segments - 2].
-            getPosition() - vertex[vertexSize - 1].getPosition()) *
-            QVector3D::dotProduct(normal, QVector3D::crossProduct(v1, v2))
-                > 0)
+        if(_stage2)
         {
-            QVector3D temp;
-            for(i = 0; i < segments / 2; i++)
+            Projection projection = widget->getProjection();
+            double dy = (widget->getHalfHeight() - event->y() - widget->
+                         getLastPosition().y()) / double(100);
+            QVector3D normal = createNormal(widget->getCamera()->rotation());
+
+            for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].
+                    addToPosition(normal * dy);
+
+            //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
+            QVector3D v1 = vertex[vertexSize - segments - 1].getPosition() -
+                    vertex[vertexSize - 1].getPosition();
+            QVector3D v2 = vertex[vertexSize - segments].getPosition() -
+                    vertex[vertexSize - 1].getPosition();
+
+            //flip if needed
+            if(QVector3D::dotProduct(normal, vertex[vertexSize - segments - 2].
+                getPosition() - vertex[vertexSize - 1].getPosition()) *
+                QVector3D::dotProduct(normal, QVector3D::crossProduct(v1, v2))
+                    > 0)
             {
-                temp = vertex[vertexSize - segments - 1 + i].getPosition();
-                vertex[vertexSize - segments - 1 + i] = vertex[vertexSize -
-                        2 - i];
-                vertex[vertexSize - 2 - i].setPosition(temp);
-                temp = vertex[vertexSize - 2 * segments - 2 + i].
-                        getPosition();
-                vertex[vertexSize - 2 * segments - 2 + i] = vertex[
-                        vertexSize - segments - 3 - i];
-                vertex[vertexSize - segments - 3 - i].setPosition(temp);
+                QVector3D temp;
+                for(i = 0; i < segments / 2; i++)
+                {
+                    temp = vertex[vertexSize - segments - 1 + i].getPosition();
+                    vertex[vertexSize - segments - 1 + i] = vertex[vertexSize -
+                            2 - i];
+                    vertex[vertexSize - 2 - i].setPosition(temp);
+                    temp = vertex[vertexSize - 2 * segments - 2 + i].
+                            getPosition();
+                    vertex[vertexSize - 2 * segments - 2 + i] = vertex[
+                            vertexSize - segments - 3 - i];
+                    vertex[vertexSize - segments - 3 - i].setPosition(temp);
+                }
             }
         }
+        break;
     }
-    if(action == STOP)
+    case STOP:
     {
         vertexSize = vertex.size();
         //if height == 0 we remove cylinder (2 * segments + 2 vertices and 4 *
@@ -94,9 +100,13 @@ void TCylinder::function(Action action, QMouseEvent *event)
         widget->setToolIsOn(false);
         setStage2(false);
         widget->setMouseTracking(false);
+        break;
     }
-    if(action == STAGE2)
+    case STAGE2:
     {
+        ellipseFailed = false;
+        TEllipse::function(STOP, event);
+        if(ellipseFailed) return;
 
         widget->setToolIsOn(true);
         setStage2(true);
@@ -107,6 +117,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
                     true);
 
         widget->setMouseTracking(true);
+    }
     }
 }
 

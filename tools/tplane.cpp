@@ -24,7 +24,9 @@ void TPlane::function(Action action, QMouseEvent *event)
     int triangleSize = triangle.size();
     int i;
 
-    if(action == START)
+    switch(action)
+    {
+    case START:
     {
         //create the cap without other parts
         allocateCap(_hasStage2);
@@ -36,73 +38,79 @@ void TPlane::function(Action action, QMouseEvent *event)
             vertex[vertexSize + i] = worldCoordinates;
             vertex[vertexSize + i].setNewSelected(true);
         }
+        break;
     }
-    if(action == EXECUTE && (_hasStage2 ? _stage2 == false : true))
+    case EXECUTE:
     {
-        //drawing the cap
-        QVector2D diagonal;
-        //with posA and posB we track if we need to flip cap
-        QVector3D posA, posB;
-        //drawing square if "square" or "cube" options set
-        bool square = checkBoxSquare->isChecked();
-        Projection projection = widget->getProjection();
-        if(projection == PERSPECTIVE)
+        if(_hasStage2 ? _stage2 == false : true)
         {
+            //drawing the cap
+            QVector2D diagonal;
+            //with posA and posB we track if we need to flip cap
+            QVector3D posA, posB;
+            //drawing square if "square" or "cube" options set
+            bool square = checkBoxSquare->isChecked();
+            Projection projection = widget->getProjection();
+            if(projection == PERSPECTIVE)
+            {
 
-            //height can be 0 or 1 (which point will be returned by
-            //    fromScreenToWorld(event, widget) at action == START,
-            //    depends on camera angle
-            double height = vertex[vertexSize - 4].getPosition().z();
-            QVector3D worldCoordinates = fromScreenToWorld(event, widget,
-                                                           true, height);
-            vertex[vertexSize - 2].setPosition(worldCoordinates);
-            diagonal = QVector2D(vertex[vertexSize - 2].getPosition() -
-                    vertex[vertexSize - 4].getPosition());
-            if(square)
-            {
-                countDiagonalForSquare(&diagonal);
-                vertex[vertexSize - 2].setPosition(vertex[vertexSize - 4].
-                        getPosition() + QVector3D(diagonal, 0));
+                //height can be 0 or 1 (which point will be returned by
+                //    fromScreenToWorld(event, widget) at action == START,
+                //    depends on camera angle
+                double height = vertex[vertexSize - 4].getPosition().z();
+                QVector3D worldCoordinates = fromScreenToWorld(event, widget,
+                                                               true, height);
+                vertex[vertexSize - 2].setPosition(worldCoordinates);
+                diagonal = QVector2D(vertex[vertexSize - 2].getPosition() -
+                        vertex[vertexSize - 4].getPosition());
+                if(square)
+                {
+                    countDiagonalForSquare(&diagonal);
+                    vertex[vertexSize - 2].setPosition(vertex[vertexSize - 4].
+                            getPosition() + QVector3D(diagonal, 0));
+                }
+                posB = QVector3D(vertex[vertexSize - 4].getPosition().x(), vertex[
+                        vertexSize - 2].getPosition().y(), height);
+                posA = QVector3D(vertex[vertexSize - 2].getPosition().x(), vertex[
+                        vertexSize - 4].getPosition().y(), height);
             }
-            posB = QVector3D(vertex[vertexSize - 4].getPosition().x(), vertex[
-                    vertexSize - 2].getPosition().y(), height);
-            posA = QVector3D(vertex[vertexSize - 2].getPosition().x(), vertex[
-                    vertexSize - 4].getPosition().y(), height);
-        }
-        else
-        {
-            widget->countFinalInverseMatrix(false);
-            QVector2D startPosition = QVector2D(widget->getFinalMatrix() *
-                       QVector4D(vertex[vertexSize - 4].getPosition(), 1));
-            QVector2D currentPosition = QVector2D(event->x() - widget->
-                       getHalfWidth(), widget->getHalfHeight() - event->y());
-            diagonal = currentPosition - startPosition;
-            if(square)
+            else
             {
-                countDiagonalForSquare(&diagonal);
-                currentPosition = startPosition + diagonal;
+                widget->countFinalInverseMatrix(false);
+                QVector2D startPosition = QVector2D(widget->getFinalMatrix() *
+                           QVector4D(vertex[vertexSize - 4].getPosition(), 1));
+                QVector2D currentPosition = QVector2D(event->x() - widget->
+                           getHalfWidth(), widget->getHalfHeight() - event->y());
+                diagonal = currentPosition - startPosition;
+                if(square)
+                {
+                    countDiagonalForSquare(&diagonal);
+                    currentPosition = startPosition + diagonal;
+                }
+                vertex[vertexSize - 2].setPosition(_fromScreenToWorld(
+                                  QVector4D(currentPosition, 0, 1), widget));
+                posB = _fromScreenToWorld(QVector4D(startPosition.x(),
+                                            currentPosition.y(), 0, 1), widget);
+                posA = _fromScreenToWorld(QVector4D(currentPosition.x(),
+                                            startPosition.y(), 0, 1), widget);
             }
-            vertex[vertexSize - 2].setPosition(_fromScreenToWorld(
-                              QVector4D(currentPosition, 0, 1), widget));
-            posB = _fromScreenToWorld(QVector4D(startPosition.x(),
-                                        currentPosition.y(), 0, 1), widget);
-            posA = _fromScreenToWorld(QVector4D(currentPosition.x(),
-                                        startPosition.y(), 0, 1), widget);
+            //flipping the cap (or not)
+            int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;
+            vertex[vertexSize - a].setPosition(posA);
+            vertex[vertexSize - 4 + a].setPosition(posB);
         }
-        //flipping the cap (or not)
-        int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;
-        vertex[vertexSize - a].setPosition(posA);
-        vertex[vertexSize - 4 + a].setPosition(posB);
+        break;
     }
-    if( action == STOP )
+    case STOP:
     {
-        //if cap's height or width == 0
+        //if plane's height or width == 0
         if(vertex[vertexSize - 1] == vertex[vertexSize - 2] || vertex[
                 vertexSize - 3] == vertex[vertexSize - 2] )
         {
             //remove cap - last 4 vertices and 2 triangles
             vertex.resize(vertexSize - 4);
             triangle.resize(triangle.size() - 2);
+            planeFailed = true;
             return;
         }
         for(i = 1; i < 5; i++)
@@ -110,6 +118,7 @@ void TPlane::function(Action action, QMouseEvent *event)
             vertex[vertexSize - i].setNewSelected(false);
             vertex[vertexSize - i].setSelected(true);
         }
+    }
     }
 }
 
