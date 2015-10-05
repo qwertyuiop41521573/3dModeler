@@ -121,16 +121,13 @@ RESOURCES += \
 #               if (action == STOP )  -- 2 ifs can be combined
 #               ( for vertices and triangles )
 # unite all setters/getters in classes
-# in Model replace traingleNumber with getTriangleNumber();
 # remove #include <iostream>
 # in model->load() replace fscanf with cin
-# replace * with & !!!
-# common in cylinder and box ?
 # move, rotate and scale have much common code
-# remove some variables from widget (like colors)
 # make triangle[i].vertex[j]
 # GLWidget::draw() - textured and not have similar code
 # passing const to methods to avoid copies ?
+# const where possible ?
 # replace hasStage2(true) with _stage2 = true;
 
 # tool Cylinder!!! - FINAL ( height )

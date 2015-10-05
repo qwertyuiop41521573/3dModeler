@@ -7,6 +7,16 @@
 
 #include <QMouseEvent>
 
+#define GRAY       QVector3D(0.5, 0.5, 0.5)
+#define BLACK      QVector3D(0, 0, 0)
+#define RED        QVector3D(1, 0, 0)
+#define GREEN      QVector3D(0, 1, 0)
+#define BLUE       QVector3D(0, 0, 1)
+#define SHADED     QVector3D(0.73, 0.78, 0.91)
+#define DARK_GRAY  QVector3D(0.4, 0.4, 0.4)
+#define LIGHT_BLUE QVector3D(0, 0.4, 0.7)
+#define WHITE      QVector3D(1, 1, 1)
+
 using namespace std;
 
 GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
@@ -37,7 +47,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
     vector <VertexData_Color> &verticesG = grid.vertices;
 
     verticesG.resize(88);
-    for(i = 0; i < 88; i++) verticesG[i].color = darkGray;
+    for(i = 0; i < 88; i++) verticesG[i].color = DARK_GRAY;
     for(i = 0; i < 40; i++)
     {
         verticesG[i].position.setX(i % 4 / 2 ? i / 4 - 10 : i % 2 ? 10 : -10);
@@ -62,15 +72,15 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
     vector <VertexData_Color> &verticesA = axis.vertices;
     verticesA.resize(6);
 
-    verticesA[0].color = red;
+    verticesA[0].color = RED;
     verticesA[1].position.setX(1);
-    verticesA[1].color = red;
-    verticesA[2].color = green;
+    verticesA[1].color = RED;
+    verticesA[2].color = GREEN;
     verticesA[3].position.setY(1);
-    verticesA[3].color = green;
-    verticesA[4].color = blue;
+    verticesA[3].color = GREEN;
+    verticesA[4].color = BLUE;
     verticesA[5].position.setZ(1);
-    verticesA[5].color = blue;
+    verticesA[5].color = BLUE;
 
     axis.indices.resize(6);
     for( i = 0; i < 6; i++ ) axis.indices[i] = i;
@@ -92,7 +102,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
 void GLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColorVector(gray);
+    glClearColorVector(GRAY);
     initShaders();
     //if( model->textured ) initTextures();
     glEnable(GL_DEPTH_TEST);
@@ -177,7 +187,7 @@ void GLWidget::draw(bool wireframe)
     case WIREFRAME:
     {
         glDisable(GL_CULL_FACE);
-        color = black;
+        color = BLACK;
         if(workWithElements[0]->isChecked())
         {
 
@@ -194,7 +204,7 @@ void GLWidget::draw(bool wireframe)
             for(i = 0; i < vertexNumber; i++)
             {
                 vertices_col[i].position = vertex[i].getPosition();
-                vertices_col[i].color = vertex[i].newSelected() ? blue : vertex[i].isSelected() ? red : black;
+                vertices_col[i].color = vertex[i].newSelected() ? BLUE : vertex[i].isSelected() ? RED : BLACK;
                 indices[i] = i;
             }
             glBufferData(GL_ARRAY_BUFFER, vertexNumber *
@@ -214,7 +224,7 @@ void GLWidget::draw(bool wireframe)
     {
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        color = shadedColor;
+        color = SHADED;
         glShadeModel(GL_FLAT);
         break;
     }
@@ -222,7 +232,7 @@ void GLWidget::draw(bool wireframe)
     {
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        color = shadedColor;
+        color = SHADED;
         glShadeModel(GL_SMOOTH);
         break;
     }
@@ -231,7 +241,7 @@ void GLWidget::draw(bool wireframe)
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glShadeModel(GL_SMOOTH);
-        if(!model->textured) color = shadedColor;
+        if(!model->textured) color = SHADED;
     }
     }
     int j;
@@ -339,7 +349,7 @@ void GLWidget::drawAdittional()
             (*activeTool)->function(DRAW);
             int vertexNumber = toolData.vertices.size();
             int indexNumber = toolData.indices.size();
-            for(i = 0; i < vertexNumber; i++) toolData.vertices[i].color = white;
+            for(i = 0; i < vertexNumber; i++) toolData.vertices[i].color = WHITE;
             prepareProgramColor(toolMatrix);
             glBufferData(GL_ARRAY_BUFFER, vertexNumber *
                 vertexData_ColorSize, toolData.vertices.data(),
@@ -350,12 +360,12 @@ void GLWidget::drawAdittional()
             glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_SHORT,
                             0);
         }
-        color = lightBlue;
+        color = LIGHT_BLUE;
         glLineWidth(4);
     }
     else
     {
-        color = black;
+        color = BLACK;
         glLineWidth(2);
     }
 
@@ -507,8 +517,7 @@ void GLWidget::prepareProgramColor( QMatrix4x4 matrix )
 void GLWidget::addSelectedFace( int num )
 {
     vector <Triangle> &triangle = model->getTriangle();
-    QVector3D selectedColor = triangle[ num ].newSelected()
-            ? blue : red;
+    QVector3D selectedColor(triangle[ num ].newSelected() ? BLUE : RED);
     for( int j = 0; j < 3; j++ ) selectedFaces.push_back(
         VertexData_Color( model->getVertex()[
         triangle[ num ].getIndex( j ) ].getPosition(),

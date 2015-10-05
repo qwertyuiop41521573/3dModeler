@@ -49,9 +49,6 @@ public:
     void setWireframeOverlay( bool value )
     { wireframeOverlay = value; };
 
-    Tool *getActiveTool()
-    { return *activeTool; };
-
     QVector2D getLastPosition()
     { return lastPosition; };
 
@@ -103,9 +100,6 @@ public:
 
     Camera *getCamera()
     { return &camera[ projection ]; };
-
-    void setCamera( Camera newCamera )
-    { camera[ projection ] = newCamera; };
 
     void setToolIsOn( bool value)
     { toolIsOn = value; };
@@ -169,19 +163,6 @@ private:
 
     GLuint texture;
     GLuint modelVboIds[2];
-
-    QVector3D gray = { 0.5, 0.5, 0.5 };
-    QVector3D black = { 0, 0, 0 };
-    QVector3D red = { 1, 0, 0 };
-    QVector3D green = { 0, 1, 0 };
-    QVector3D blue = { 0, 0, 1 };
-    QVector3D shadedColor = { 0.73, 0.78, 0.91 };
-    QVector3D darkGray = { 0.4, 0.4, 0.4 };
- //   QVector3D lightBlue = { 0.07, 0.47, 0.75 };
-    QVector3D lightBlue = { 0, 0.4, 0.7 };
-    QVector3D white = { 1, 1, 1 };
-    QVector3D sRed = { 0.7, 0, 0 };
-    QVector3D sBlue = { 0, 0, 0.7 };
 
     const void *vectorSize = (const void*)sizeof(QVector3D);
     int vertexData_ColorSize = sizeof(VertexData_Color);

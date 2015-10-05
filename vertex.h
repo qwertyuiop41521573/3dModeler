@@ -31,9 +31,6 @@ public:
     void addToPosition( QVector3D vector )
     { position += vector; };
 
-    void addToPosition( Axis axis, double value )
-    { position[ axis ] += value; };
-
     void multiplyPosition( QMatrix4x4 matrix )
     { position = QVector3D( matrix * QVector4D( position, 1 ) ); };
 
