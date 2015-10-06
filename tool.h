@@ -28,7 +28,7 @@ public:
 struct VertexAndIndexData
 {
     vector <VertexData_Color> vertices;
-    vector <GLushort> indices;
+    vector <GLuint> indices;
 };
 
 typedef enum { START, STOP, EXECUTE, DRAW, FINAL, STAGE2 } Action;

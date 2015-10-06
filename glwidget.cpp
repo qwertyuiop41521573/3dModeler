@@ -86,7 +86,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
     for( i = 0; i < 6; i++ ) axis.indices[i] = i;
 
     frame.vertices.resize(4);
-    vector <GLushort> &indicesF = frame.indices;
+    vector <GLuint> &indicesF = frame.indices;
     indicesF.resize(8);
 
     indicesF[0] = 0;
@@ -209,7 +209,7 @@ void GLWidget::draw(bool wireframe)
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber *
                          GLushortSize, indices.data(), GL_STATIC_DRAW);
 
-            glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_SHORT, 0);
+            glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_INT, 0);
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(1);
@@ -267,6 +267,7 @@ void GLWidget::draw(bool wireframe)
     else
     {
         vertices_col.clear();
+       // for(i = triangleNumber - 1; i >= 0; i--)/////////////////
         for(i = 0; i < triangleNumber; i++)
         {
             if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
@@ -277,8 +278,7 @@ void GLWidget::draw(bool wireframe)
         fragment = "a_color";
         program = programColor;
         verticesLength = vertices_col.size();
-        glBufferData(GL_ARRAY_BUFFER, verticesLength * structSize,
-                      vertices_col.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, verticesLength * structSize, vertices_col.data(), GL_STATIC_DRAW);
     }
     indices.resize(verticesLength);
     for(i = 0; i < verticesLength; i++) indices[i] = i;
@@ -295,7 +295,7 @@ void GLWidget::draw(bool wireframe)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLushortSize,
                  indices.data(), GL_STATIC_DRAW);
     if(wireframe) glEnable(GL_POLYGON_OFFSET_LINE);
-    glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_INT, 0);
     glDisable(GL_POLYGON_OFFSET_LINE);
 }
 
@@ -317,7 +317,7 @@ void GLWidget::drawAdittional()
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, selectedFacesLength *
                       GLushortSize, indices.data(), GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, selectedFacesLength,
-                        GL_UNSIGNED_SHORT, 0);
+                        GL_UNSIGNED_INT, 0);
     }
 
     //draw axis
@@ -327,7 +327,7 @@ void GLWidget::drawAdittional()
                   axis.vertices.data(), GL_STATIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLushortSize,
                   axis.indices.data(), GL_STATIC_DRAW);
-    glDrawElements(GL_LINES, 6, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, 0);
     if(projection == PERSPECTIVE)
     {
         prepareProgramColor(projectionMatrix);
@@ -336,7 +336,7 @@ void GLWidget::drawAdittional()
                       grid.vertices.data(), GL_STATIC_DRAW);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 88 * GLushortSize,
                       grid.indices.data(), GL_STATIC_DRAW);
-        glDrawElements(GL_LINES, 88, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_LINES, 88, GL_UNSIGNED_INT, 0);
     }
 
     //draw tool marks and select color for frame
@@ -358,7 +358,7 @@ void GLWidget::drawAdittional()
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber *
                 GLushortSize, toolData.indices.data(), GL_STATIC_DRAW);
 
-            glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_SHORT,
+            glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT,
                             0);
         }
         color = LIGHT_BLUE;
@@ -377,7 +377,7 @@ void GLWidget::drawAdittional()
                   frame.vertices.data(), GL_STATIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * GLushortSize,
                   frame.indices.data(), GL_STATIC_DRAW);
-    glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
 }
 
 void GLWidget::timerEvent(QTimerEvent *event)

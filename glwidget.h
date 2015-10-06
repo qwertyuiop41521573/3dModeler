@@ -167,14 +167,14 @@ private:
     const void *vectorSize = (const void*)sizeof(QVector3D);
     int vertexData_ColorSize = sizeof(VertexData_Color);
     int vertexData_TextureSize = sizeof(VertexData_Texture);
-    int GLushortSize = sizeof(GLushort);
+    int GLushortSize = sizeof(GLuint);
 
     VertexAndIndexData grid, axis, frame;
 
     vector <VertexData_Texture> vertices_tex;
     vector <VertexData_Color> vertices_col;
     vector <VertexData_Color> selectedFaces;
-    vector <GLushort> indices;
+    vector <GLuint> indices;
 
 
     bool _oldHidden;

@@ -124,6 +124,7 @@ RESOURCES += \
 # flat and smooth shaded should have light
 # check all matrices in glwidget
 # rotate - custom pivot
+# draw points over wireframe overlay
 
 # unite all setters/getters in classes
 # in model->load() replace fscanf with cin
@@ -134,6 +135,8 @@ RESOURCES += \
 # create container for triangles to "triangle[i].vertex[j]"
 # in mainwindow::selectAll add selectableObject
 # TSelect - START AND DRAW have common code
+# replace vector <Triangle> and <Vertex> with list or other containers ###
+# in GLWidget::draw vertices should not repeat! - fix after textures
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis

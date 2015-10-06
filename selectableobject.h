@@ -25,8 +25,6 @@ public:
 
 private:
     SelectedState _selected;
-//    bool _isSelected = false;
- //   bool _newSelected = false;
 };
 
 #endif // SELECTABLEOBJECT_H

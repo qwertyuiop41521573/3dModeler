@@ -69,7 +69,7 @@ void TRotate::function(Action action, QMouseEvent *event)
         {
             VertexAndIndexData &data = widget->getToolData();
             vector <VertexData_Color> &vertices = data.vertices;
-            vector <GLushort> &indices = data.indices;
+            vector <GLuint> &indices = data.indices;
             vertices.resize(3);
             vertices[0].position = lastPosition;
             vertices[1].position = pivotOnScreen;

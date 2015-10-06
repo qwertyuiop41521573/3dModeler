@@ -75,7 +75,7 @@ void TSelect::function(Action action, QMouseEvent *event)
     {
         VertexAndIndexData &data = widget->getToolData();
         vector <VertexData_Color> &vertices = data.vertices;
-        vector <GLushort> &indices = data.indices;
+        vector <GLuint> &indices = data.indices;
         vertices.resize(4);
 
         QVector2D min, max;

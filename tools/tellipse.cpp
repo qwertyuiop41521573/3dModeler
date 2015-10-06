@@ -12,6 +12,7 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
     spinBox[0]->setMinimum(3);
     spinBox[0]->setValue(18);
+    spinBox[0]->setMaximum(10000);
 
     MyLabel *segments = new MyLabel("Segments:", 70);
 
