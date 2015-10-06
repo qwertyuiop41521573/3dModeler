@@ -1,6 +1,5 @@
 #include "tselect.h"
 #include "glwidget.h"
-#include "functions.h"
 
 #include "mainwindow.h"
 
@@ -49,7 +48,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         int j;
         if(workWithVert)
         {
-            for(i = 0; i < vertexSize; i++) if(isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max)) vertex[i].select(NEW);
+            for(i = 0; i < vertexSize; i++) if(widget->isSelected(vertex[i].getPosition(), min, max)) vertex[i].select(NEW);
         }
         else
         {
@@ -110,7 +109,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         int j;
         if(workWithVert)
         {
-            for(i = 0; i < vertexSize; i++) if(isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max)) vertex[i].select(NEW);
+            for(i = 0; i < vertexSize; i++) if(widget->isSelected(vertex[i].getPosition(), min, max)) vertex[i].select(NEW);
         }
         else
         {
@@ -119,8 +118,7 @@ void TSelect::function(Action action, QMouseEvent *event)
                // triangle[i].deselect();
                 for(j = 0; j < 3; j++)
                 {
-                    if(isSelected(widget->getFinalMatrix(), vertex[
-                        triangle[i].getIndex(j)].getPosition(), perspective,
+                    if(widget->isSelected(vertex[triangle[i].getIndex(j)].getPosition(),
                                     min, max))
                     {
                         triangle[i].select(NEW);

@@ -1,6 +1,5 @@
 #include "tcylinder.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
 
 TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)

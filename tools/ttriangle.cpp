@@ -1,6 +1,5 @@
 #include "ttriangle.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
 
 TTriangle::TTriangle(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
@@ -51,7 +50,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
                     break;
                 }
             }
-            if(!selectedBefore && isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max))
+            if(!selectedBefore && widget->isSelected(vertex[i].getPosition(), min, max))
             {
                 newTriangle.push_back(i);
                 vertex[i].select(NEW);

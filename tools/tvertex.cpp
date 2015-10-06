@@ -1,6 +1,5 @@
 #include "tvertex.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
 #include "gui/mylabel.h"
 
@@ -31,13 +30,13 @@ void TVertex::function(Action action, QMouseEvent *event)
     if(action == START || action == FINAL)
     {
         QVector3D newVertex;
-        if(action == START) fromScreenToWorld(newVertex, event, widget);
+        if(action == START) widget->fromScreenToWorld(newVertex, event);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
         vertex.push_back(newVertex);
         vertex[vertexSize].select(NEW);
         if(action == FINAL) action = STOP;
     }
-    if(action == EXECUTE) fromScreenToWorld(vertex[vertexSize - 1].getEditablePosition(), event, widget);
+    if(action == EXECUTE) widget->fromScreenToWorld(vertex[vertexSize - 1].getEditablePosition(), event);
     if(action == STOP)
     {
         vertexSize = vertex.size();

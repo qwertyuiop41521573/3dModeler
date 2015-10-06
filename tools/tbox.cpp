@@ -1,7 +1,7 @@
 #include "tbox.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
+#include "mathfunctions.h"
 
 TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
 {

@@ -1,7 +1,8 @@
 #include "tplane.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
+#include "mathfunctions.h"
+
 #include "gui/mylabel.h"
 #include "gui/myframe.h"
 
@@ -32,7 +33,7 @@ void TPlane::function(Action action, QMouseEvent *event)
         allocateCap(_hasStage2);
 
         QVector3D worldCoordinates;
-        fromScreenToWorld(worldCoordinates, event, widget);
+        widget->fromScreenToWorld(worldCoordinates, event);
         //all cap vertices are in 1 point
         for(int i = 0; i < 4; i++)
         {
@@ -60,7 +61,7 @@ void TPlane::function(Action action, QMouseEvent *event)
                 //    depends on camera angle
                 double height = vertex[vertexSize - 4].getPosition().z();
                 QVector3D worldCoordinates;
-                fromScreenToWorld(worldCoordinates, event, widget, true, height);
+                widget->fromScreenToWorld(worldCoordinates, event, true, height);
                 vertex[vertexSize - 2].setPosition(worldCoordinates);
                 diagonal = QVector2D(vertex[vertexSize - 2].getPosition() -
                         vertex[vertexSize - 4].getPosition());
@@ -86,11 +87,11 @@ void TPlane::function(Action action, QMouseEvent *event)
                     countDiagonalForSquare(diagonal);
                     currentPosition = startPosition + diagonal;
                 }
-                _fromScreenToWorld(vertex[vertexSize - 2].getEditablePosition(), QVector4D(currentPosition, 0, 1), widget);
-                _fromScreenToWorld(posB, QVector4D(startPosition.x(),
-                                            currentPosition.y(), 0, 1), widget);
-                _fromScreenToWorld(posA, QVector4D(currentPosition.x(),
-                                            startPosition.y(), 0, 1), widget);
+                widget->_fromScreenToWorld(vertex[vertexSize - 2].getEditablePosition(), QVector4D(currentPosition, 0, 1));
+                widget->_fromScreenToWorld(posB, QVector4D(startPosition.x(),
+                                            currentPosition.y(), 0, 1));
+                widget->_fromScreenToWorld(posA, QVector4D(currentPosition.x(),
+                                            startPosition.y(), 0, 1));
             }
             //flipping the cap (or not)
             int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;

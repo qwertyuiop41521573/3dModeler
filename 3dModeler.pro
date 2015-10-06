@@ -11,7 +11,6 @@ SOURCES += \
     triangle.cpp \
     glwidget.cpp \
     camera.cpp \
-    functions.cpp \
     toolwithwidget.cpp \
                     \
     tools/tpan.cpp \
@@ -39,7 +38,8 @@ SOURCES += \
     gui/myframe.cpp \
     selectableobject.cpp \
     transformingtool.cpp \
-    toolwithpivot.cpp
+    toolwithpivot.cpp \
+    mathfunctions.cpp
 
 
 HEADERS += \
@@ -50,7 +50,6 @@ HEADERS += \
     triangle.h \
     glwidget.h \
     camera.h \
-    functions.h \
     toolwithwidget.h \
                   \
     tools/tpan.h \
@@ -79,7 +78,8 @@ HEADERS += \
     gui/myframe.h \
     selectableobject.h \
     transformingtool.h \
-    toolwithpivot.h
+    toolwithpivot.h \
+    mathfunctions.h
 
 
 RESOURCES += \
@@ -128,15 +128,11 @@ RESOURCES += \
 
 # unite all setters/getters in classes
 # in model->load() replace fscanf with cin
-# check all resize() and clear()
-# mainWindow - some functions should be private?
-# some functions should be moved to widget.cpp ?
-# use vector::reference?
-# create container for triangles to "triangle[i].vertex[j]"
+# move "countSomeMatrix" to function that is called later (and perspective)
 # in mainwindow::selectAll add selectableObject
 # TSelect - START AND DRAW have common code
-# replace vector <Triangle> and <Vertex> with list or other containers ###
 # in GLWidget::draw vertices should not repeat! - fix after textures
+# remove unneeded #include
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis

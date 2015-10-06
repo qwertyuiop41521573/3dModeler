@@ -8,7 +8,6 @@
 #include "glwidget.h"
 #include "model.h"
 #include "tool.h"
-#include "functions.h"
 #include "gui/mypushbutton.h"
 #include "gui/mycombobox.h"
 

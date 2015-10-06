@@ -1,6 +1,5 @@
 #include "trotate.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
 
 TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)

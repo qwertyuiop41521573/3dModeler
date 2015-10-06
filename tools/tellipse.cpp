@@ -1,7 +1,7 @@
 #include "tellipse.h"
 #include "glwidget.h"
-#include "functions.h"
 #include "mainwindow.h"
+#include "mathfunctions.h"
 
 TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
@@ -64,7 +64,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     {
     case START:
     {
-        fromScreenToWorld(startPosition3D, event, widget);
+        widget->fromScreenToWorld(startPosition3D, event);
         for(i = 0; i <= segments; i++)
         {
             vertex[vertexSize + i] = startPosition3D;
@@ -121,7 +121,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             {
                 double height = startPosition3D.z();
                 QVector3D worldCoordinates;
-                fromScreenToWorld(worldCoordinates, event, widget, true, height);
+                widget->fromScreenToWorld(worldCoordinates, event, true, height);
                 QVector2D radius = QVector2D(worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
                 vertex[vertexSize - 1].setPosition(center);
@@ -146,7 +146,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 QVector2D currentPosition = QVector2D(event->x() -
                     widget->getHalfWidth(), widget->getHalfHeight() - event->y());
                 QVector3D worldCoordinates;
-                _fromScreenToWorld(worldCoordinates, QVector4D(currentPosition, 0, 1), widget);
+                widget->_fromScreenToWorld(worldCoordinates, QVector4D(currentPosition, 0, 1));
                 QVector3D radius = (worldCoordinates - startPosition3D) /
                         double(2);
                 QVector3D center = startPosition3D + radius;
