@@ -12,10 +12,10 @@
 struct List;
 
 bool isSelected(const QMatrix4x4 &finalMatrix, const QVector3D &vertex, bool perspective, const QVector2D &min, const QVector2D &max);
-QVector3D fromScreenToWorld(QMouseEvent *event, GLWidget *widget, bool forcedHeight = false, double height = 0);
-QVector3D _fromScreenToWorld(const QVector4D &screenCoordinates, GLWidget *widget, bool forcedHeight = false, double height = 0);
+void fromScreenToWorld(QVector3D &answer, QMouseEvent *event, GLWidget *widget, bool forcedHeight = false, double height = 0);
+void _fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, GLWidget *widget, bool forcedHeight = false, double height = 0);
 double inRadians( double value );
-QVector4D screenCoordinatesPerspective(double a[ 4 ][ 4 ], double h, const QVector4D &screenCoordinates );
+void screenCoordinatesPerspective(QVector4D &answer, double a[ 4 ][ 4 ], double h, const QVector4D &screenCoordinates );
 int sign( double number );
 
 double cosR(double x);

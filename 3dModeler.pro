@@ -123,12 +123,12 @@ RESOURCES += \
 # correct button width
 # flat and smooth shaded should have light
 # check all matrices in glwidget
+# rotate - custom pivot
 
 # unite all setters/getters in classes
 # in model->load() replace fscanf with cin
 # check all resize() and clear()
 # mainWindow - some functions should be private?
-# functions should return references?
 # some functions should be moved to widget.cpp ?
 
 # tool Cylinder!!! - FINAL ( height )

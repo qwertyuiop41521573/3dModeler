@@ -31,7 +31,8 @@ void TPlane::function(Action action, QMouseEvent *event)
         //create the cap without other parts
         allocateCap(_hasStage2);
 
-        QVector3D worldCoordinates = fromScreenToWorld(event, widget);
+        QVector3D worldCoordinates;
+        fromScreenToWorld(worldCoordinates, event, widget);
         //all cap vertices are in 1 point
         for(int i = 0; i < 4; i++)
         {
@@ -58,8 +59,8 @@ void TPlane::function(Action action, QMouseEvent *event)
                 //    fromScreenToWorld(event, widget) at action == START,
                 //    depends on camera angle
                 double height = vertex[vertexSize - 4].getPosition().z();
-                QVector3D worldCoordinates = fromScreenToWorld(event, widget,
-                                                               true, height);
+                QVector3D worldCoordinates;
+                fromScreenToWorld(worldCoordinates, event, widget, true, height);
                 vertex[vertexSize - 2].setPosition(worldCoordinates);
                 diagonal = QVector2D(vertex[vertexSize - 2].getPosition() -
                         vertex[vertexSize - 4].getPosition());
@@ -85,11 +86,10 @@ void TPlane::function(Action action, QMouseEvent *event)
                     countDiagonalForSquare(diagonal);
                     currentPosition = startPosition + diagonal;
                 }
-                vertex[vertexSize - 2].setPosition(_fromScreenToWorld(
-                                  QVector4D(currentPosition, 0, 1), widget));
-                posB = _fromScreenToWorld(QVector4D(startPosition.x(),
+                _fromScreenToWorld(vertex[vertexSize - 2].getEditablePosition(), QVector4D(currentPosition, 0, 1), widget);
+                _fromScreenToWorld(posB, QVector4D(startPosition.x(),
                                             currentPosition.y(), 0, 1), widget);
-                posA = _fromScreenToWorld(QVector4D(currentPosition.x(),
+                _fromScreenToWorld(posA, QVector4D(currentPosition.x(),
                                             startPosition.y(), 0, 1), widget);
             }
             //flipping the cap (or not)

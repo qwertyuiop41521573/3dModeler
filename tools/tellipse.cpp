@@ -63,7 +63,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     {
     case START:
     {
-        startPosition3D = fromScreenToWorld(event, widget);
+        fromScreenToWorld(startPosition3D, event, widget);
         for(i = 0; i <= segments; i++)
         {
             vertex[vertexSize + i] = startPosition3D;
@@ -120,8 +120,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
             if(projection == PERSPECTIVE)
             {
                 double height = startPosition3D.z();
-                QVector3D worldCoordinates = fromScreenToWorld(event, widget,
-                                                               true, height);
+                QVector3D worldCoordinates;
+                fromScreenToWorld(worldCoordinates, event, widget, true, height);
                 QVector2D radius = QVector2D(worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
                 vertex[vertexSize - 1].setPosition(center);
@@ -145,8 +145,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 widget->countFinalInverseMatrix(false);
                 QVector2D currentPosition = QVector2D(event->x() -
                     widget->getHalfWidth(), widget->getHalfHeight() - event->y());
-                QVector3D worldCoordinates = _fromScreenToWorld(
-                            QVector4D(currentPosition, 0, 1), widget);
+                QVector3D worldCoordinates;
+                _fromScreenToWorld(worldCoordinates, QVector4D(currentPosition, 0, 1), widget);
                 QVector3D radius = (worldCoordinates - startPosition3D) /
                         double(2);
                 QVector3D center = startPosition3D + radius;

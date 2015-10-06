@@ -526,14 +526,14 @@ void GLWidget::addSelectedFace( int num )
                         selectedColor ) );
 }
 
-QVector2D GLWidget::fromWorldToScreen(const QVector3D &vector, bool point )
+void GLWidget::fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point )
 {
     bool perspective = projection == PERSPECTIVE;
     countFinalMatrix( perspective );
     QVector4D temp = finalMatrix * QVector4D( vector, point );
     if( point && perspective ) for( int i = 0; i < 2; i++ )
         temp[ i ] /= temp[ 3 ];
-    return QVector2D( temp[ 0 ], temp[ 1 ] );
+    answer = QVector2D( temp[ 0 ], temp[ 1 ] );
 }
 
 void GLWidget::countRotationMatrices()

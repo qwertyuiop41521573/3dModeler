@@ -107,7 +107,7 @@ public:
     VertexAndIndexData &getToolData()
     { return toolData; };
 
-    QVector2D fromWorldToScreen(const QVector3D &vector, bool point );
+    void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point );
     void countFinalInverseMatrix( bool perspective );
     void countRotationMatrices();
     void setCurrentPosition( double x, double y );

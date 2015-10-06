@@ -14,6 +14,9 @@ public:
     Vertex(const QVector3D &newPosition = { 0, 0, 0 } )
     { position = newPosition; };
 
+    QVector3D &getEditablePosition()
+    { return position; };
+
     const QVector3D &getPosition() const
     { return position; };
 

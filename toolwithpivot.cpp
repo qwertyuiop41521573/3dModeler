@@ -81,5 +81,5 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     }
     pivot = (min + max);
     for(i = 0; i < 3; i++) pivot[i] /= 2;
-    pivotOnScreen = widget->fromWorldToScreen(pivot, true);
+    widget->fromWorldToScreen(pivotOnScreen, pivot, true);
 }
