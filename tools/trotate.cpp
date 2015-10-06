@@ -49,12 +49,12 @@ void TRotate::function(Action action, QMouseEvent *event)
     if(action == FINAL)
     {
         angle = spinBox[0]->value();
-        if(!getAxis(&rotation, angle)) return;
+        if(!getAxis(rotation, angle)) return;
     }
     else
     {
         bool execute = action == EXECUTE;
-        QVector2D lastPosition = execute ? widget->getLastPosition() :
+        const QVector2D &lastPosition = execute ? widget->getLastPosition() :
                                            widget->getStartPosition();
         QVector2D currentPosition = execute ? QVector2D(event->x() -
             widget->getHalfWidth(), widget->getHalfHeight() - event->y()) :
@@ -67,9 +67,9 @@ void TRotate::function(Action action, QMouseEvent *event)
             angle *= -1;
         if(action == DRAW)
         {
-            VertexAndIndexData *data = widget->getToolData();
-            vector <VertexData_Color> &vertices = data->vertices;
-            vector <GLushort> &indices = data->indices;
+            VertexAndIndexData &data = widget->getToolData();
+            vector <VertexData_Color> &vertices = data.vertices;
+            vector <GLushort> &indices = data.indices;
             vertices.resize(3);
             vertices[0].position = lastPosition;
             vertices[1].position = pivotOnScreen;
@@ -91,7 +91,7 @@ void TRotate::function(Action action, QMouseEvent *event)
             rotation.rotate(angle, 0, 0, 1);
             rotation *= widget->getRotationMatrix();
         }
-        else if(!getAxis(&rotation, angle)) return;
+        else if(!getAxis(rotation, angle)) return;
     }
 
     //create transformation matrix
@@ -103,12 +103,12 @@ void TRotate::function(Action action, QMouseEvent *event)
     transform();
 }
 
-bool TRotate::getAxis(QMatrix4x4 *rotation, double angle)
+bool TRotate::getAxis(QMatrix4x4 &rotation, double angle)
 {
     QVector3D axis;
     for(int i = 0; i < 3; i++) axis[i] = spinBox[i + 1]->value();
     if(axis.isNull()) return false;
     axis.normalize();
-    rotation->rotate(angle, axis);
+    rotation.rotate(angle, axis);
     return true;
 }

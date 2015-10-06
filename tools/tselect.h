@@ -11,9 +11,6 @@ public:
 
     void function(Action action, QMouseEvent *event);
 
-    MyCheckBox *getCheckBox(int index)
-    { return checkBox[index]; };
-
 signals:
 
 public slots:

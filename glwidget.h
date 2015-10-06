@@ -49,13 +49,13 @@ public:
     void setWireframeOverlay( bool value )
     { wireframeOverlay = value; };
 
-    QVector2D getLastPosition()
+    const QVector2D &getLastPosition()
     { return lastPosition; };
 
-    QVector2D getStartPosition()
+    const QVector2D &getStartPosition()
     { return startPosition; };
 
-    QVector2D getCurrentPosition()
+    const QVector2D &getCurrentPosition()
     { return currentPosition; };
 
     void setProjection( Projection newProjection )
@@ -70,20 +70,20 @@ public:
     double getScale()
     { return scale; };
 
-    QMatrix4x4 getFinalMatrix()
+    const QMatrix4x4 &getFinalMatrix()
     { return finalMatrix; };
 
-    QMatrix4x4 getFinalInverseMatrix()
+    const QMatrix4x4 &getFinalInverseMatrix()
     { return finalMatrixInverse; };
 
     void countFinalMatrix( bool perspective )
     { finalMatrix = ( perspective ? toolMatrixPerspectiveInverse :
         toolMatrixInverse ) * projectionMatrix; };
 
-    QMatrix4x4 getRotationMatrix()
+    const QMatrix4x4 &getRotationMatrix()
     { return rotationMatrix; };
 
-    QMatrix4x4 getRotationMatrixInverse()
+    const QMatrix4x4 &getRotationMatrixInverse()
     { return rotationMatrixInverse; };
 
     void setOldHidden( bool value )
@@ -98,16 +98,16 @@ public:
     int getHalfHeight()
     { return halfHeight; };
 
-    Camera *getCamera()
-    { return &camera[ projection ]; };
+    Camera &getCamera()
+    { return camera[ projection ]; };
 
     void setToolIsOn( bool value)
     { toolIsOn = value; };
 
-    VertexAndIndexData *getToolData()
-    { return &toolData; };
+    VertexAndIndexData &getToolData()
+    { return toolData; };
 
-    QVector2D fromWorldToScreen( QVector3D vector, bool point );
+    QVector2D fromWorldToScreen(const QVector3D &vector, bool point );
     void countFinalInverseMatrix( bool perspective );
     void countRotationMatrices();
     void setCurrentPosition( double x, double y );
@@ -183,11 +183,11 @@ private:
     void draw( bool wireframe = false );
     void setupProjection();
 
-    void glClearColorVector( QVector3D vector )
+    void glClearColorVector(const QVector3D &vector )
     { glClearColor( vector.x(), vector.y(), vector.z(), 1 ); };
 
     void drawAdittional();
-    void prepareProgramColor( QMatrix4x4 matrix );
+    void prepareProgramColor(const QMatrix4x4 &matrix );
     void addSelectedFace( int num );
 };
 

@@ -6,7 +6,7 @@
 class MyLabel : public QLabel
 {
 public:
-    MyLabel(QString text, int maxWidth);
+    MyLabel(const QString &text, int maxWidth);
 
 signals:
 

@@ -122,15 +122,14 @@ RESOURCES += \
 # option - flip triangles
 # correct button width
 # flat and smooth shaded should have light
+# check all matrices in glwidget
 
 # unite all setters/getters in classes
-# remove #include <iostream>
 # in model->load() replace fscanf with cin
-# move, rotate and scale have much common code
-# GLWidget::draw() - textured and not have similar code
-# passing const to methods to avoid copies ?
-# const where possible ?
-# workWithVert
+# check all resize() and clear()
+# mainWindow - some functions should be private?
+# functions should return references?
+# some functions should be moved to widget.cpp ?
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis
@@ -138,9 +137,6 @@ RESOURCES += \
 # halfDiagonal can be <0 - FIX!!
 # in tools widgets many values must be integer!
 # box - cube down - fix
+# tPlane->widget() is not hidden as it is the biggest widget - FIX
 
-
-# tPlane->widget() is not hidden as it is the biggest widget
 # loading and saving model is corrupted
-
-# check all matrices in glwidget

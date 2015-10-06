@@ -161,7 +161,7 @@ void GLWidget::setupProjection()
                                -1000.f, 1000.f);
         projectionMatrix.scale(scale, scale, 1);
     }
-    QVector3D rotation = camera[projection].rotation();
+    const QVector3D &rotation = camera[projection].rotation();
     projectionMatrix.rotate(rotation[0] - 90, 1.f, 0.f, 0.f);
     projectionMatrix.rotate(rotation[1], 0.f, 1.f, 0.f);
     projectionMatrix.rotate(90 - rotation[2], 0.f, 0.f, 1.f);
@@ -501,7 +501,7 @@ void GLWidget::countFinalInverseMatrix( bool perspective )
     finalMatrixInverse = finalMatrix.inverted();
 }
 
-void GLWidget::prepareProgramColor( QMatrix4x4 matrix )
+void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix )
 {
     int vertexLocation = programColor->attributeLocation(
                 "a_position" );
@@ -526,7 +526,7 @@ void GLWidget::addSelectedFace( int num )
                         selectedColor ) );
 }
 
-QVector2D GLWidget::fromWorldToScreen( QVector3D vector, bool point )
+QVector2D GLWidget::fromWorldToScreen(const QVector3D &vector, bool point )
 {
     bool perspective = projection == PERSPECTIVE;
     countFinalMatrix( perspective );

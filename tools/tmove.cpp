@@ -34,7 +34,7 @@ void TMove::function(Action action, QMouseEvent *event)
     else
     {
         bool execute = action == EXECUTE;
-        QVector2D lastPosition = execute ? widget->getLastPosition() :
+        const QVector2D &lastPosition = execute ? widget->getLastPosition() :
                                             widget->getStartPosition();
         QVector2D currentPosition = execute ? QVector2D(event->x() - widget->
             getHalfWidth(), widget->getHalfHeight() - event->y()) : widget->
@@ -47,12 +47,12 @@ void TMove::function(Action action, QMouseEvent *event)
                                   QVector4D(dr.x(), dr.y(), 0.f, 0.f));
         if(action == DRAW)
         {
-            VertexAndIndexData *data = widget->getToolData();
-            data->vertices.resize(2);
-            data->vertices[0].position = lastPosition;
-            data->vertices[1].position = currentPosition;
-            data->indices.resize(2);
-            for(i = 0; i < 2; i++) data->indices[i] = i;
+            VertexAndIndexData &data = widget->getToolData();
+            data.vertices.resize(2);
+            data.vertices[0].position = lastPosition;
+            data.vertices[1].position = currentPosition;
+            data.indices.resize(2);
+            for(i = 0; i < 2; i++) data.indices[i] = i;
             for(i = 0; i < 3; i++) spinBox[i]->setValue(drInWorld[i]);
             return;
         }

@@ -12,26 +12,26 @@ using namespace std;
 MainWindow::MainWindow()
 {
     int i;
-    centralWidget = new QWidget;
+    QWidget *centralWidget = new QWidget;
 
     model = new Model;
 
     //tools
     tPan = new TPan(this);
-    tZoom = new TZoom(this);
-    tRotateCamera = new TRotateCamera(this);
+    TZoom *tZoom = new TZoom(this);
+    TRotateCamera *tRotateCamera = new TRotateCamera(this);
     tOrbit = new TOrbit(this);
 
-    tSelect = new TSelect(this);
-    tMove = new TMove(this);
-    tScale = new TScale(this);
-    tRotate = new TRotate(this);
-    tVertex = new TVertex(this);
-    tTriangle = new TTriangle(this);
-    tPlane = new TPlane(this);
-    tBox = new TBox(this);
-    tEllipse = new TEllipse(this);
-    tCylinder = new TCylinder(this);
+    TSelect *tSelect = new TSelect(this);
+    TMove *tMove = new TMove(this);
+    TScale *tScale = new TScale(this);
+    TRotate *tRotate = new TRotate(this);
+    TVertex *tVertex = new TVertex(this);
+    TTriangle *tTriangle = new TTriangle(this);
+    TPlane *tPlane = new TPlane(this);
+    TBox *tBox = new TBox(this);
+    TEllipse *tEllipse = new TEllipse(this);
+    TCylinder *tCylinder = new TCylinder(this);
 
     QWidget *workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;
@@ -208,8 +208,7 @@ MainWindow::MainWindow()
     centralWidget->setLayout(centralLayout);
     setCentralWidget(centralWidget);
 
-    createActions();
-    createMenus();
+    createActionsAndMenus();
 
     setWindowTitle("3d Modeler");
 
@@ -228,56 +227,54 @@ void MainWindow::open()
     }
 }
 
-void MainWindow::createActions()
+void MainWindow::createActionsAndMenus()
 {
-    openAction = new QAction( tr( "&Open" ), this );
+    QAction *openAction = new QAction( tr( "&Open" ), this );
     openAction->setShortcut( tr( "Ctrl+O" ) );
     connect( openAction, SIGNAL( triggered() ), this,
              SLOT( open() ) );
-    exitAction = new QAction( tr( "&Exit" ), this );
+    QAction *exitAction = new QAction( tr( "&Exit" ), this );
     exitAction->setShortcut( tr( "Ctrl+Q" ) );
     connect( exitAction, SIGNAL( triggered() ), this,
              SLOT( close() ) );
-    newAction = new QAction( tr( "&New" ), this );
+    QAction *newAction = new QAction( tr( "&New" ), this );
     newAction->setShortcut( tr( "Ctrl+N" ) );
     connect( newAction, SIGNAL( triggered() ), this,
              SLOT( newFile() ) );
-    saveAction = new QAction( tr( "&Save" ), this );
+    QAction *saveAction = new QAction( tr( "&Save" ), this );
     saveAction->setShortcut( tr( "Ctrl+S" ) );
     connect( saveAction, SIGNAL( triggered() ), this,
              SLOT( save() ) );
-    saveAsAction = new QAction( tr( "&Save As" ), this );
+    QAction *saveAsAction = new QAction( tr( "&Save As" ), this );
     connect( saveAsAction, SIGNAL( triggered() ), this,
              SLOT( saveAs() ) );
 
-    selectAllAction = new QAction( tr( "&Select All" ), this );
+    QAction *selectAllAction = new QAction( tr( "&Select All" ), this );
     selectAllAction->setShortcut( tr( "Ctrl+A" ) );
     connect( selectAllAction, SIGNAL( triggered() ), this,
             SLOT( selectAll() ) );
-    selectNoneAction = new QAction( tr( "&Select None" ), this );
+    QAction *selectNoneAction = new QAction( tr( "&Select None" ), this );
     selectNoneAction->setShortcut( tr( "Ctrl+D" ) );
     connect( selectNoneAction, SIGNAL( triggered() ), this,
             SLOT( selectNone() ) );
-    snapTogetherAction = new QAction( tr( "&Snap Together" ), this );
+    QAction *snapTogetherAction = new QAction( tr( "&Snap Together" ), this );
     snapTogetherAction->setShortcut( tr( "Ctrl+T" ) );
     connect( snapTogetherAction, SIGNAL( triggered() ), this,
              SLOT( snapTogether() ) );
-    deleteAction = new QAction( tr( "&Delete" ), this );
+    QAction *deleteAction = new QAction( tr( "&Delete" ), this );
     deleteAction->setShortcut( tr( "Del" ) );
     connect( deleteAction, SIGNAL( triggered() ), this,
              SLOT( deleteSlot() ) );
-}
 
-void MainWindow::createMenus()
-{
-    fileMenu = menuBar()->addMenu( tr( "&File" ) );
+
+    QMenu *fileMenu = menuBar()->addMenu( tr( "&File" ) );
     fileMenu->addAction( newAction );
     fileMenu->addAction( openAction );
     fileMenu->addAction( saveAction );
     fileMenu->addAction( saveAsAction );
     fileMenu->addAction( exitAction );
 
-    editMenu = menuBar()->addMenu( tr( "&Edit" ) );
+    QMenu *editMenu = menuBar()->addMenu( tr( "&Edit" ) );
     editMenu->addAction( selectAllAction );
     editMenu->addAction( selectNoneAction );
     editMenu->addAction( snapTogetherAction );
@@ -306,7 +303,6 @@ void MainWindow::setActiveTool(Tool *tool)
     toolActive->setActive(false);
     toolActive = tool;
     tool->setActive(true);
-
 }
 
 bool MainWindow::saveRequest()
@@ -447,7 +443,7 @@ void MainWindow::snapTogether()
         if( model->getVertex()[ i ].isSelected() )
         {
             selected.push_back( i );
-            QVector3D vertex = model->getVertex()[ i ].getPosition();
+            const QVector3D &vertex = model->getVertex()[ i ].getPosition();
 
             if( vertex.x() > max.x() ) max.setX( vertex.x() );
             if( vertex.y() > max.y() ) max.setY( vertex.y() );

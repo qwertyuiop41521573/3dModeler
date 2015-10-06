@@ -17,7 +17,7 @@ signals:
 public slots:
 
 private:
-       void createWallsAndSecondCap(QVector3D height);
+       void createWallsAndSecondCap(const QVector3D &height);
 };
 
 #endif // TCYLINDER_H

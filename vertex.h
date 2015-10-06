@@ -11,29 +11,29 @@
 class Vertex : public SelectableObject
 {
 public:
-    Vertex( QVector3D newPosition = { 0, 0, 0 } )
+    Vertex(const QVector3D &newPosition = { 0, 0, 0 } )
     { position = newPosition; };
 
-    QVector3D getPosition()
+    const QVector3D &getPosition() const
     { return position; };
 
-    void setPosition( QVector3D vector )
+    void setPosition(const QVector3D &vector )
     { position = vector; };
 
     void setPosition( Axis axis, double value )
     { position[ axis ] = value; };
 
-    void addToPosition( QVector3D vector )
+    void addToPosition(const QVector3D &vector )
     { position += vector; };
 
-    void multiplyPosition( QMatrix4x4 matrix )
+    void multiplyPosition(const QMatrix4x4 &matrix )
     { position = QVector3D( matrix * QVector4D( position, 1 ) ); };
 
     void setPosition( float x, float y );
     void setPosition( float x, float y, float z );
     void setUV( float u, float v );
 
-    bool operator ==( Vertex vertex )
+    bool operator ==(const Vertex &vertex)
     { return position == vertex.getPosition(); };
 
 private:

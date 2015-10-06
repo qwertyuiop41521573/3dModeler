@@ -39,11 +39,15 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
     Model *getModel();
+
     Tool **getActiveTool()
     { return &toolActive; }
+
     QRadioButton **getWorkWithElements()
     { return workWithElements; };
+
     void setActiveWidget(GLWidget *widget);
+
     GLWidget **getActiveWidget()
     { return &widgetActive; };
 
@@ -86,54 +90,26 @@ private slots:
     void maximize(bool value);
 
 private:
-    QWidget *centralWidget;
     Model *model;
-
     Tool *toolActive, *lastTool;
     GLWidget *widget[4], *widgetActive;
 
     MyComboBox *renderingMode;
     QCheckBox *wireframeOverlay;
     MyComboBox *projection;
-
-    QMenu *fileMenu, *editMenu;
-    QAction *openAction;
-    QAction *exitAction;
-    QAction *newAction;
-    QAction *saveAction;
-    QAction *saveAsAction;
-
-    QAction *selectAllAction, *selectNoneAction, *snapTogetherAction;
-    QAction *deleteAction;
     MyPushButton *hideViewportButtons[4];
     QPushButton *maximizeButton;
-    QCursor windowCursor;
 
-    void createActions();
-    void createMenus();
-
-
-
-    bool saveRequest();
-    bool openFileDialog( QString title );
-
+    //we need this pointers here for quick access
     TPan *tPan;
-    TZoom *tZoom;
-    TRotateCamera *tRotateCamera;
     TOrbit *tOrbit;
-    TSelect *tSelect;
-    TMove *tMove;
-    TScale *tScale;
-    TRotate *tRotate;
-    TVertex *tVertex;
-    TTriangle *tTriangle;
-    TPlane *tPlane;
-    TBox *tBox;
-    TEllipse *tEllipse;
-    TCylinder *tCylinder;
 
     QRadioButton *workWithElements[2];
 
+
+    void createActionsAndMenus();
+    bool saveRequest();
+    bool openFileDialog( QString title );
 };
 
 #endif // MAINWINDOW_H

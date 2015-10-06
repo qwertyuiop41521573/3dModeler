@@ -65,14 +65,12 @@ void TPlane::function(Action action, QMouseEvent *event)
                         vertex[vertexSize - 4].getPosition());
                 if(square)
                 {
-                    countDiagonalForSquare(&diagonal);
+                    countDiagonalForSquare(diagonal);
                     vertex[vertexSize - 2].setPosition(vertex[vertexSize - 4].
                             getPosition() + QVector3D(diagonal, 0));
                 }
-                posB = QVector3D(vertex[vertexSize - 4].getPosition().x(), vertex[
-                        vertexSize - 2].getPosition().y(), height);
-                posA = QVector3D(vertex[vertexSize - 2].getPosition().x(), vertex[
-                        vertexSize - 4].getPosition().y(), height);
+                posB = QVector3D(vertex[vertexSize - 4].getPosition().x(), vertex[vertexSize - 2].getPosition().y(), height);
+                posA = QVector3D(vertex[vertexSize - 2].getPosition().x(), vertex[vertexSize - 4].getPosition().y(), height);
             }
             else
             {
@@ -84,7 +82,7 @@ void TPlane::function(Action action, QMouseEvent *event)
                 diagonal = currentPosition - startPosition;
                 if(square)
                 {
-                    countDiagonalForSquare(&diagonal);
+                    countDiagonalForSquare(diagonal);
                     currentPosition = startPosition + diagonal;
                 }
                 vertex[vertexSize - 2].setPosition(_fromScreenToWorld(
@@ -122,14 +120,14 @@ void TPlane::function(Action action, QMouseEvent *event)
     }
 }
 
-void TPlane::countDiagonalForSquare(QVector2D *diagonal)
+void TPlane::countDiagonalForSquare(QVector2D &diagonal)
 {
     //square diagonal length is equal to length of projection (of
     //    line we draw) to this diagonal
-    QVector2D squareDiagonal(sign(diagonal->x()), sign(diagonal->y()));
-    double length = QVector2D::dotProduct(*diagonal, squareDiagonal) /
+    QVector2D squareDiagonal(sign(diagonal.x()), sign(diagonal.y()));
+    double length = QVector2D::dotProduct(diagonal, squareDiagonal) /
             double(2);
-    *diagonal = squareDiagonal * length;
+    diagonal = squareDiagonal * length;
 }
 
 void TPlane::allocateCap(bool flip)

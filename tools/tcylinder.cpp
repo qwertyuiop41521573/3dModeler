@@ -45,7 +45,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             Projection projection = widget->getProjection();
             double dy = (widget->getHalfHeight() - event->y() - widget->
                          getLastPosition().y()) / double(100);
-            QVector3D normal = createNormal(widget->getCamera()->rotation());
+            QVector3D normal = createNormal(widget->getCamera().rotation());
 
             for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].
                     addToPosition(normal * dy);
@@ -121,7 +121,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     }
 }
 
-void TCylinder::createWallsAndSecondCap(QVector3D height)
+void TCylinder::createWallsAndSecondCap(const QVector3D &height)
 {
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();

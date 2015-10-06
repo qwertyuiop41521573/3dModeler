@@ -29,7 +29,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
         for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
 
         QVector2D min, max;
-        QVector2D startPosition = widget->getStartPosition();
+        const QVector2D &startPosition = widget->getStartPosition();
         QVector2D currentPosition(event->x() - widget->getHalfWidth(),
                                   widget->getHalfHeight() - event->y());
         min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);

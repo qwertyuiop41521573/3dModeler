@@ -33,9 +33,6 @@ struct VertexAndIndexData
 
 typedef enum { START, STOP, EXECUTE, DRAW, FINAL, STAGE2 } Action;
 
-typedef void ( *toolFunction )( GLWidget *widget, Action action,
-                  QMouseEvent *event, VertexAndIndexData *data );
-
 class MainWindow;
 
 class Tool : public QObject

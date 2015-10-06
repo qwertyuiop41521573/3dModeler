@@ -11,22 +11,22 @@ class Camera
 public:
     Camera();
 
-    void addToPosition( QVector3D vector )
+    void addToPosition(const QVector3D &vector )
     { _position += vector; };
 
     void addToPosition( double x, double y, double z )
     { _position += QVector3D( x, y, z ); };
 
-    QVector3D position()
+    const QVector3D &position()
     { return _position; };
 
     void setPosition( double x, double y, double z )
     { _position = { x, y, z }; };
 
-    void setPosition( QVector4D vector )
+    void setPosition(const QVector4D &vector )
     { _position = QVector3D( vector ); };
 
-    QVector3D rotation()
+    const QVector3D &rotation()
     { return _rotation; };
 
     void setRotation( double x, double y, double z )

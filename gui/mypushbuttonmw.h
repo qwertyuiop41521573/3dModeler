@@ -6,7 +6,7 @@
 class MyPushButtonMW : public QPushButton
 {
 public:
-    MyPushButtonMW(QString text);
+    MyPushButtonMW(const QString &text);
 
 signals:
 

@@ -34,11 +34,6 @@ protected:
     Model *model;
     bool _stage2 = false;
     QRadioButton **workWithElements;
-
-private:
-
-
-
 };
 
 #endif // TOOLWITHWIDGET_H

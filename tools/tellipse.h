@@ -23,14 +23,11 @@ protected:
     QVector3D normal;
     bool ellipseFailed;
 
-    QVector3D createNormal(QVector3D camRot);
+    QVector3D createNormal(const QVector3D &camRot);
 
 private:
     void allocateCap(bool flip = false);
-    void createCap(QVector4D rotatingVertex, double angle, QVector3D normal,
-                   QMatrix4x4 scaleAndTranslate);
-    QMatrix4x4 createScaleAndTranslate(double scaleX, double scaleY, double
-                                               scaleZ, QVector3D center);
+    void createCap(QVector4D rotatingVertex, double angle, const QVector3D normal, const QMatrix4x4 &scaleAndTranslate);
 
     QVector3D startPosition3D;
 };

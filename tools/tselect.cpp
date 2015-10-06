@@ -35,7 +35,7 @@ void TSelect::function(Action action, QMouseEvent *event)
     case START:
     {
         QVector2D min, max;
-        QVector2D startPosition = widget->getStartPosition();
+        const QVector2D &startPosition = widget->getStartPosition();
         QVector2D currentPosition(event->x() - widget->
              getHalfWidth(), widget->getHalfHeight() - event->y());
 
@@ -76,14 +76,14 @@ void TSelect::function(Action action, QMouseEvent *event)
     }
     case DRAW:
     {
-        VertexAndIndexData *data = widget->getToolData();
-        vector <VertexData_Color> &vertices = data->vertices;
-        vector <GLushort> &indices = data->indices;
+        VertexAndIndexData &data = widget->getToolData();
+        vector <VertexData_Color> &vertices = data.vertices;
+        vector <GLushort> &indices = data.indices;
         vertices.resize(4);
 
         QVector2D min, max;
-        QVector2D startPosition = widget->getStartPosition();
-        QVector2D currentPosition = widget->getCurrentPosition();
+        const QVector2D &startPosition = widget->getStartPosition();
+        const QVector2D &currentPosition = widget->getCurrentPosition();
         min.setX(qMin(startPosition.x(), currentPosition.x()) - 1);
         min.setY(qMin(startPosition.y(), currentPosition.y()) - 1);
         max.setX(qMax(startPosition.x(), currentPosition.x()) + 1);
