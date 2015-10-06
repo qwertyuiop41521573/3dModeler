@@ -1,27 +1,32 @@
 #ifndef SELECTABLEOBJECT_H
 #define SELECTABLEOBJECT_H
 
+typedef enum { NO, YES, NEW } SelectedState;
 
 class SelectableObject
 {
 public:
     SelectableObject();
 
-    void setSelected(bool value)
-    { _isSelected = value; };
+    void select(SelectedState state = YES)
+    { _selected = state; };
 
-    bool isSelected()
-    { return _isSelected; };
+    void select(bool state)
+    { _selected = SelectedState(state); };
+
+    void deselect()
+    { _selected = NO; };
+
+    bool selected()
+    { return _selected == YES; };
 
     bool newSelected()
-    { return _newSelected; };
-
-    void setNewSelected( bool value )
-    { _newSelected = value; };
+    { return _selected == NEW; };
 
 private:
-    bool _isSelected = false;
-    bool _newSelected = false;
+    SelectedState _selected;
+//    bool _isSelected = false;
+ //   bool _newSelected = false;
 };
 
 #endif // SELECTABLEOBJECT_H

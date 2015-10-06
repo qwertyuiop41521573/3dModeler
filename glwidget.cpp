@@ -201,7 +201,7 @@ void GLWidget::draw(bool wireframe)
             for(i = 0; i < vertexNumber; i++)
             {
                 vertices_col[i].position = vertex[i].getPosition();
-                vertices_col[i].color = vertex[i].newSelected() ? BLUE : vertex[i].isSelected() ? RED : BLACK;
+                vertices_col[i].color = vertex[i].newSelected() ? BLUE : vertex[i].selected() ? RED : BLACK;
                 indices[i] = i;
             }
             glBufferData(GL_ARRAY_BUFFER, vertexNumber *
@@ -251,7 +251,7 @@ void GLWidget::draw(bool wireframe)
         for(i = 0; i < triangleNumber; i++)
         {
             if(workWithElements[1]->isChecked() && (triangle[i].newSelected()
-                || triangle[i].isSelected())) addSelectedFace(i);
+                || triangle[i].selected())) addSelectedFace(i);
             else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[
                 triangle[i].getIndex(j)].getPosition(), { (rand() % 10) /
                 double(10), (rand() % 10) / double(10) } });
@@ -269,7 +269,7 @@ void GLWidget::draw(bool wireframe)
         vertices_col.clear();
         for(i = 0; i < triangleNumber; i++)
         {
-            if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].isSelected())) addSelectedFace(i);
+            if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
             else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[
                            triangle[i].getIndex(j)].getPosition(), color });
         }

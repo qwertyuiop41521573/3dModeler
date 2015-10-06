@@ -130,6 +130,10 @@ RESOURCES += \
 # check all resize() and clear()
 # mainWindow - some functions should be private?
 # some functions should be moved to widget.cpp ?
+# use vector::reference?
+# create container for triangles to "triangle[i].vertex[j]"
+# in mainwindow::selectAll add selectableObject
+# TSelect - START AND DRAW have common code
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis

@@ -67,7 +67,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         for(i = 0; i <= segments; i++)
         {
             vertex[vertexSize + i] = startPosition3D;
-            vertex[vertexSize + i].setNewSelected(true);
+            vertex[vertexSize + i].select(NEW);
         }
         break;
     }
@@ -102,8 +102,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         createCap(rotatingVertex, angle, normal, scaleAndTranslate);
 
-        for(i = 0; i <= segments; i++) vertex[vertexSize + i].
-                setSelected(true);
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].select();
         break;
     }
 
@@ -190,11 +189,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             return;
         }
 
-        for(int i = 1; i < segments + 2; i++)
-        {
-            vertex[vertexSize - i].setNewSelected(false);
-            vertex[vertexSize - i].setSelected(true);
-        }
+        for(int i = 1; i < segments + 2; i++) vertex[vertexSize - i].select();
     }
     }
 }

@@ -37,7 +37,7 @@ void TPlane::function(Action action, QMouseEvent *event)
         for(int i = 0; i < 4; i++)
         {
             vertex[vertexSize + i] = worldCoordinates;
-            vertex[vertexSize + i].setNewSelected(true);
+            vertex[vertexSize + i].select(NEW);
         }
         break;
     }
@@ -111,11 +111,7 @@ void TPlane::function(Action action, QMouseEvent *event)
             planeFailed = true;
             return;
         }
-        for(i = 1; i < 5; i++)
-        {
-            vertex[vertexSize - i].setNewSelected(false);
-            vertex[vertexSize - i].setSelected(true);
-        }
+        for(i = 1; i < 5; i++) vertex[vertexSize - i].select();
     }
     }
 }

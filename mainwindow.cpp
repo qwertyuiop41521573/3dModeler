@@ -350,10 +350,10 @@ void MainWindow::selectAll()
     if( workWithElements[0]->isChecked() )
     {
         for( int i = 0; i < model->getVertex().size(); i++ )
-            model->getVertex()[i].setSelected(true);
+            model->getVertex()[i].select();
     }
     else for( int i = 0; i < model->getTriangle().size(); i++ )
-        model->getTriangle()[ i ].setSelected( true );
+        model->getTriangle()[ i ].select();
 }
 
 void MainWindow::selectNone()
@@ -361,10 +361,10 @@ void MainWindow::selectNone()
     if( workWithElements[0]->isChecked() )
     {
         for( int i = 0; i < model->getVertex().size(); i++ )
-            model->getVertex()[ i ].setSelected( false );
+            model->getVertex()[ i ].deselect();
     }
     else for( int i = 0; i < model->getTriangle().size(); i++ )
-        model->getTriangle()[ i ].setSelected( false );
+        model->getTriangle()[ i ].deselect();
 }
 
 bool MainWindow::openFileDialog( QString action )
@@ -431,7 +431,7 @@ void MainWindow::snapTogether()
     int vertexNumber = vertex.size();
     for( i = 0; i < vertexNumber; i++ )
     {
-        if(vertex[i].isSelected())
+        if(vertex[i].selected())
         {
             min = max = vertex[i].getPosition();
             selected.push_back( i );
@@ -440,7 +440,7 @@ void MainWindow::snapTogether()
     }
     for( ; i < vertexNumber; i++ )
     {
-        if( model->getVertex()[ i ].isSelected() )
+        if( model->getVertex()[ i ].selected() )
         {
             selected.push_back( i );
             const QVector3D &vertex = model->getVertex()[ i ].getPosition();

@@ -33,8 +33,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     case FINAL:
     {
         createWallsAndSecondCap(normal);
-        for(i = 0; i <= segments; i++) vertex[vertexSize + i].setSelected(
-                        true);
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].select();
         break;
     }
     //if(!_stage2) is done in TEllipse::function(action, event);
@@ -89,14 +88,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             vertex.resize(vertexSize - 2 * segments - 2);
             triangle.resize(triangle.size() - 4 * segments);
         }
-        else
-        {
-            for(i = 1; i < 2 * segments + 3; i++)
-            {
-                vertex[vertexSize - i].setNewSelected(false);
-                vertex[vertexSize - i].setSelected(true);
-            }
-        }
+        else for(i = 1; i < 2 * segments + 3; i++) vertex[vertexSize - i].select();
         widget->setToolIsOn(false);
         setStage2(false);
         widget->setMouseTracking(false);
@@ -113,8 +105,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
 
         createWallsAndSecondCap(QVector3D(0, 0, 0));
 
-        for(i = 0; i <= segments; i++) vertex[vertexSize + i].setNewSelected(
-                    true);
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].select(NEW);
 
         widget->setMouseTracking(true);
     }

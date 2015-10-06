@@ -39,20 +39,17 @@ void TSelect::function(Action action, QMouseEvent *event)
         QVector2D currentPosition(event->x() - widget->
              getHalfWidth(), widget->getHalfHeight() - event->y());
 
-        min.setX(qMin(startPosition.x(), currentPosition.x()) - 1);
-        min.setY(qMin(startPosition.y(), currentPosition.y()) - 1);
-        max.setX(qMax(startPosition.x(), currentPosition.x()) + 1);
-        max.setY(qMax(startPosition.y(), currentPosition.y()) + 1);
+        min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);
+        min.setY(qMin(startPosition.y(), currentPosition.y()) - 5);
+        max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);
+        max.setY(qMax(startPosition.y(), currentPosition.y()) + 5);
 
         bool perspective = projection == PERSPECTIVE;
         widget->countFinalMatrix(perspective);
         int j;
         if(workWithVert)
         {
-            for(i = 0; i < vertexSize; i++)
-                vertex[i].setNewSelected(isSelected(widget->
-                    getFinalMatrix(), vertex[i].getPosition(),
-                                             perspective, min, max));
+            for(i = 0; i < vertexSize; i++) if(isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max)) vertex[i].select(NEW);
         }
         else
         {
@@ -113,23 +110,20 @@ void TSelect::function(Action action, QMouseEvent *event)
         int j;
         if(workWithVert)
         {
-            for(i = 0; i < vertexSize; i++)
-                vertex[i].setNewSelected(isSelected(widget->
-                    getFinalMatrix(), vertex[i].getPosition(), perspective,
-                                                    min, max));
+            for(i = 0; i < vertexSize; i++) if(isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max)) vertex[i].select(NEW);
         }
         else
         {
             for(i = 0; i < triangleSize; i++)
             {
-                triangle[i].setNewSelected(false);
+               // triangle[i].deselect();
                 for(j = 0; j < 3; j++)
                 {
                     if(isSelected(widget->getFinalMatrix(), vertex[
                         triangle[i].getIndex(j)].getPosition(), perspective,
                                     min, max))
                     {
-                        triangle[i].setNewSelected(true);
+                        triangle[i].select(NEW);
                         break;
                     }
                 }
@@ -149,12 +143,11 @@ void TSelect::function(Action action, QMouseEvent *event)
         for(i = 0; i < selObj.size(); i++)
         {
             if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
-                selObj[i]->setSelected(selObj[i]->newSelected());
-            if(checkBox[0]->isChecked() && !selObj[i]->isSelected())
-                selObj[i]->setSelected(selObj[i]->newSelected());
-            if(checkBox[1]->isChecked() && selObj[i]->isSelected())
-                selObj[i]->setSelected(!selObj[i]->newSelected());
-            selObj[i]->setNewSelected(false);
+                selObj[i]->select(selObj[i]->newSelected());
+            if(checkBox[0]->isChecked() && selObj[i]->newSelected())
+                selObj[i]->select();
+            if(checkBox[1]->isChecked() && selObj[i]->newSelected())
+                selObj[i]->deselect();
         }
         break;
     }

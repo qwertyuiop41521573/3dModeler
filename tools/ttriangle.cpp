@@ -26,7 +26,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
         int vertexSize = vertex.size();
         int triangleSize = triangle.size();
 
-        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
+        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].select(NEW);
 
         QVector2D min, max;
         const QVector2D &startPosition = widget->getStartPosition();
@@ -54,19 +54,19 @@ void TTriangle::function(Action action, QMouseEvent *event)
             if(!selectedBefore && isSelected(widget->getFinalMatrix(), vertex[i].getPosition(), perspective, min, max))
             {
                 newTriangle.push_back(i);
-                vertex[i].setNewSelected(true);
+                vertex[i].select(NEW);
             }
         }
         if(newTriangle.size() == 3)
         {
             triangle.push_back(newTriangle.data());
-            for(i = 0; i < 3; i++) vertex[newTriangle[i]].setNewSelected(false);
+            for(i = 0; i < 3; i++) vertex[newTriangle[i]].select();
             newTriangle.clear();
         }
     }
     else
     {
-        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(false);
+        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].deselect();
         newTriangle.clear();
     }
 }
@@ -74,5 +74,5 @@ void TTriangle::function(Action action, QMouseEvent *event)
 void TTriangle::setActive(bool value)
 {
     if(!value) function(FINAL, 0);
-    Tool::setActive(value);
+    ToolWithWidget::setActive(value);
 }

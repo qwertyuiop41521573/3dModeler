@@ -34,14 +34,13 @@ void TVertex::function(Action action, QMouseEvent *event)
         if(action == START) fromScreenToWorld(newVertex, event, widget);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
         vertex.push_back(newVertex);
-        vertex[vertexSize].setNewSelected(true);
+        vertex[vertexSize].select(NEW);
         if(action == FINAL) action = STOP;
     }
     if(action == EXECUTE) fromScreenToWorld(vertex[vertexSize - 1].getEditablePosition(), event, widget);
     if(action == STOP)
     {
         vertexSize = vertex.size();
-        vertex[vertexSize - 1].setNewSelected(false);
-        vertex[vertexSize - 1].setSelected(true);
+        vertex[vertexSize - 1].select();
     }
 }
