@@ -2,6 +2,7 @@
 #define TVERTEX_H
 
 #include "toolwithwidget.h"
+
 #include "gui/myspinbox.h"
 
 class TVertex : public ToolWithWidget

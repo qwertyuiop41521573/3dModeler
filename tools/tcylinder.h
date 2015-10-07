@@ -2,8 +2,6 @@
 #define TCYLINDER_H
 
 #include "tellipse.h"
-#include "gui/myspinbox.h"
-#include "gui/mycheckboxmw.h"
 
 class TCylinder : public TEllipse
 {

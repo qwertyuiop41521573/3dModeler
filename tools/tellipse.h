@@ -2,6 +2,7 @@
 #define TELLIPSE_H
 
 #include "toolwithwidget.h"
+
 #include "gui/myspinbox.h"
 #include "gui/mycheckboxmw.h"
 

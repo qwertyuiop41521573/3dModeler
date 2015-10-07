@@ -1,7 +1,6 @@
 #include "tool.h"
 #include "mainwindow.h"
 
-
 Tool::Tool(MainWindow *mainWindow)
 {
     _mainWindow = mainWindow;

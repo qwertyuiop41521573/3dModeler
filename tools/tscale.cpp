@@ -7,16 +7,13 @@ TScale::TScale(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
     button->setText("Scale");
     finalButton = new QPushButton("Scale");
 
-    int i;
-    for(i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
     {
         pushButton[i] = new MyPushButtonMW(QString('X' + i));
-        spinBox[i] = new MySpinBox;
-        layout->addWidget(pushButton[i], i, 0);
-        layout->addWidget(spinBox[i], i, 1);
+        layout->addWidget(pushButton[i], i + 1, 0);
     }
 
-    layout->addWidget(finalButton, 3, 0, 1, 2);
+    layout->addWidget(finalButton, 4, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
 
 }

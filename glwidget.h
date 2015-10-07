@@ -3,14 +3,12 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include <QBasicTimer>
 #include <QOpenGLShaderProgram>
+
+#include <QBasicTimer>
 
 #include "tool.h"
 #include "model.h"
-#include "camera.h"
-
-#include <iostream>
 
 using namespace std;
 
@@ -110,9 +108,6 @@ public:
     void countFinalInverseMatrix();
     void countFinalMatrix()
     { finalMatrix = ( projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse ) * projectionMatrix; };
-
-
-    void setCurrentPosition( double x, double y );//????
 
 
     void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point );

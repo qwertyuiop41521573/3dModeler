@@ -1,6 +1,7 @@
 #include "tvertex.h"
 #include "glwidget.h"
 #include "mainwindow.h"
+
 #include "gui/mylabel.h"
 
 TVertex::TVertex(MainWindow *mainWindow) : ToolWithWidget(mainWindow)

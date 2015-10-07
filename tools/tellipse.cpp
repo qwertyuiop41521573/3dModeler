@@ -3,6 +3,8 @@
 #include "mainwindow.h"
 #include "mathfunctions.h"
 
+#include "gui/mylabel.h"
+
 TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
     button->setText("Ellipse");

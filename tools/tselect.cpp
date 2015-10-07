@@ -1,6 +1,5 @@
 #include "tselect.h"
 #include "glwidget.h"
-
 #include "mainwindow.h"
 
 TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)

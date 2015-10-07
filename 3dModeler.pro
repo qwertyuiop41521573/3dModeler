@@ -127,13 +127,11 @@ RESOURCES += \
 # draw points over wireframe overlay
 # ortho for 3d
 
-
 # unite all setters/getters in classes
+# check classes and structs that don't have their own file
+
 # in model->load() replace fscanf with cin
-#
 # in GLWidget::draw vertices should not repeat! - fix after textures
-# remove unneeded #include
-# glwidget - remove setCurrentPosition ?
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis

@@ -1,12 +1,7 @@
 #ifndef MATHFUNCTIONS
 #define MATHFUNCTIONS
 
-#include <QPushButton>
-#include <QDoubleSpinBox>
-#include <QMouseEvent>
-
-#include "glwidget.h"
-#include "gui/myspinbox.h"
+#include <QtMath>
 
 double inRadians( double value );
 int sign( double number );

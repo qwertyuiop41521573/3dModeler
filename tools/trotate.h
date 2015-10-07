@@ -2,7 +2,7 @@
 #define TROTATE_H
 
 #include "toolwithpivot.h"
-#include "gui/myspinbox.h"
+
 #include "gui/mycheckboxmw.h"
 
 class TRotate : public ToolWithPivot
@@ -17,7 +17,7 @@ signals:
 public slots:
 
 private:
-    MySpinBox *spinBox[4];
+    MySpinBox *spinBoxAngle;
     MyCheckBoxMW *checkBoxCustomAxis;
 
     bool getAxis(QMatrix4x4 &rotation, double angle);

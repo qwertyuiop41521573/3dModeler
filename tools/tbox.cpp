@@ -3,6 +3,8 @@
 #include "mainwindow.h"
 #include "mathfunctions.h"
 
+#include "gui/mylabel.h"
+
 TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
 {
     button->setText("Box");

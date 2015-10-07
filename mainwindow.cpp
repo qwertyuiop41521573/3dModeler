@@ -1,11 +1,6 @@
-#include <QtGui>
-#include <QtOpenGL>
-#include <QSpacerItem>
-
 #include "mainwindow.h"
-#include "gui/myframe.h"
 
-#include <iostream>
+#include "gui/myframe.h"
 
 using namespace std;
 
@@ -18,20 +13,20 @@ MainWindow::MainWindow()
 
     //tools
     tPan = new TPan(this);
-    TZoom *tZoom = new TZoom(this);
-    TRotateCamera *tRotateCamera = new TRotateCamera(this);
+    tZoom = new TZoom(this);
+    tRotateCamera = new TRotateCamera(this);
     tOrbit = new TOrbit(this);
 
-    TSelect *tSelect = new TSelect(this);
-    TMove *tMove = new TMove(this);
-    TScale *tScale = new TScale(this);
-    TRotate *tRotate = new TRotate(this);
-    TVertex *tVertex = new TVertex(this);
-    TTriangle *tTriangle = new TTriangle(this);
-    TPlane *tPlane = new TPlane(this);
-    TBox *tBox = new TBox(this);
-    TEllipse *tEllipse = new TEllipse(this);
-    TCylinder *tCylinder = new TCylinder(this);
+    tSelect = new TSelect(this);
+    tMove = new TMove(this);
+    tScale = new TScale(this);
+    tRotate = new TRotate(this);
+    tVertex = new TVertex(this);
+    tTriangle = new TTriangle(this);
+    tPlane = new TPlane(this);
+    tBox = new TBox(this);
+    tEllipse = new TEllipse(this);
+    tCylinder = new TCylinder(this);
 
     QWidget *workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;

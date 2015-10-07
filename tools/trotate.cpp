@@ -2,6 +2,8 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
+#include "gui/mylabel.h"
+
 TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
 {
     button->setText("Rotate");
@@ -10,21 +12,17 @@ TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
     int i;
     MyLabel *label[4];
     label[0] = new MyLabel("Angle:", 50);
+    spinBoxAngle = new MySpinBox;
     for(i = 1; i < 4; i++) label[i] = new MyLabel(QString('W' + i) + ':', 50);
-    for(i = 0; i < 4; i++)
-    {
-        spinBox[i] = new MySpinBox;
-        layout->addWidget(spinBox[i], i, 1);
-        layout->addWidget(label[i], i, 0);
-    }
+    for(i = 0; i < 4; i++) layout->addWidget(label[i], i, 0);
     spinBox[0]->setMaximum(360);
     spinBox[0]->setMinimum(-360);
 
     checkBoxCustomAxis = new MyCheckBoxMW;
     checkBoxCustomAxis->setText("Custom Axis");
     checkBoxCustomAxis->setChecked(true);
-    layout->addWidget(checkBoxCustomAxis, 5, 0, 1, 2);
-    layout->addWidget(finalButton, 4, 0, 1, 2);
+    layout->addWidget(checkBoxCustomAxis, 4, 0, 1, 2);
+    layout->addWidget(finalButton, 5, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
 }
 

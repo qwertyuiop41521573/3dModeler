@@ -3,9 +3,6 @@
 #include "mainwindow.h"
 #include "mathfunctions.h"
 
-#include "gui/mylabel.h"
-#include "gui/myframe.h"
-
 TPlane::TPlane(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
     button->setText("Plane");

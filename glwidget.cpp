@@ -2,11 +2,6 @@
 #include "mainwindow.h"
 #include "mathfunctions.h"
 
-#include <iostream>
-#include <math.h>
-
-#include <QMouseEvent>
-
 #define GRAY       QVector3D(0.5, 0.5, 0.5)
 #define BLACK      QVector3D(0, 0, 0)
 #define RED        QVector3D(1, 0, 0)
@@ -588,12 +583,4 @@ bool GLWidget::isSelected(const QVector3D &vertex, const QVector2D &min, const Q
     if(projection == PERSPECTIVE) for(int i = 0; i < 2; i++) result[i] /= result[3];
     return result.x() > min.x() && result.x() < max.x() && result.y() >
             min.y() && result.y() < max.y();
-}
-
-
-
-void GLWidget::setCurrentPosition( double x, double y )
-{
-    currentPosition.setX( x );
-    currentPosition.setY( y );
 }

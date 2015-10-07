@@ -3,6 +3,8 @@
 
 #include "toolwithwidget.h"
 
+#include "gui/myspinbox.h"
+
 class TransformingTool : public ToolWithWidget
 {
 public:
@@ -13,6 +15,8 @@ signals:
 public slots:
 
 protected:
+    MySpinBox *spinBox[3];
+
     vector <bool> checked;
     vector <int> toTransform;
     QMatrix4x4 transformation;

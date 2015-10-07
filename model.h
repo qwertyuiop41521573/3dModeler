@@ -1,13 +1,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <QString>
-#include <QTextBrowser>
-
-#include "vertex.h"
 #include "triangle.h"
-
-#include <iostream>
+#include "vertex.h"
 
 using namespace std;
 

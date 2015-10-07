@@ -2,7 +2,11 @@
 
 TransformingTool::TransformingTool(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
-
+    for(int i = 0; i < 3; i++)
+    {
+        spinBox[i] = new MySpinBox;
+        layout->addWidget(spinBox[i], i + 1, 1);
+    }
 }
 
 void TransformingTool::transform()

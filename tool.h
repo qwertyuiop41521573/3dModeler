@@ -2,17 +2,12 @@
 #define TOOL_H
 
 #include <QPushButton>
-#include <QLineEdit>
 #include <QVector3D>
 #include <QtOpenGL>
 
-#include <iostream>
-
 using namespace  std;
 
-//class QString;
 class GLWidget;
-class QPoint;
 
 class VertexData_Color
 {

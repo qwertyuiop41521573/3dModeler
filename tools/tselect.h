@@ -2,6 +2,7 @@
 #define TSELECT_H
 
 #include "toolwithwidget.h"
+
 #include "gui/mycheckbox.h"
 
 class TSelect : public ToolWithWidget

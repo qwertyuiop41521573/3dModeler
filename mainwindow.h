@@ -1,18 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QComboBox>
-#include <QCheckBox>
-
 #include "glwidget.h"
-#include "model.h"
-#include "tool.h"
+
 #include "gui/mypushbutton.h"
 #include "gui/mycombobox.h"
-
-
-#include <iostream>
 
 #include "tools/tpan.h"
 #include "tools/tzoom.h"
@@ -99,9 +91,21 @@ private:
     MyPushButton *hideViewportButtons[4];
     QPushButton *maximizeButton;
 
-    //we need this pointers here for quick access
     TPan *tPan;
+    TZoom *tZoom;
+    TRotateCamera *tRotateCamera;
     TOrbit *tOrbit;
+
+    TSelect *tSelect;
+    TMove *tMove;
+    TScale *tScale;
+    TRotate *tRotate;
+    TVertex *tVertex;
+    TTriangle *tTriangle;
+    TPlane *tPlane;
+    TBox *tBox;
+    TEllipse *tEllipse;
+    TCylinder *tCylinder;
 
     QRadioButton *workWithElements[2];
 

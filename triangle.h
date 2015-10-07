@@ -1,7 +1,7 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "vertex.h"
+#include "selectableobject.h"
 
 class Triangle : public SelectableObject
 {

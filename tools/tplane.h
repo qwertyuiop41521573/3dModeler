@@ -2,7 +2,7 @@
 #define TPLANE_H
 
 #include "toolwithwidget.h"
-#include "gui/myspinbox.h"
+
 #include "gui/mycheckboxmw.h"
 
 class TPlane : public ToolWithWidget

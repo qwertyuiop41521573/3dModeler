@@ -2,8 +2,8 @@
 #define TMOVE_H
 
 #include "transformingtool.h"
+
 #include "gui/mypushbuttonmw.h"
-#include "gui/myspinbox.h"
 
 using namespace std;
 
@@ -20,7 +20,6 @@ public slots:
 
 private:
     MyPushButtonMW *pushButton[3];
-    MySpinBox *spinBox[3];
 };
 
 #endif // TMOVE_H

@@ -2,9 +2,8 @@
 #define TBOX_H
 
 #include "tools/tplane.h"
+
 #include "gui/myspinbox.h"
-#include "gui/mycheckboxmw.h"
-#include "gui/mylabel.h"
 
 class TBox : public TPlane
 {

@@ -1,9 +1,5 @@
 #include "mathfunctions.h"
 
-#include <QLayout>
-#include <QDoubleSpinBox>
-#include <iostream>
-
 using namespace std;
 
 double inRadians( double value )

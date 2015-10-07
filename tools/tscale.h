@@ -2,8 +2,8 @@
 #define TSCALE_H
 
 #include "toolwithpivot.h"
+
 #include "gui/mypushbuttonmw.h"
-#include "gui/myspinbox.h"
 
 class TScale : public ToolWithPivot
 {
@@ -18,7 +18,6 @@ public slots:
 
 private:
     MyPushButtonMW *pushButton[3];
-    MySpinBox *spinBox[3];
 };
 
 #endif // TSCALE_H

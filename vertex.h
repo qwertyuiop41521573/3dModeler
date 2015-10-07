@@ -2,7 +2,6 @@
 #define VERTEX_H
 
 #include <QVector2D>
-#include <QVector3D>
 #include <QMatrix4x4>
 
 #include "camera.h"
