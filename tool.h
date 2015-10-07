@@ -5,8 +5,6 @@
 #include <QVector3D>
 #include <QtOpenGL>
 
-using namespace  std;
-
 class GLWidget;
 
 typedef enum { START, STOP, EXECUTE, DRAW, FINAL, STAGE2 } Action;

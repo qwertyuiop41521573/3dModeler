@@ -3,8 +3,6 @@
 
 #include <QPushButton>
 
-using namespace std;
-
 class MainWindow;
 
 class MyPushButton : public QPushButton

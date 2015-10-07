@@ -21,8 +21,6 @@
 #include "tools/tellipse.h"
 #include "tools/tcylinder.h"
 
-using namespace std;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

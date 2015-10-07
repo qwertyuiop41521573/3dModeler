@@ -127,7 +127,6 @@ RESOURCES += \
 # draw points over wireframe overlay
 # ortho for 3d
 
-# remove namespace
 # in glwidget add sin(inRadians...
 
 # in model->load() replace fscanf with cin

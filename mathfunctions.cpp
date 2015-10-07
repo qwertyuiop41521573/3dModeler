@@ -1,7 +1,5 @@
 #include "mathfunctions.h"
 
-using namespace std;
-
 double inRadians(double value)
 {
     return value * M_PI / double(180);
