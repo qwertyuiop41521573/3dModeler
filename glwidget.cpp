@@ -202,7 +202,7 @@ void GLWidget::draw(bool wireframe)
             glBufferData(GL_ARRAY_BUFFER, vertexNumber *
                      vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber *
-                         GLushortSize, indices.data(), GL_STATIC_DRAW);
+                         GLuintSize, indices.data(), GL_STATIC_DRAW);
 
             glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_INT, 0);
         }
@@ -287,7 +287,7 @@ void GLWidget::draw(bool wireframe)
     glVertexAttribPointer(fragmentLocation, 3, GL_FLOAT, GL_FALSE,
                           structSize, vectorSize);
     program->setUniformValue("mvp_matrix", projectionMatrix);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLushortSize,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLuintSize,
                  indices.data(), GL_STATIC_DRAW);
     if(wireframe) glEnable(GL_POLYGON_OFFSET_LINE);
     glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_INT, 0);
@@ -310,7 +310,7 @@ void GLWidget::drawAdittional()
         glBufferData(GL_ARRAY_BUFFER, selectedFacesLength *
            vertexData_ColorSize, selectedFaces.data(), GL_STATIC_DRAW);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, selectedFacesLength *
-                      GLushortSize, indices.data(), GL_STATIC_DRAW);
+                      GLuintSize, indices.data(), GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, selectedFacesLength,
                         GL_UNSIGNED_INT, 0);
     }
@@ -320,7 +320,7 @@ void GLWidget::drawAdittional()
     glLineWidth(1);
     glBufferData(GL_ARRAY_BUFFER, 6 * vertexData_ColorSize,
                   axis.vertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLushortSize,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLuintSize,
                   axis.indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, 0);
     if(projection == PERSPECTIVE)
@@ -329,7 +329,7 @@ void GLWidget::drawAdittional()
 
         glBufferData(GL_ARRAY_BUFFER, 88 * vertexData_ColorSize,
                       grid.vertices.data(), GL_STATIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 88 * GLushortSize,
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 88 * GLuintSize,
                       grid.indices.data(), GL_STATIC_DRAW);
         glDrawElements(GL_LINES, 88, GL_UNSIGNED_INT, 0);
     }
@@ -351,7 +351,7 @@ void GLWidget::drawAdittional()
                 vertexData_ColorSize, toolData.vertices.data(),
                           GL_STATIC_DRAW);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber *
-                GLushortSize, toolData.indices.data(), GL_STATIC_DRAW);
+                GLuintSize, toolData.indices.data(), GL_STATIC_DRAW);
 
             glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT,
                             0);
@@ -370,7 +370,7 @@ void GLWidget::drawAdittional()
     prepareProgramColor(frameMatrix);
     glBufferData(GL_ARRAY_BUFFER, 4 * vertexData_ColorSize,
                   frame.vertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * GLushortSize,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * GLuintSize,
                   frame.indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
 }

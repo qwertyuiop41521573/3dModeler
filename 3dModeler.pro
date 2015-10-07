@@ -3,16 +3,6 @@ CONFIG += staticlib
 QT += opengl
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp \
-    model.cpp \
-    tool.cpp \
-    vertex.cpp \
-    triangle.cpp \
-    glwidget.cpp \
-    camera.cpp \
-    toolwithwidget.cpp \
-                    \
     tools/tpan.cpp \
     tools/tplane.cpp \
     tools/tbox.cpp \
@@ -36,6 +26,16 @@ SOURCES += \
     gui/mylabel.cpp \
     gui/mypushbuttonmw.cpp \
     gui/myframe.cpp \
+                        \
+    main.cpp \
+    mainwindow.cpp \
+    model.cpp \
+    tool.cpp \
+    vertex.cpp \
+    triangle.cpp \
+    glwidget.cpp \
+    camera.cpp \
+    toolwithwidget.cpp \
     selectableobject.cpp \
     transformingtool.cpp \
     toolwithpivot.cpp \
@@ -43,15 +43,6 @@ SOURCES += \
 
 
 HEADERS += \
-    mainwindow.h \
-    model.h \
-    tool.h \
-    vertex.h \
-    triangle.h \
-    glwidget.h \
-    camera.h \
-    toolwithwidget.h \
-                  \
     tools/tpan.h \
     tools/tbox.h \
     tools/tcylinder.h \
@@ -76,6 +67,15 @@ HEADERS += \
     gui/mypushbuttonmw.h \
     gui/myhframe.h \
     gui/myframe.h \
+                    \
+    mainwindow.h \
+    model.h \
+    tool.h \
+    vertex.h \
+    triangle.h \
+    glwidget.h \
+    camera.h \
+    toolwithwidget.h \
     selectableobject.h \
     transformingtool.h \
     toolwithpivot.h \
@@ -127,13 +127,9 @@ RESOURCES += \
 # draw points over wireframe overlay
 # ortho for 3d
 
-# unite all setters/getters in classes
-# check classes and structs that don't have their own file
-
 # in model->load() replace fscanf with cin
 # in GLWidget::draw vertices should not repeat! - fix after textures
 
-# tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis
 # ellipse and cylinder: normal = (-1, 0, 0) - FIX!!
 # halfDiagonal can be <0 - FIX!!

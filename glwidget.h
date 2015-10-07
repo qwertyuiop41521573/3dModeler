@@ -188,7 +188,7 @@ private:
     const void *vectorSize = (const void*)sizeof(QVector3D);
     int vertexData_ColorSize = sizeof(VertexData_Color);
     int vertexData_TextureSize = sizeof(VertexData_Texture);
-    int GLushortSize = sizeof(GLuint);
+    int GLuintSize = sizeof(GLuint);
 
     VertexAndIndexData grid, axis, frame;
 
