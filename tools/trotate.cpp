@@ -13,6 +13,7 @@ TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
     MyLabel *label[4];
     label[0] = new MyLabel("Angle:", 50);
     spinBoxAngle = new MySpinBox;
+    layout->addWidget(spinBoxAngle, 0, 1);
     for(i = 1; i < 4; i++) label[i] = new MyLabel(QString('W' + i) + ':', 50);
     for(i = 0; i < 4; i++) layout->addWidget(label[i], i, 0);
     spinBox[0]->setMaximum(360);
@@ -40,13 +41,11 @@ void TRotate::function(Action action, QMouseEvent *event)
     ToolWithPivot::function(action, event);
     if(action == START) return;
 
-    double angle;
     QMatrix4x4 rotation;
     rotation.setToIdentity();
     if(action == FINAL)
     {
-        angle = spinBox[0]->value();
-        if(!getAxis(rotation, angle)) return;
+        if(!createRotationMatrix(rotation, spinBoxAngle->value())) return;
     }
     else
     {
@@ -59,7 +58,7 @@ void TRotate::function(Action action, QMouseEvent *event)
         QVector2D toCurrent = (currentPosition - pivotOnScreen).normalized();
         QVector2D toLast = (lastPosition - pivotOnScreen).normalized();
 
-        angle = qAcos(QVector2D::dotProduct(toCurrent, toLast)) * 180 / M_PI;
+        double angle = qAcos(QVector2D::dotProduct(toCurrent, toLast)) * 180 / M_PI;
         if(toCurrent.x() * toLast.y() > toCurrent.y() * toLast.x())
             angle *= -1;
         if(action == DRAW)
@@ -78,7 +77,7 @@ void TRotate::function(Action action, QMouseEvent *event)
             indices[2] = 1;
             indices[3] = 2;
 
-            spinBox[0]->setValue(angle);
+            spinBoxAngle->setValue(angle);
             return;
         }
         if(checkBoxCustomAxis->isChecked())
@@ -88,7 +87,7 @@ void TRotate::function(Action action, QMouseEvent *event)
             rotation.rotate(angle, 0, 0, 1);
             rotation *= widget->getRotationMatrix();
         }
-        else if(!getAxis(rotation, angle)) return;
+        else if(!createRotationMatrix(rotation, angle)) return;
     }
 
     //create transformation matrix
@@ -103,9 +102,24 @@ void TRotate::function(Action action, QMouseEvent *event)
 bool TRotate::getAxis(QMatrix4x4 &rotation, double angle)
 {
     QVector3D axis;
-    for(int i = 0; i < 3; i++) axis[i] = spinBox[i + 1]->value();
+    for(int i = 0; i < 3; i++) axis[i] = spinBox[i]->value();
     if(axis.isNull()) return false;
     axis.normalize();
     rotation.rotate(angle, axis);
     return true;
+}
+
+bool TRotate::createRotationMatrix(QMatrix4x4 &rotation, double angle)
+{
+    GLWidget *widget = *_activeWidget;
+
+    if(checkBoxCustomAxis->isChecked())
+    {
+        widget->countRotationMatrices();
+        rotation *= widget->getRotationMatrixInverse();
+        rotation.rotate(angle, 0, 0, 1);
+        rotation *= widget->getRotationMatrix();
+        return true;
+    }
+    else return getAxis(rotation, angle);
 }

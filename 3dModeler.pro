@@ -130,7 +130,6 @@ RESOURCES += \
 # in model->load() replace fscanf with cin
 # in GLWidget::draw vertices should not repeat! - fix after textures
 
-# rotate around custom axis
 # ellipse and cylinder: normal = (-1, 0, 0) - FIX!!
 # halfDiagonal can be <0 - FIX!!
 # in tools widgets many values must be integer!
