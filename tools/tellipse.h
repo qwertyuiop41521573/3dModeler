@@ -18,7 +18,7 @@ signals:
 public slots:
 
 protected:
-    MySpinBox *spinBoxSegments;
+    QSpinBox *spinBoxSegments;
     MySpinBox *spinBox[6];
     MySpinBox *spinBoxRadius;
 

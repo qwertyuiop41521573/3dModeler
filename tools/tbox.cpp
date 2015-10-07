@@ -10,6 +10,7 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
     button->setText("Box");
     finalButton = new QPushButton("Create Box");
     int i;
+
     checkBoxCube = new QCheckBox;
     checkBoxCube->setText("Cube");
     layout->addWidget(checkBoxCube, 0, 2, 1, 2);
@@ -17,7 +18,7 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
     QLabel *center = new QLabel("Center");
     QLabel *size = new QLabel("Size");
     layout->addWidget(center, 1, 0, 1, 2);
-    layout->addWidget(size, 1, 2, 1, 2);
+    layout->addWidget(size, 1, 2, 1, 4);
 
     MyLabel *label[6];
     for(i = 0; i < 6; i++)
@@ -28,13 +29,20 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
         layout->addWidget(label[i], y, x);
         layout->addWidget(spinBox[i], y, x + 1);
     }
-    for(i = 0; i < 3; i++) spinBox[3 + i]->setMinimum(0);
+    for(i = 0; i < 3; i++)
+    {
+        spinBox[3 + i]->setMinimum(0);
+        spinBox[3 + i]->setValue(1);
+    }
 
     layout->addWidget(finalButton, 6, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
     _hasStage2 = true;
     connect(checkBoxCube, SIGNAL(clicked(bool)), this, SLOT(handleCubeClick(
                                                                 bool)));
+
+
+    _widget->hide();
 }
 
 void TBox::function(Action action, QMouseEvent *event)

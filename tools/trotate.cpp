@@ -25,6 +25,7 @@ TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
     layout->addWidget(checkBoxCustomAxis, 4, 0, 1, 2);
     layout->addWidget(finalButton, 5, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    _widget->hide();
 }
 
 void TRotate::function(Action action, QMouseEvent *event)

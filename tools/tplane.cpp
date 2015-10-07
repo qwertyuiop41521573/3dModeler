@@ -8,7 +8,8 @@ TPlane::TPlane(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     button->setText("Plane");
     checkBoxSquare = new MyCheckBoxMW;
     checkBoxSquare->setText("Square");
-    layout->addWidget(checkBoxSquare, 0, 0, 1, 2);
+    layout->addWidget(checkBoxSquare, 0, 0, 1, 4);
+    _widget->hide();
 }
 
 void TPlane::function(Action action, QMouseEvent *event)

@@ -18,6 +18,7 @@ TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)
     layout->addWidget(spinBoxHeight, 7, 2, 1, 2);
 
     _hasStage2 = true;
+    _widget->show();
 }
 
 void TCylinder::function(Action action, QMouseEvent *event)
@@ -42,6 +43,13 @@ void TCylinder::function(Action action, QMouseEvent *event)
     //    TEllipse::function(action, event);
     case FINAL:
     {
+        if(ellipseFailed) return;
+        if(spinBoxHeight->value() == 0)
+        {
+            vertex.resize(vertexSize - segments - 1);
+            triangle.resize(triangle.size() - segments);
+            return;
+        }
         createWallsAndSecondCap(true);
         for(i = 0; i <= segments; i++) vertex[vertexSize + i].select();
         break;

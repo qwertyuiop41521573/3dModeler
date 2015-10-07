@@ -7,13 +7,15 @@ TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     button->setText("Select");
     int i;
     for(i = 0; i < 2; i++) checkBox[i] = new MyCheckBox;
+    checkBox[0]->setText("Add");
+    checkBox[1]->setText("Remove");
     for(i = 0; i < 2; i++)
     {
         checkBox[i]->setNeighbor(checkBox[!i]);
-        layout->addWidget(checkBox[i], 0, i);
+        layout->addWidget(checkBox[i], 0, i, 1, 2);
     }
-    checkBox[0]->setText("Add");
-    checkBox[1]->setText("Remove");
+
+    _widget->hide();
 }
 
 void TSelect::function(Action action, QMouseEvent *event)

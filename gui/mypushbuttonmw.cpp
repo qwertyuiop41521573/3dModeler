@@ -3,6 +3,6 @@
 MyPushButtonMW::MyPushButtonMW(const QString &text) : QPushButton(text)
 {
     setCheckable(true);
-    setMaximumWidth(70);
+    setMaximumWidth(50);
 }
 

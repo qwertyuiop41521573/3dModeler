@@ -20,6 +20,7 @@ TVertex::TVertex(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     }
     layout->addWidget(finalButton, 3, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    _widget->hide();
 }
 
 void TVertex::function(Action action, QMouseEvent *event)

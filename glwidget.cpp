@@ -262,7 +262,6 @@ void GLWidget::draw(bool wireframe)
     else
     {
         vertices_col.clear();
-       // for(i = triangleNumber - 1; i >= 0; i--)/////////////////
         for(i = 0; i < triangleNumber; i++)
         {
             if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
@@ -323,6 +322,8 @@ void GLWidget::drawAdittional()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLuintSize,
                   axis.indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, 0);
+
+    //draw grid
     if(projection == PERSPECTIVE)
     {
         prepareProgramColor(projectionMatrix);

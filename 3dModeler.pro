@@ -129,12 +129,7 @@ RESOURCES += \
 
 # in model->load() replace fscanf with cin
 # in GLWidget::draw vertices should not repeat! - fix after textures
-
-# ellipse - rename spinBox
-
-# halfDiagonal can be <0 - FIX!!
-# in tools widgets many values must be integer!
-# box - cube down - fix
-# tPlane->widget() is not hidden as it is the biggest widget - FIX
+# axis lines should be like wireframe overlay
 
 # loading and saving model is corrupted
+# tCylinder->widget() is not hidden as it is the biggest widget

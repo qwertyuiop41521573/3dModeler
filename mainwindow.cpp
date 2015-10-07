@@ -52,7 +52,7 @@ MainWindow::MainWindow()
     scrollArea->setHorizontalScrollBarPolicy(
                 Qt::ScrollBarAlwaysOff);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scrollArea->setFixedWidth(215);
+    scrollArea->setFixedWidth(225);
     QWidget *scrollAreaWidget = new QWidget;
     scrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     QGridLayout *scrollAreaLayout = new QGridLayout;
@@ -166,7 +166,8 @@ MainWindow::MainWindow()
     scrollArea->setWidget(scrollAreaWidget);
         //scrollarea end
 
-    tMove->getWidget()->hide();
+    tCylinder->getWidget()->hide();
+/*    tMove->getWidget()->hide();
     tScale->getWidget()->hide();
     tRotate->getWidget()->hide();
     tVertex->getWidget()->hide();
@@ -174,7 +175,7 @@ MainWindow::MainWindow()
     tPlane->getWidget()->hide();
     tBox->getWidget()->hide();
     tEllipse->getWidget()->hide();
-    tCylinder->getWidget()->hide();
+    tCylinder->getWidget()->hide();*/
 
         //viewports
     QWidget *viewportWidget = new QWidget;

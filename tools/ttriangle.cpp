@@ -6,9 +6,11 @@ TTriangle::TTriangle(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
     button->setText("Triangle");
     finalButton = new QPushButton("Cancel");
+    finalButton->setMaximumWidth(150);
 
-    layout->addWidget(finalButton, 0, 0 );
+    layout->addWidget(finalButton, 0, 0, 1, 2 );
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    _widget->hide();
 }
 
 void TTriangle::function(Action action, QMouseEvent *event)

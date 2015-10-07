@@ -15,7 +15,10 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     finalButton = new QPushButton("Create Ellipse");
 
     int i;
-    spinBoxSegments = new MySpinBox;
+    spinBoxSegments = new QSpinBox;
+    spinBoxSegments->setMaximumWidth(55);
+    spinBoxSegments->setMaximum(1000);
+    spinBoxSegments->setMinimum(-1000);
     for(i = 0; i < 6; i++) spinBox[i] = new MySpinBox;
     spinBoxRadius = new MySpinBox;
 
@@ -52,6 +55,7 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     layout->addWidget(spinBoxRadius, 6, 2, 1, 2);
     layout->addWidget(finalButton, 8, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    _widget->hide();
 }
 
 void TEllipse::function(Action action, QMouseEvent *event)
@@ -68,11 +72,11 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
     //argument should be true for cylinder and false for ellipse, so we
     //    can use _hasStage2 and do not create new variable
-    if(action == START || action == FINAL) allocateCap(_hasStage2);
     switch(action)
     {
     case START:
     {
+        allocateCap(_hasStage2);
         widget->countFinalInverseMatrix();
         widget->fromScreenToWorld(startPosition3D, event);
         for(i = 0; i <= segments; i++)
@@ -84,11 +88,17 @@ void TEllipse::function(Action action, QMouseEvent *event)
     }
     case FINAL:
     {
+        ellipseFailed = false;
         for(i = 0; i < 3; i++) normal[i] = spinBox[3 + i]->value();
-        if(normal.length() == 0) return;
-        normal.normalize();
         double radius = spinBoxRadius->value();
-        if(radius == 0) return;
+        if(normal.length() == 0 || radius == 0)
+        {
+            ellipseFailed = true;
+            return;
+        }
+
+        allocateCap(_hasStage2);
+        normal.normalize();
         QVector3D center;
         for(i = 0; i < 3; i++) center[i] = spinBox[i]->value();
         //widget->countFinalInverseMatrix(false);

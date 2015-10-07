@@ -9,12 +9,15 @@ TScale::TScale(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
 
     for(int i = 0; i < 3; i++)
     {
+        spinBox[i]->setMinimum(0);
+        spinBox[i]->setValue(1);
         pushButton[i] = new MyPushButtonMW(QString('X' + i));
         layout->addWidget(pushButton[i], i + 1, 0);
     }
 
     layout->addWidget(finalButton, 4, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    _widget->hide();
 
 }
 

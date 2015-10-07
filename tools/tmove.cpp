@@ -15,6 +15,7 @@ TMove::TMove(MainWindow *mainWindow) : TransformingTool(mainWindow)
 
     layout->addWidget(finalButton, 4, 0, 1, 2);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    _widget->hide();
 }
 
 void TMove::function(Action action, QMouseEvent *event)
