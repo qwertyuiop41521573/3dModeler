@@ -18,10 +18,27 @@ typedef enum { WIREFRAME, FLAT_SHADED, SMOOTH_SHADED,
 typedef enum { TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT,
                PERSPECTIVE } Projection;
 
+class VertexData_Color
+{
+public:
+    VertexData_Color( QVector3D pos = { 0, 0, 0 },
+                      QVector3D col = { 0, 0, 0 } )
+    { position = pos; color = col; };
+
+    QVector3D position;
+    QVector3D color;
+};
+
 struct VertexData_Texture
 {
     QVector3D position;
     QVector2D texCoord;
+};
+
+struct VertexAndIndexData
+{
+    vector <VertexData_Color> vertices;
+    vector <GLuint> indices;
 };
 
 class MainWindow;

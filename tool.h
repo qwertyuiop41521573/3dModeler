@@ -9,23 +9,6 @@ using namespace  std;
 
 class GLWidget;
 
-class VertexData_Color
-{
-public:
-    VertexData_Color( QVector3D pos = { 0, 0, 0 },
-                      QVector3D col = { 0, 0, 0 } )
-    { position = pos; color = col; };
-
-    QVector3D position;
-    QVector3D color;
-};
-
-struct VertexAndIndexData
-{
-    vector <VertexData_Color> vertices;
-    vector <GLuint> indices;
-};
-
 typedef enum { START, STOP, EXECUTE, DRAW, FINAL, STAGE2 } Action;
 
 class MainWindow;
