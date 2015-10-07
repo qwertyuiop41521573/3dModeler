@@ -127,6 +127,9 @@ RESOURCES += \
 # draw points over wireframe overlay
 # ortho for 3d
 
+# remove namespace
+# in glwidget add sin(inRadians...
+
 # in model->load() replace fscanf with cin
 # in GLWidget::draw vertices should not repeat! - fix after textures
 # axis lines should be like wireframe overlay

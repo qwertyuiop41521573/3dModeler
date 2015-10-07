@@ -12,8 +12,7 @@ void TZoom::function(Action action, QMouseEvent *event)
     GLWidget *widget = *_activeWidget;
     if(action != EXECUTE) return;
     bool perspective = widget->getProjection() == PERSPECTIVE;
-    double dy = (widget->getHalfHeight() - event->y() - widget->
-                 getLastPosition().y()) / (perspective ? 40 : 100);
+    double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / (perspective ? 40 : 100);
 
     if(perspective)
     {

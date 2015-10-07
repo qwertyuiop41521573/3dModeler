@@ -6,19 +6,19 @@
 class Triangle : public SelectableObject
 {
 public:
-    Triangle( int a =-1, int b =-1, int c =-1 )
-    { setIndices( a, b, c ); };
+    Triangle(int a =-1, int b =-1, int c =-1)
+    { setIndices(a, b, c); };
 
     Triangle(int *values)
     { for(int i = 0; i < 3; i++) index[i] = values[i]; };
 
-    int getIndex( int num )
-    { return index[ num ]; };
+    int getIndex(int num)
+    { return index[num]; };
 
-    void setIndex( int num, int newIndex )
-    { index[ num ] = newIndex; };
+    void setIndex(int num, int newIndex)
+    { index[num] = newIndex; };
 
-    void setIndices( int a, int b, int c );
+    void setIndices(int a, int b, int c);
 
 private:
     int index[3];

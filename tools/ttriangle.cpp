@@ -31,8 +31,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
 
         QVector2D min, max;
         const QVector2D &startPosition = widget->getStartPosition();
-        QVector2D currentPosition(event->x() - widget->getHalfWidth(),
-                                  widget->getHalfHeight() - event->y());
+        QVector2D currentPosition(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
         min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);
         min.setY(qMin(startPosition.y(), currentPosition.y()) - 5);
         max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);

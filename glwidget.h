@@ -12,17 +12,14 @@
 
 using namespace std;
 
-typedef enum { WIREFRAME, FLAT_SHADED, SMOOTH_SHADED,
-               TEXTURED } RenderingMode;
+typedef enum { WIREFRAME, FLAT_SHADED, SMOOTH_SHADED, TEXTURED } RenderingMode;
 
-typedef enum { TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT,
-               PERSPECTIVE } Projection;
+typedef enum { TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT, PERSPECTIVE } Projection;
 
 class VertexData_Color
 {
 public:
-    VertexData_Color( QVector3D pos = { 0, 0, 0 },
-                      QVector3D col = { 0, 0, 0 } )
+    VertexData_Color(QVector3D pos = { 0, 0, 0 }, QVector3D col = { 0, 0, 0 })
     { position = pos; color = col; };
 
     QVector3D position;
@@ -49,10 +46,10 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 public:
     explicit GLWidget(MainWindow *mainWindow, QWidget *parent = 0);
 
-    void setActive( bool value )
+    void setActive(bool value)
     { _isActive = value; };
 
-    void setRenderingMode( RenderingMode newRenderingMode )
+    void setRenderingMode(RenderingMode newRenderingMode)
     { renderingMode = newRenderingMode; };
 
     RenderingMode getRenderingMode()
@@ -61,7 +58,7 @@ public:
     bool getWireframeOverlay()
     { return wireframeOverlay; };
 
-    void setWireframeOverlay( bool value )
+    void setWireframeOverlay(bool value)
     { wireframeOverlay = value; };
 
     const QVector2D &getLastPosition()
@@ -73,13 +70,13 @@ public:
     const QVector2D &getCurrentPosition()
     { return currentPosition; };
 
-    void setProjection( Projection newProjection )
+    void setProjection(Projection newProjection)
     { projection = newProjection; };
 
     Projection getProjection()
     { return projection; };
 
-    void multiplyScaleBy( double number )
+    void multiplyScaleBy(double number)
     { scale *= number; };
 
     double getScale()
@@ -99,7 +96,7 @@ public:
     const QMatrix4x4 &getRotationMatrixInverse()
     { return rotationMatrixInverse; };
 
-    void setOldHidden( bool value )
+    void setOldHidden(bool value)
     { _oldHidden = value; };
 
     bool oldHidden()
@@ -112,9 +109,9 @@ public:
     { return halfHeight; };
 
     Camera &getCamera()
-    { return camera[ projection ]; };
+    { return camera[projection]; };
 
-    void setToolIsOn( bool value)
+    void setToolIsOn(bool value)
     { toolIsOn = value; };
 
     VertexAndIndexData &getToolData()
@@ -124,25 +121,25 @@ public:
     void countRotationMatrices();
     void countFinalInverseMatrix();
     void countFinalMatrix()
-    { finalMatrix = ( projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse ) * projectionMatrix; };
+    { finalMatrix = (projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse) * projectionMatrix; };
 
 
-    void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point );
+    void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point);
     void fromScreenToWorld(QVector3D &answer, QMouseEvent *event, bool forcedHeight = false, double height = 0);
     void _fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, bool forcedHeight = false, double height = 0);
-    void screenCoordinatesPerspective(QVector4D &answer, double a[ 4 ][ 4 ], double h, const QVector4D &screenCoordinates );
+    void screenCoordinatesPerspective(QVector4D &answer, double a[4][4], double h, const QVector4D &screenCoordinates);
     bool isSelected(const QVector3D &vertex, const QVector2D &min, const QVector2D &max);
 
 protected:
     void initializeGL();
-    void resizeGL( int newWidth, int newHeight );
+    void resizeGL(int newWidth, int newHeight);
     void paintGL();
 
     void timerEvent(QTimerEvent *event);
-    void mousePressEvent( QMouseEvent *event );
-    void mouseMoveEvent( QMouseEvent *event );
-    void mouseReleaseEvent( QMouseEvent *event );
-    void wheelEvent( QWheelEvent *event );
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
     void initShaders();
    // void initTextures();
@@ -201,15 +198,15 @@ private:
     bool _oldHidden;
     VertexAndIndexData toolData;
 
-    void draw( bool wireframe = false );
+    void draw(bool wireframe = false);
     void setupProjection();
 
-    void glClearColorVector(const QVector3D &vector )
-    { glClearColor( vector.x(), vector.y(), vector.z(), 1 ); };
+    void glClearColorVector(const QVector3D &vector)
+    { glClearColor(vector.x(), vector.y(), vector.z(), 1); };
 
     void drawAdittional();
-    void prepareProgramColor(const QMatrix4x4 &matrix );
-    void addSelectedFace( int num );
+    void prepareProgramColor(const QMatrix4x4 &matrix);
+    void addSelectedFace(int num);
 };
 
 #endif // GLWIDGET_H

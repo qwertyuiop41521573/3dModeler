@@ -106,8 +106,7 @@ void TSelect::function(Action action, QMouseEvent *event)
                // triangle[i].deselect();
                 for(j = 0; j < 3; j++)
                 {
-                    if(widget->isSelected(vertex[triangle[i].getIndex(j)].getPosition(),
-                                    min, max))
+                    if(widget->isSelected(vertex[triangle[i].getIndex(j)].getPosition(), min, max))
                     {
                         triangle[i].select(NEW);
                         break;
@@ -128,12 +127,9 @@ void TSelect::function(Action action, QMouseEvent *event)
         }
         for(i = 0; i < selObj.size(); i++)
         {
-            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
-                selObj[i]->select(selObj[i]->newSelected());
-            if(checkBox[0]->isChecked() && selObj[i]->newSelected())
-                selObj[i]->select();
-            if(checkBox[1]->isChecked() && selObj[i]->newSelected())
-                selObj[i]->deselect();
+            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) selObj[i]->select(selObj[i]->newSelected());
+            if(checkBox[0]->isChecked()  && selObj[i]->newSelected())  selObj[i]->select();
+            if(checkBox[1]->isChecked()  && selObj[i]->newSelected())  selObj[i]->deselect();
         }
         break;
     }

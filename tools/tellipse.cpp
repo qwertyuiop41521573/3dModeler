@@ -34,8 +34,7 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     QLabel *center = new QLabel("Center");
     QLabel *normalLabel = new QLabel("Normal");
     MyLabel *label[6];
-    for(i = 0; i < 6; i++) label[i] = new MyLabel(QString('X' + i % 3 ) +
-                                                  ':', 25);
+    for(i = 0; i < 6; i++) label[i] = new MyLabel(QString('X' + i % 3 ) + ':', 25);
     MyLabel *radius = new MyLabel("Radius:", 70);
 
     spinBoxRadius->setMinimum(0);
@@ -112,9 +111,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         //    scaleAndTranslate"
 
         //if normal is parallel to X axis, than e_y; else [e_x, normal]
-        QVector4D rotatingVertex = (abs(normal.x()) == 1) ? QVector4D(0, 1, 0,
-            1) : QVector4D(QVector3D::crossProduct(QVector3D(1, 0, 0),
-                                     normal).normalized(), 1);
+        QVector4D rotatingVertex = (abs(normal.x()) == 1) ? QVector4D(0, 1, 0, 1) : QVector4D(QVector3D::crossProduct(QVector3D(1, 0, 0), normal).normalized(), 1);
         double angle = 360 / double(segments);
         QMatrix4x4 scaleAndTranslate;
         scaleAndTranslate.setToIdentity();
@@ -168,8 +165,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 QVector3D worldCoordinates;
 
                 widget->_fromScreenToWorld(worldCoordinates, QVector4D(currentPosition, 0, 1));
-                QVector3D radius = (worldCoordinates - startPosition3D) /
-                        double(2);
+                QVector3D radius = (worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
                 vertex[vertexSize - 1].setPosition(center);
 
@@ -184,12 +180,10 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 }
                 else
                 {
-                    for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] =
-                            sign(radius[i]);
+                    for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] = sign(radius[i]);
                     scaleAndTranslate.scale(radius.x(), radius.y(), radius.z());
                 }
-                double angle = 360 / double(segments) * sign(radius.x() *
-                                                         radius.y() * radius.z());
+                double angle = 360 / double(segments) * sign(radius.x() * radius.y() * radius.z());
                 if(projection == TOP || projection == BOTTOM) angle *= -1;
                 bool front = projection == FRONT || projection == BACK;
                 createCap({ !front, front, 0.f, 1.f }, angle, scaleAndTranslate);
@@ -200,8 +194,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if ellipse is a line
-        if(QVector3D::crossProduct(vertex[vertexSize - 1].getPosition(),
-                        vertex[vertexSize - 2].getPosition()).length() == 0)
+        if(QVector3D::crossProduct(vertex[vertexSize - 1].getPosition(), vertex[vertexSize - 2].getPosition()).length() == 0)
         {
             //remove cap
             vertex.resize(vertexSize - segments - 1);
@@ -232,16 +225,13 @@ void TEllipse::allocateCap(bool flip)
     vertex.resize(vertexSize + segments + 1);
     triangle.resize(triangleSize + segments);
     //set indices
-    for(i = 0; i < segments - 1; i++) triangle[triangleSize + i].setIndices(
-        vertexSize + i + flip, vertexSize + i + !flip, vertexSize + segments);
-    triangle[triangleSize + i].setIndices(vertexSize + (segments - 1) * !flip,
-                   vertexSize + (segments - 1) * flip, vertexSize + segments);
+    for(i = 0; i < segments - 1; i++) triangle[triangleSize + i].setIndices(vertexSize + i + flip, vertexSize + i + !flip, vertexSize + segments);
+    triangle[triangleSize + i].setIndices(vertexSize + (segments - 1) * !flip, vertexSize + (segments - 1) * flip, vertexSize + segments);
 }
 
 QVector3D TEllipse::createNormal(const QVector3D &camRot)
 {
-    return ((*_activeWidget)->getProjection() == PERSPECTIVE) ? QVector3D(0,
-        0, 1) : QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
+    return ((*_activeWidget)->getProjection() == PERSPECTIVE) ? QVector3D(0, 0, 1) : QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
 }
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)
@@ -256,8 +246,7 @@ void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x
     for(int i = 0; i < segments; i++)
     {
         rotatingVertex = rotation * rotatingVertex;
-        vertex[vertexSize - segments - 1 + i].setPosition(QVector3D(
-                                        scaleAndTranslate * rotatingVertex));
+        vertex[vertexSize - segments - 1 + i].setPosition(QVector3D(scaleAndTranslate * rotatingVertex));
     }
 }
 

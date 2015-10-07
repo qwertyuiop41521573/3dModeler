@@ -53,11 +53,11 @@ private slots:
     void open();
 
     void newFile()
-    { if( saveRequest() ) model->clear(); };
+    { if(saveRequest()) model->clear(); };
 
     void save();
     void saveAs()
-    { if( openFileDialog( "Save" ) ) model->save(); };
+    { if(openFileDialog("Save") ) model->save(); };
 
     void selectAll();
     void selectNone();
@@ -71,12 +71,10 @@ private slots:
     { widgetActive->setRenderingMode(RenderingMode(mode)); };
 
     void changeWireFrameOverlay()
-    { widgetActive->setWireframeOverlay(!widgetActive->
-                                        getWireframeOverlay()); };
+    { widgetActive->setWireframeOverlay(!widgetActive->getWireframeOverlay()); };
 
-    void changeProjection( int newProjection )
-    { widgetActive->setProjection(
-                    Projection( newProjection ) ); };
+    void changeProjection(int newProjection)
+    { widgetActive->setProjection(Projection(newProjection)); };
 
     void maximize(bool value);
 
@@ -112,7 +110,7 @@ private:
 
     void createActionsAndMenus();
     bool saveRequest();
-    bool openFileDialog( QString title );
+    bool openFileDialog(QString title);
 };
 
 #endif // MAINWINDOW_H

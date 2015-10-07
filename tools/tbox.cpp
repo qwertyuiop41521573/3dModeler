@@ -38,9 +38,7 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
     layout->addWidget(finalButton, 6, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
     _hasStage2 = true;
-    connect(checkBoxCube, SIGNAL(clicked(bool)), this, SLOT(handleCubeClick(
-                                                                bool)));
-
+    connect(checkBoxCube, SIGNAL(clicked(bool)), this, SLOT(handleCubeClick(bool)));
 
     _widget->hide();
 }
@@ -92,30 +90,18 @@ void TBox::function(Action action, QMouseEvent *event)
 
         triangle.resize( triangleSize + 12 );
         //triangles of the box:
-        triangle[triangleSize     ].setIndices(vertexSize,     vertexSize + 1,
-                                               vertexSize + 2);
-        triangle[triangleSize + 1 ].setIndices(vertexSize,     vertexSize + 2,
-                                               vertexSize + 3);
-        triangle[triangleSize + 2 ].setIndices(vertexSize,     vertexSize + 5,
-                                               vertexSize + 1);
-        triangle[triangleSize + 3 ].setIndices(vertexSize,     vertexSize + 4,
-                                               vertexSize + 5);
-        triangle[triangleSize + 4 ].setIndices(vertexSize + 1, vertexSize + 6,
-                                               vertexSize + 2);
-        triangle[triangleSize + 5 ].setIndices(vertexSize + 1, vertexSize + 5,
-                                               vertexSize + 6);
-        triangle[triangleSize + 6 ].setIndices(vertexSize + 2, vertexSize + 7,
-                                               vertexSize + 3);
-        triangle[triangleSize + 7 ].setIndices(vertexSize + 2, vertexSize + 6,
-                                               vertexSize + 7);
-        triangle[triangleSize + 8 ].setIndices(vertexSize + 3, vertexSize + 4,
-                                               vertexSize    );
-        triangle[triangleSize + 9 ].setIndices(vertexSize + 3, vertexSize + 7,
-                                               vertexSize + 4);
-        triangle[triangleSize + 10].setIndices(vertexSize + 4, vertexSize + 6,
-                                               vertexSize + 5);
-        triangle[triangleSize + 11].setIndices(vertexSize + 4, vertexSize + 7,
-                                               vertexSize + 6);
+        triangle[triangleSize     ].setIndices(vertexSize,     vertexSize + 1, vertexSize + 2);
+        triangle[triangleSize + 1 ].setIndices(vertexSize,     vertexSize + 2, vertexSize + 3);
+        triangle[triangleSize + 2 ].setIndices(vertexSize,     vertexSize + 5, vertexSize + 1);
+        triangle[triangleSize + 3 ].setIndices(vertexSize,     vertexSize + 4, vertexSize + 5);
+        triangle[triangleSize + 4 ].setIndices(vertexSize + 1, vertexSize + 6, vertexSize + 2);
+        triangle[triangleSize + 5 ].setIndices(vertexSize + 1, vertexSize + 5, vertexSize + 6);
+        triangle[triangleSize + 6 ].setIndices(vertexSize + 2, vertexSize + 7, vertexSize + 3);
+        triangle[triangleSize + 7 ].setIndices(vertexSize + 2, vertexSize + 6, vertexSize + 7);
+        triangle[triangleSize + 8 ].setIndices(vertexSize + 3, vertexSize + 4, vertexSize    );
+        triangle[triangleSize + 9 ].setIndices(vertexSize + 3, vertexSize + 7, vertexSize + 4);
+        triangle[triangleSize + 10].setIndices(vertexSize + 4, vertexSize + 6, vertexSize + 5);
+        triangle[triangleSize + 11].setIndices(vertexSize + 4, vertexSize + 7, vertexSize + 6);
 
         break;
     }
@@ -125,35 +111,24 @@ void TBox::function(Action action, QMouseEvent *event)
         if(_stage2)
         {
             Projection projection = widget->getProjection();
-            double dy = (widget->getHalfHeight() - event->y() - widget->
-                         getLastPosition().y()) / double(100);
+            double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
             Camera &camera = widget->getCamera();
             const QVector3D &rotation = camera.rotation();
-            QVector3D normal = (projection == PERSPECTIVE) ?
-                        QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
+            QVector3D normal = (projection == PERSPECTIVE) ? QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
 
             //if cube
             if(checkBoxCube->isChecked() && dy != 0)
             {
-                QVector3D dh = normal * sign(dy) * (vertex[vertexSize - 2].
-                        getPosition() - vertex[vertexSize - 4].getPosition()).
-                        length() / qSqrt(2);
-                for(i = -4; i < 0; i++) vertex[vertexSize + i].setPosition(
-                            vertex[vertexSize - 4 + i].getPosition() + dh);
+                QVector3D dh = normal * sign(dy) * (vertex[vertexSize - 2].getPosition() - vertex[vertexSize - 4].getPosition()).length() / qSqrt(2);
+                for(i = -4; i < 0; i++) vertex[vertexSize + i].setPosition(vertex[vertexSize - 4 + i].getPosition() + dh);
             }
-            else for(i = -4; i < 0; i++) vertex[vertexSize + i].addToPosition(
-                        normal * dy);
+            else for(i = -4; i < 0; i++) vertex[vertexSize + i].addToPosition(normal * dy);
 
-            QVector3D diagonal = vertex[vertexSize - 2].getPosition() -
-                    vertex[vertexSize - 4].getPosition();
-            QVector3D e_x = vertex[vertexSize - 1].getPosition() - vertex[
-                    vertexSize - 4].getPosition();
+            QVector3D diagonal = vertex[vertexSize - 2].getPosition() - vertex[vertexSize - 4].getPosition();
+            QVector3D e_x = vertex[vertexSize - 1].getPosition() - vertex[vertexSize - 4].getPosition();
 
             //flip the box if needed
-            if(QVector3D::dotProduct(normal, vertex[vertexSize - 8].
-                getPosition() - vertex[vertexSize - 4].getPosition()) *
-                QVector3D::dotProduct(normal, QVector3D::crossProduct(e_x,
-                                                                diagonal)) > 0)
+            if(QVector3D::dotProduct(normal, vertex[vertexSize - 8].getPosition() - vertex[vertexSize - 4].getPosition()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) > 0)
             {
                     QVector3D temp = vertex[vertexSize - 7].getPosition();
                     vertex[vertexSize - 7] = vertex[vertexSize - 5];
@@ -203,26 +178,16 @@ void TBox::function(Action action, QMouseEvent *event)
         vertex.resize(vertexSize + 4);
         triangle.resize(triangleSize + 10);
 
-        triangle[triangleSize    ].setIndices(vertexSize - 4, vertexSize + 1,
-                                              vertexSize - 3);
-        triangle[triangleSize + 1].setIndices(vertexSize - 4, vertexSize,
-                                              vertexSize + 1);
-        triangle[triangleSize + 2].setIndices(vertexSize - 3, vertexSize + 2,
-                                              vertexSize - 2);
-        triangle[triangleSize + 3].setIndices(vertexSize - 3, vertexSize + 1,
-                                              vertexSize + 2);
-        triangle[triangleSize + 4].setIndices(vertexSize - 2, vertexSize + 3,
-                                              vertexSize - 1);
-        triangle[triangleSize + 5].setIndices(vertexSize - 2, vertexSize + 2,
-                                              vertexSize + 3);
-        triangle[triangleSize + 6].setIndices(vertexSize - 1, vertexSize,
-                                              vertexSize - 4);
-        triangle[triangleSize + 7].setIndices(vertexSize - 1, vertexSize + 3,
-                                              vertexSize    );
-        triangle[triangleSize + 8].setIndices(vertexSize, vertexSize + 2,
-                                              vertexSize + 1);
-        triangle[triangleSize + 9].setIndices(vertexSize, vertexSize + 3,
-                                              vertexSize + 2);
+        triangle[triangleSize    ].setIndices(vertexSize - 4, vertexSize + 1, vertexSize - 3);
+        triangle[triangleSize + 1].setIndices(vertexSize - 4, vertexSize,     vertexSize + 1);
+        triangle[triangleSize + 2].setIndices(vertexSize - 3, vertexSize + 2, vertexSize - 2);
+        triangle[triangleSize + 3].setIndices(vertexSize - 3, vertexSize + 1, vertexSize + 2);
+        triangle[triangleSize + 4].setIndices(vertexSize - 2, vertexSize + 3, vertexSize - 1);
+        triangle[triangleSize + 5].setIndices(vertexSize - 2, vertexSize + 2, vertexSize + 3);
+        triangle[triangleSize + 6].setIndices(vertexSize - 1, vertexSize,     vertexSize - 4);
+        triangle[triangleSize + 7].setIndices(vertexSize - 1, vertexSize + 3, vertexSize    );
+        triangle[triangleSize + 8].setIndices(vertexSize,     vertexSize + 2, vertexSize + 1);
+        triangle[triangleSize + 9].setIndices(vertexSize,     vertexSize + 3, vertexSize + 2);
 
         for(i = 0; i < 4; i++)
         {

@@ -60,35 +60,25 @@ void TCylinder::function(Action action, QMouseEvent *event)
         if(_stage2)
         {
             Projection projection = widget->getProjection();
-            double dy = (widget->getHalfHeight() - event->y() - widget->
-                         getLastPosition().y()) / double(100);
+            double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
 
-            for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].
-                    addToPosition(normal * dy);
+            for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].addToPosition(normal * dy);
 
             //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
-            QVector3D v1 = vertex[vertexSize - segments - 1].getPosition() -
-                    vertex[vertexSize - 1].getPosition();
-            QVector3D v2 = vertex[vertexSize - segments].getPosition() -
-                    vertex[vertexSize - 1].getPosition();
+            QVector3D v1 = vertex[vertexSize - segments - 1].getPosition() - vertex[vertexSize - 1].getPosition();
+            QVector3D v2 = vertex[vertexSize - segments].getPosition() - vertex[vertexSize - 1].getPosition();
 
             //flip if needed
-            if(QVector3D::dotProduct(normal, vertex[vertexSize - segments - 2].
-                getPosition() - vertex[vertexSize - 1].getPosition()) *
-                QVector3D::dotProduct(normal, QVector3D::crossProduct(v1, v2))
-                    > 0)
+            if(QVector3D::dotProduct(normal, vertex[vertexSize - segments - 2].getPosition() - vertex[vertexSize - 1].getPosition()) * QVector3D::dotProduct(normal, QVector3D::crossProduct(v1, v2)) > 0)
             {
                 QVector3D temp;
                 for(i = 0; i < segments / 2; i++)
                 {
                     temp = vertex[vertexSize - segments - 1 + i].getPosition();
-                    vertex[vertexSize - segments - 1 + i] = vertex[vertexSize -
-                            2 - i];
+                    vertex[vertexSize - segments - 1 + i] = vertex[vertexSize - 2 - i];
                     vertex[vertexSize - 2 - i].setPosition(temp);
-                    temp = vertex[vertexSize - 2 * segments - 2 + i].
-                            getPosition();
-                    vertex[vertexSize - 2 * segments - 2 + i] = vertex[
-                            vertexSize - segments - 3 - i];
+                    temp = vertex[vertexSize - 2 * segments - 2 + i].getPosition();
+                    vertex[vertexSize - 2 * segments - 2 + i] = vertex[vertexSize - segments - 3 - i];
                     vertex[vertexSize - segments - 3 - i].setPosition(temp);
                 }
             }
@@ -142,8 +132,7 @@ void TCylinder::createWallsAndSecondCap(bool final)
     //add vertices for second cap
     vertex.resize(vertexSize + segments + 1);
     //second cap
-    for(i = 0; i <= segments; i++) vertex[vertexSize + i].setPosition(
-            vertex[vertexSize - segments - 1 + i].getPosition() + height);
+    for(i = 0; i <= segments; i++) vertex[vertexSize + i].setPosition(vertex[vertexSize - segments - 1 + i].getPosition() + height);
 
     //add triangles for walls and second cap
     triangle.resize(triangleSize + 3 * segments);
@@ -151,20 +140,14 @@ void TCylinder::createWallsAndSecondCap(bool final)
     for(i = 0; i < segments - 1; i++)
     {
         //1 cap element
-        triangle[triangleSize + i].setIndices(vertexSize + i, vertexSize +
-                                              i + 1, vertexSize + segments);
+        triangle[triangleSize + i].setIndices(vertexSize + i, vertexSize + i + 1, vertexSize + segments);
         //2 wall elements
-        triangle[triangleSize + segments + 2 * i].setIndices(vertexSize + i +
-                        1, vertexSize + i, vertexSize - segments - 1 + i);
-        triangle[triangleSize + segments + 2 * i + 1].setIndices(vertexSize -
-            segments - 1 + i, vertexSize - segments + i, vertexSize + i + 1);
+        triangle[triangleSize + segments + 2 * i].setIndices(vertexSize + i + 1, vertexSize + i, vertexSize - segments - 1 + i);
+        triangle[triangleSize + segments + 2 * i + 1].setIndices(vertexSize - segments - 1 + i, vertexSize - segments + i, vertexSize + i + 1);
     }
     //1 cap element
-    triangle[triangleSize + i].setIndices(vertexSize + segments - 1,
-                                          vertexSize, vertexSize + segments);
+    triangle[triangleSize + i].setIndices(vertexSize + segments - 1, vertexSize, vertexSize + segments);
     //2 wall elements
-    triangle[triangleSize + segments + 2 * i].setIndices(vertexSize,
-                                 vertexSize + segments - 1, vertexSize - 2);
-    triangle[triangleSize + segments + 2 * i + 1].setIndices(vertexSize - 2,
-                                      vertexSize - segments - 1, vertexSize);
+    triangle[triangleSize + segments + 2 * i].setIndices(vertexSize, vertexSize + segments - 1, vertexSize - 2);
+    triangle[triangleSize + segments + 2 * i + 1].setIndices(vertexSize - 2, vertexSize - segments - 1, vertexSize);
 }

@@ -2,6 +2,5 @@
 
 MyCheckBox::MyCheckBox()
 {
-    connect(this, SIGNAL(clicked(bool)), this, SLOT(handleClick(
-                                                           bool)));
+    connect(this, SIGNAL(clicked(bool)), this, SLOT(handleClick(bool)));
 }

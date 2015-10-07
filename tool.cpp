@@ -7,8 +7,7 @@ Tool::Tool(MainWindow *mainWindow)
     button = new QPushButton;
     button->setMaximumWidth(70);
     button->setCheckable(true);
-    connect(button, SIGNAL(clicked(bool)), this, SLOT(handleClick(
-                                                          bool)));
+    connect(button, SIGNAL(clicked(bool)), this, SLOT(handleClick(bool)));
     _activeWidget = _mainWindow->getActiveWidget();
 }
 

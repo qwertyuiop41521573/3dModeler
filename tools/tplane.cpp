@@ -62,23 +62,19 @@ void TPlane::function(Action action, QMouseEvent *event)
                 QVector3D worldCoordinates;
                 widget->fromScreenToWorld(worldCoordinates, event, true, height);
                 vertex[vertexSize - 2].setPosition(worldCoordinates);
-                diagonal = QVector2D(vertex[vertexSize - 2].getPosition() -
-                        vertex[vertexSize - 4].getPosition());
+                diagonal = QVector2D(vertex[vertexSize - 2].getPosition() - vertex[vertexSize - 4].getPosition());
                 if(square)
                 {
                     countDiagonalForSquare(diagonal);
-                    vertex[vertexSize - 2].setPosition(vertex[vertexSize - 4].
-                            getPosition() + QVector3D(diagonal, 0));
+                    vertex[vertexSize - 2].setPosition(vertex[vertexSize - 4].getPosition() + QVector3D(diagonal, 0));
                 }
                 posB = QVector3D(vertex[vertexSize - 4].getPosition().x(), vertex[vertexSize - 2].getPosition().y(), height);
                 posA = QVector3D(vertex[vertexSize - 2].getPosition().x(), vertex[vertexSize - 4].getPosition().y(), height);
             }
             else
             {
-                QVector2D startPosition = QVector2D(widget->getFinalMatrix() *
-                           QVector4D(vertex[vertexSize - 4].getPosition(), 1));
-                QVector2D currentPosition = QVector2D(event->x() - widget->
-                           getHalfWidth(), widget->getHalfHeight() - event->y());
+                QVector2D startPosition = QVector2D(widget->getFinalMatrix() * QVector4D(vertex[vertexSize - 4].getPosition(), 1));
+                QVector2D currentPosition = QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
                 diagonal = currentPosition - startPosition;
                 if(square)
                 {
@@ -86,10 +82,8 @@ void TPlane::function(Action action, QMouseEvent *event)
                     currentPosition = startPosition + diagonal;
                 }
                 widget->_fromScreenToWorld(vertex[vertexSize - 2].getEditablePosition(), QVector4D(currentPosition, 0, 1));
-                widget->_fromScreenToWorld(posB, QVector4D(startPosition.x(),
-                                            currentPosition.y(), 0, 1));
-                widget->_fromScreenToWorld(posA, QVector4D(currentPosition.x(),
-                                            startPosition.y(), 0, 1));
+                widget->_fromScreenToWorld(posB, QVector4D(startPosition.x(), currentPosition.y(), 0, 1));
+                widget->_fromScreenToWorld(posA, QVector4D(currentPosition.x(), startPosition.y(), 0, 1));
             }
             //flipping the cap (or not)
             int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;
@@ -101,8 +95,7 @@ void TPlane::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if plane's height or width == 0
-        if(vertex[vertexSize - 1] == vertex[vertexSize - 2] || vertex[
-                vertexSize - 3] == vertex[vertexSize - 2] )
+        if(vertex[vertexSize - 1] == vertex[vertexSize - 2] || vertex[vertexSize - 3] == vertex[vertexSize - 2])
         {
             //remove cap - last 4 vertices and 2 triangles
             vertex.resize(vertexSize - 4);
@@ -120,8 +113,7 @@ void TPlane::countDiagonalForSquare(QVector2D &diagonal)
     //square diagonal length is equal to length of projection (of
     //    line we draw) to this diagonal
     QVector2D squareDiagonal(sign(diagonal.x()), sign(diagonal.y()));
-    double length = QVector2D::dotProduct(diagonal, squareDiagonal) /
-            double(2);
+    double length = QVector2D::dotProduct(diagonal, squareDiagonal) / double(2);
     diagonal = squareDiagonal * length;
 }
 
@@ -134,8 +126,6 @@ void TPlane::allocateCap(bool flip)
 
     vertex.resize(vertexSize + 4);
     triangle.resize(triangleSize + 2);
-    triangle[triangleSize    ].setIndices(vertexSize + !flip, vertexSize +
-                                          flip, vertexSize + 2);
-    triangle[triangleSize + 1].setIndices(vertexSize + 2 * !flip, vertexSize
-                                          + 2 * flip, vertexSize + 3);
+    triangle[triangleSize    ].setIndices(vertexSize + !flip, vertexSize + flip, vertexSize + 2);
+    triangle[triangleSize + 1].setIndices(vertexSize + 2 * !flip, vertexSize + 2 * flip, vertexSize + 3);
 }

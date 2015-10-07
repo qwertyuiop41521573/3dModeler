@@ -34,10 +34,8 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
             {
                 for(j = 0; j < 3; j++)
                 {
-                    if(vertex[i].getPosition()[j] > max[j]) max[j] =
-                                vertex[i].getPosition()[ j ];
-                    if(vertex[i].getPosition()[j] < min[j]) min[j] =
-                                vertex[i].getPosition()[j];
+                    if(vertex[i].getPosition()[j] > max[j]) max[j] = vertex[i].getPosition()[ j ];
+                    if(vertex[i].getPosition()[j] < min[j]) min[j] = vertex[i].getPosition()[j];
                 }
             }
         }
@@ -68,10 +66,8 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
                         for(k = 0; k < 3; k++)
                         {
                             checked[index] = true;
-                            if(vertex[index].getPosition()[k] > max[k])
-                                max[k] = vertex[index].getPosition()[k];
-                            if(vertex[index].getPosition()[k] < min[k])
-                                min[k] = vertex[index].getPosition()[k];
+                            if(vertex[index].getPosition()[k] > max[k]) max[k] = vertex[index].getPosition()[k];
+                            if(vertex[index].getPosition()[k] < min[k]) min[k] = vertex[index].getPosition()[k];
                         }
                     }
                 }
@@ -79,7 +75,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         }
         checked.clear();
     }
-    pivot = (min + max);
+    pivot = min + max;
     for(i = 0; i < 3; i++) pivot[i] /= 2;
     widget->countFinalMatrix();
     widget->fromWorldToScreen(pivotOnScreen, pivot, true);

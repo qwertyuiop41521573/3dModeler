@@ -2,14 +2,14 @@
 
 using namespace std;
 
-double inRadians( double value )
+double inRadians(double value)
 {
-    return value * M_PI / double( 180 );
+    return value * M_PI / double(180);
 }
 
-int sign( double number )
+int sign(double number)
 {
-    return ( number > 0 ) ? 1 : -1;
+    return (number > 0) ? 1 : -1;
 }
 
 double cosR(double x)

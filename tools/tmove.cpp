@@ -28,21 +28,16 @@ void TMove::function(Action action, QMouseEvent *event)
     int i;
 
     QVector3D drInWorld; //(not on screen)
-    if(action == FINAL) for(i = 0; i < 3; i++) drInWorld[i] =
-            spinBox[i]->value();
+    if(action == FINAL) for(i = 0; i < 3; i++) drInWorld[i] = spinBox[i]->value();
     else
     {
         bool execute = action == EXECUTE;
-        const QVector2D &lastPosition = execute ? widget->getLastPosition() :
-                                            widget->getStartPosition();
-        QVector2D currentPosition = execute ? QVector2D(event->x() - widget->
-            getHalfWidth(), widget->getHalfHeight() - event->y()) : widget->
-                                              getCurrentPosition();
+        const QVector2D &lastPosition = execute ? widget->getLastPosition() : widget->getStartPosition();
+        QVector2D currentPosition = execute ? QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y()) : widget->getCurrentPosition();
         QVector2D dr = currentPosition - lastPosition;
         if(widget->getProjection() == PERSPECTIVE) dr *= 10;
         widget->countFinalInverseMatrix();
-        drInWorld = QVector3D(widget->getFinalInverseMatrix() *
-                                  QVector4D(dr.x(), dr.y(), 0.f, 0.f));
+        drInWorld = QVector3D(widget->getFinalInverseMatrix() * QVector4D(dr.x(), dr.y(), 0.f, 0.f));
         if(action == DRAW)
         {
             VertexAndIndexData &data = widget->getToolData();

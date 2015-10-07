@@ -17,7 +17,7 @@ public:
     QPushButton *getFinalButton()
     { return finalButton; };
 
-    void setStage2( bool value )
+    void setStage2(bool value)
     { _stage2 = value; };
 
     bool stage2()

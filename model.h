@@ -10,7 +10,7 @@ class Model
 {
 public:
     Model();
-    bool load( const char *fileName );
+    bool load(const char *fileName);
     void clear();
     void save();
 

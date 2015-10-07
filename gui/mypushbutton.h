@@ -11,8 +11,7 @@ class MyPushButton : public QPushButton
 {
     Q_OBJECT
 public:
-    explicit MyPushButton(int index, MainWindow *mainWindow,
-                          QWidget *parent = 0);
+    explicit MyPushButton(int index, MainWindow *mainWindow, QWidget *parent = 0);
 
 public slots:
     void handleClick();

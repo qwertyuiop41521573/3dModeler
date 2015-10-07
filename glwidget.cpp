@@ -12,10 +12,7 @@
 #define LIGHT_BLUE QVector3D(0, 0.4, 0.7)
 #define WHITE      QVector3D(1, 1, 1)
 
-using namespace std;
-
-GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
-    QOpenGLWidget(parent)
+GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(parent)
 {
     _mainWindow = mainWindow;
     model = _mainWindow->getModel();
@@ -35,8 +32,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
     camera[RIGHT].setRotation(0, 0,-90);
     const double rad15t = 15 * M_PI / double(180);
     const double rad30 = 30 * M_PI / double(180);
-    camera[PERSPECTIVE].setPosition(5 * sin(rad30), 5 * cos(rad30), 5 * tan(
-                                        rad15t));
+    camera[PERSPECTIVE].setPosition(5 * sin(rad30), 5 * cos(rad30), 5 * tan(rad15t));
     camera[PERSPECTIVE].setRotation(15, 0,-120);
 
     vector <VertexData_Color> &verticesG = grid.vertices;
@@ -48,10 +44,8 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
         verticesG[i].position.setX(i % 4 / 2 ? i / 4 - 10 : i % 2 ? 10 : -10);
         verticesG[i].position.setY(i % 4 / 2 ? i % 2 ? 10 : -10 : i / 4 - 10);
 
-        verticesG[48 + i].position.setX(i % 4 / 2 ? i / 4 + 1 : i % 2 ? 10 :
-                                                                       -10);
-        verticesG[48 + i].position.setY(i % 4 / 2 ? i % 2 ? 10 : -10 : i / 4 +
-                                                           1);
+        verticesG[48 + i].position.setX(i % 4 / 2 ? i / 4 + 1 : i % 2 ? 10 : -10);
+        verticesG[48 + i].position.setY(i % 4 / 2 ? i % 2 ? 10 : -10 : i / 4 + 1);
     }
 
     verticesG[40].position.setX(-10);
@@ -78,7 +72,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) :
     verticesA[5].color = BLUE;
 
     axis.indices.resize(6);
-    for( i = 0; i < 6; i++ ) axis.indices[i] = i;
+    for(i = 0; i < 6; i++) axis.indices[i] = i;
 
     frame.vertices.resize(4);
     vector <GLuint> &indicesF = frame.indices;
@@ -148,12 +142,10 @@ void GLWidget::paintGL()
 void GLWidget::setupProjection()
 {
     projectionMatrix.setToIdentity();
-    if(projection == PERSPECTIVE) projectionMatrix.perspective(fov, aspect,
-                                                               zNear, zFar);
+    if(projection == PERSPECTIVE) projectionMatrix.perspective(fov, aspect, zNear, zFar);
     else
     {
-        projectionMatrix.ortho(-halfWidth, halfWidth,-halfHeight, halfHeight,
-                               -1000.f, 1000.f);
+        projectionMatrix.ortho(-halfWidth, halfWidth,-halfHeight, halfHeight, -1000.f, 1000.f);
         projectionMatrix.scale(scale, scale, 1);
     }
     const QVector3D &rotation = camera[projection].rotation();
@@ -166,8 +158,7 @@ void GLWidget::setupProjection()
 
 void GLWidget::draw(bool wireframe)
 {
-    RenderingMode renderingModeCurrent = wireframe ? WIREFRAME :
-                                                     renderingMode;
+    RenderingMode renderingModeCurrent = wireframe ? WIREFRAME : renderingMode;
 
     QVector3D color;
     glBindBuffer(GL_ARRAY_BUFFER, modelVboIds[0]);
@@ -199,10 +190,8 @@ void GLWidget::draw(bool wireframe)
                 vertices_col[i].color = vertex[i].newSelected() ? BLUE : vertex[i].selected() ? RED : BLACK;
                 indices[i] = i;
             }
-            glBufferData(GL_ARRAY_BUFFER, vertexNumber *
-                     vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber *
-                         GLuintSize, indices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vertexNumber * vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber * GLuintSize, indices.data(), GL_STATIC_DRAW);
 
             glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_INT, 0);
         }
@@ -245,19 +234,15 @@ void GLWidget::draw(bool wireframe)
         vertices_tex.clear();
         for(i = 0; i < triangleNumber; i++)
         {
-            if(workWithElements[1]->isChecked() && (triangle[i].newSelected()
-                || triangle[i].selected())) addSelectedFace(i);
-            else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[
-                triangle[i].getIndex(j)].getPosition(), { (rand() % 10) /
-                double(10), (rand() % 10) / double(10) } });
+            if(workWithElements[1]->isChecked() && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
+            else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
         }
         structSize = vertexData_TextureSize;
         fragment = "a_texcoord";
         programTexture->setUniformValue("texture", 0);
         program = programTexture;
         verticesLength = vertices_tex.size();
-        glBufferData(GL_ARRAY_BUFFER, verticesLength * structSize,
-                      vertices_tex.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, verticesLength * structSize, vertices_tex.data(), GL_STATIC_DRAW);
     }
     else
     {
@@ -265,8 +250,7 @@ void GLWidget::draw(bool wireframe)
         for(i = 0; i < triangleNumber; i++)
         {
             if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-            else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[
-                           triangle[i].getIndex(j)].getPosition(), color });
+            else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), color });
         }
         structSize = vertexData_ColorSize;
         fragment = "a_color";
@@ -279,15 +263,12 @@ void GLWidget::draw(bool wireframe)
     program->bind();
     int vertexLocation = program->attributeLocation("a_position");
     program->enableAttributeArray(vertexLocation);
-    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, structSize,
-                          0);
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
     int fragmentLocation = program->attributeLocation(fragment);
     program->enableAttributeArray(fragmentLocation);
-    glVertexAttribPointer(fragmentLocation, 3, GL_FLOAT, GL_FALSE,
-                          structSize, vectorSize);
+    glVertexAttribPointer(fragmentLocation, 3, GL_FLOAT, GL_FALSE, structSize, vectorSize);
     program->setUniformValue("mvp_matrix", projectionMatrix);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLuintSize,
-                 indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLuintSize, indices.data(), GL_STATIC_DRAW);
     if(wireframe) glEnable(GL_POLYGON_OFFSET_LINE);
     glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_INT, 0);
     glDisable(GL_POLYGON_OFFSET_LINE);
@@ -306,21 +287,16 @@ void GLWidget::drawAdittional()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         indices.resize(selectedFacesLength);
         for(i = 0; i < selectedFacesLength; i++) indices[i] = i;
-        glBufferData(GL_ARRAY_BUFFER, selectedFacesLength *
-           vertexData_ColorSize, selectedFaces.data(), GL_STATIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, selectedFacesLength *
-                      GLuintSize, indices.data(), GL_STATIC_DRAW);
-        glDrawElements(GL_TRIANGLES, selectedFacesLength,
-                        GL_UNSIGNED_INT, 0);
+        glBufferData(GL_ARRAY_BUFFER, selectedFacesLength * vertexData_ColorSize, selectedFaces.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, selectedFacesLength * GLuintSize, indices.data(), GL_STATIC_DRAW);
+        glDrawElements(GL_TRIANGLES, selectedFacesLength, GL_UNSIGNED_INT, 0);
     }
 
     //draw axis
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLineWidth(1);
-    glBufferData(GL_ARRAY_BUFFER, 6 * vertexData_ColorSize,
-                  axis.vertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLuintSize,
-                  axis.indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 6 * vertexData_ColorSize, axis.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLuintSize, axis.indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, 0);
 
     //draw grid
@@ -328,10 +304,8 @@ void GLWidget::drawAdittional()
     {
         prepareProgramColor(projectionMatrix);
 
-        glBufferData(GL_ARRAY_BUFFER, 88 * vertexData_ColorSize,
-                      grid.vertices.data(), GL_STATIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 88 * GLuintSize,
-                      grid.indices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 88 * vertexData_ColorSize, grid.vertices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 88 * GLuintSize, grid.indices.data(), GL_STATIC_DRAW);
         glDrawElements(GL_LINES, 88, GL_UNSIGNED_INT, 0);
     }
 
@@ -348,14 +322,10 @@ void GLWidget::drawAdittional()
             int indexNumber = toolData.indices.size();
             for(i = 0; i < vertexNumber; i++) toolData.vertices[i].color = WHITE;
             prepareProgramColor(toolMatrix);
-            glBufferData(GL_ARRAY_BUFFER, vertexNumber *
-                vertexData_ColorSize, toolData.vertices.data(),
-                          GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber *
-                GLuintSize, toolData.indices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vertexNumber * vertexData_ColorSize, toolData.vertices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber * GLuintSize, toolData.indices.data(), GL_STATIC_DRAW);
 
-            glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT,
-                            0);
+            glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT, 0);
         }
         color = LIGHT_BLUE;
         glLineWidth(4);
@@ -369,10 +339,8 @@ void GLWidget::drawAdittional()
     //draw frame
     for(i = 0; i < 4; i++) frame.vertices[i].color = color;
     prepareProgramColor(frameMatrix);
-    glBufferData(GL_ARRAY_BUFFER, 4 * vertexData_ColorSize,
-                  frame.vertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * GLuintSize,
-                  frame.indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4 * vertexData_ColorSize, frame.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * GLuintSize, frame.indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
 }
 
@@ -383,19 +351,11 @@ void GLWidget::timerEvent(QTimerEvent *event)
 
 void GLWidget::initShaders()
 {
-    if ( !programColor->addShaderFromSourceFile( QGLShader::
-                              Vertex, ":/color.vert" ) )
-        close();
-    if ( !programColor->addShaderFromSourceFile( QGLShader::
-                           Fragment, ":/color.frag") )
-        close();
+    if(!programColor->addShaderFromSourceFile(QGLShader::Vertex, ":/color.vert")) close();
+    if(!programColor->addShaderFromSourceFile(QGLShader::Fragment, ":/color.frag")) close();
 
-    if ( !programTexture->addShaderFromSourceFile( QGLShader::
-                              Vertex, ":/texture.vert" ) )
-        close();
-    if ( !programTexture->addShaderFromSourceFile( QGLShader::
-                           Fragment, ":/texture.frag") )
-        close();
+    if(!programTexture->addShaderFromSourceFile(QGLShader::Vertex, ":/texture.vert")) close();
+    if(!programTexture->addShaderFromSourceFile(QGLShader::Fragment, ":/texture.frag")) close();
 }
 
 /*
@@ -417,11 +377,10 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     if(!_isActive) _mainWindow->setActiveWidget(this);
 
-    if( !toolIsOn ) startPosition = lastPosition = QVector2D( event->x() - halfWidth,
-                                          halfHeight - event->y() );
-    if( !quickAccess )
+    if(!toolIsOn) startPosition = lastPosition = QVector2D(event->x() - halfWidth, halfHeight - event->y());
+    if(!quickAccess)
     {
-        switch( event->buttons() )
+        switch(event->buttons())
         {
         case Qt::LeftButton:
         {
@@ -429,9 +388,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
             //  ! stage2     hasStage2 == true && stage2 == false
             //               hasStage2 == false
             //  hasStage2 ? !stage2 : true
-            if(aT->hasStage2() ? !aT->stage2() : true) aT->function(
-                        START, event);
-
+            if(aT->hasStage2() ? !aT->stage2() : true) aT->function(START, event);
 
             break;
         }
@@ -450,18 +407,17 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void GLWidget::mouseMoveEvent( QMouseEvent *event )
+void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if( event->buttons() & Qt::LeftButton || quickAccess || ( *activeTool )->stage2() )
+    if(event->buttons() & Qt::LeftButton || quickAccess || (*activeTool)->stage2())
     {
         toolIsOn = true;
         (*activeTool)->function(EXECUTE, event);
-        lastPosition = currentPosition = QVector2D( event->x() -
-                          halfWidth, halfHeight - event->y() );
+        lastPosition = currentPosition = QVector2D(event->x() - halfWidth, halfHeight - event->y());
     }
 }
 
-void GLWidget::mouseReleaseEvent( QMouseEvent *event )
+void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if(quickAccess)
     {
@@ -478,49 +434,41 @@ void GLWidget::mouseReleaseEvent( QMouseEvent *event )
     }
 }
 
-void GLWidget::wheelEvent( QWheelEvent *event )
+void GLWidget::wheelEvent(QWheelEvent *event)
 {
     bool perspective = projection == PERSPECTIVE;
-    double dy =-event->angleDelta().y() / double( perspective ? 150 : 1000 );
-    if( perspective )
+    double dy =-event->angleDelta().y() / double(perspective ? 150 : 1000);
+    if(perspective)
     {
-        QVector3D rotation = camera[ PERSPECTIVE ].rotation();
-        camera[ PERSPECTIVE ].addToPosition(dy * cosR(rotation.x()) * cosR(rotation.z()), dy * cosR(rotation.x()) * sinR(rotation.z()),
-                                   -dy * sinR(rotation.x()));
+        QVector3D rotation = camera[PERSPECTIVE].rotation();
+        camera[PERSPECTIVE].addToPosition(dy * cosR(rotation.x()) * cosR(rotation.z()), dy * cosR(rotation.x()) * sinR(rotation.z()), -dy * sinR(rotation.x()));
     }
-    else scale *= exp( dy );
+    else scale *= exp(dy);
 }
 
 
-void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix )
+void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix)
 {
-    int vertexLocation = programColor->attributeLocation(
-                "a_position" );
-    programColor->enableAttributeArray( vertexLocation );
-    glVertexAttribPointer( vertexLocation, 3, GL_FLOAT,
-        GL_FALSE, vertexData_ColorSize, 0 );
-    int colorLocation = programColor->attributeLocation(
-                "a_color" );
-    programColor->enableAttributeArray( colorLocation );
-    glVertexAttribPointer( colorLocation, 3, GL_FLOAT,
-        GL_FALSE, vertexData_ColorSize, vectorSize );
-    programColor->setUniformValue( "mvp_matrix", matrix );
+    int vertexLocation = programColor->attributeLocation("a_position" );
+    programColor->enableAttributeArray(vertexLocation);
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, vertexData_ColorSize, 0);
+    int colorLocation = programColor->attributeLocation("a_color");
+    programColor->enableAttributeArray(colorLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, vertexData_ColorSize, vectorSize);
+    programColor->setUniformValue("mvp_matrix", matrix);
 }
 
-void GLWidget::addSelectedFace( int num )
+void GLWidget::addSelectedFace(int num)
 {
     vector <Triangle> &triangle = model->getTriangle();
-    QVector3D selectedColor(triangle[ num ].newSelected() ? BLUE : RED);
-    for( int j = 0; j < 3; j++ ) selectedFaces.push_back(
-        VertexData_Color( model->getVertex()[
-        triangle[ num ].getIndex( j ) ].getPosition(),
-                        selectedColor ) );
+    QVector3D selectedColor(triangle[num].newSelected() ? BLUE : RED);
+    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(model->getVertex()[triangle[num].getIndex(j)].getPosition(), selectedColor));
 }
 
 void GLWidget::countRotationMatrices()
 {
     rotationMatrix.setToIdentity();
-    rotationMatrix.scale( aspect, 1, 1 );
+    rotationMatrix.scale(aspect, 1, 1);
     rotationMatrix *= projectionWithoutTranslation;
 
     rotationMatrixInverse = rotationMatrix.inverted();
@@ -533,12 +481,11 @@ void GLWidget::countFinalInverseMatrix()
 }
 
 
-void GLWidget::fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point )
+void GLWidget::fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point)
 {
-    QVector4D temp = finalMatrix * QVector4D( vector, point );
-    if( point && projection == PERSPECTIVE ) for( int i = 0; i < 2; i++ )
-        temp[ i ] /= temp[ 3 ];
-    answer = QVector2D( temp[ 0 ], temp[ 1 ] );
+    QVector4D temp = finalMatrix * QVector4D(vector, point);
+    if(point && projection == PERSPECTIVE) for(int i = 0; i < 2; i++) temp[i] /= temp[3];
+    answer = QVector2D(temp[0], temp[1]);
 }
 
 void GLWidget::fromScreenToWorld(QVector3D &answer, QMouseEvent *event, bool forcedHeight, double height)
@@ -546,42 +493,40 @@ void GLWidget::fromScreenToWorld(QVector3D &answer, QMouseEvent *event, bool for
     _fromScreenToWorld(answer, QVector4D(event->x() - halfWidth, halfHeight - event->y(), 0, 1), forcedHeight, height);
 }
 
-void GLWidget::_fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, bool forcedHeight, double height )
+void GLWidget::_fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, bool forcedHeight, double height)
 {
     QVector4D worldCoordinates;
     if(projection == PERSPECTIVE)
     {
         double a[4][4];
         int i, j;
-        for( i = 0; i < 4; i++ ) for( j = 0; j < 4; j++ ) a[ i ][ j ] = finalMatrixInverse.data()[ 4 * j + i ];
+        for(i = 0; i < 4; i++) for(j = 0; j < 4; j++) a[i][j] = finalMatrixInverse.data()[4 * j + i];
         QVector4D screenCoordPersp;
-        screenCoordinatesPerspective(screenCoordPersp, a, height, screenCoordinates );
-        if( !forcedHeight && screenCoordPersp.z() < 0 )
+        screenCoordinatesPerspective(screenCoordPersp, a, height, screenCoordinates);
+        if(!forcedHeight && screenCoordPersp.z() < 0)
         {
-            height = int( camera[projection].position().z() ) + 2 * ( camera[projection].position().z() > 0 ) - 1;
-            screenCoordinatesPerspective(screenCoordPersp, a, height, screenCoordinates );
+            height = int(camera[projection].position().z()) + 2 * (camera[projection].position().z() > 0) - 1;
+            screenCoordinatesPerspective(screenCoordPersp, a, height, screenCoordinates);
         }
         worldCoordinates = finalMatrixInverse * screenCoordPersp;
-        worldCoordinates.setZ( height );
+        worldCoordinates.setZ(height);
     }
-    else worldCoordinates = finalMatrixInverse *
-            screenCoordinates;
+    else worldCoordinates = finalMatrixInverse * screenCoordinates;
     answer = QVector3D(worldCoordinates);
 }
 
-void GLWidget::screenCoordinatesPerspective(QVector4D &answer, double a[ 4 ][ 4 ], double h, const QVector4D &screenCoordinates)
+void GLWidget::screenCoordinatesPerspective(QVector4D &answer, double a[4][4], double h, const QVector4D &screenCoordinates)
 {
 
     double x = screenCoordinates.x(), y = screenCoordinates.y();
-    double w = ( a[ 2 ][ 2 ] - a[ 3 ][ 2 ] * h ) / ( ( a[ 3 ][ 0 ] * a[ 2 ][ 2 ] - a[ 3 ][ 2 ] * a[ 2 ][ 0 ] ) * x + ( a[ 3 ][ 1 ] * a[ 2 ][ 2 ] - a[ 3 ][ 2 ] * a[ 2 ][ 1 ] ) * y + a[ 3 ][ 3 ] * a[ 2 ][ 2 ] - a[ 3 ][ 2 ] * a[ 2 ][ 3 ] );
-    answer = QVector4D(screenCoordinates.x(), screenCoordinates.y(), ( h - ( a[ 2 ][ 0 ] * x + a[ 2 ][ 1 ] * y + a[ 2 ][ 3 ] ) * w ) / a[ 2 ][ 2 ], w);
-    for(int i = 0; i < 2; i++) answer[ i ] *= w;
+    double w = (a[2][2] - a[3][2] * h) / ((a[3][0] * a[2][2] - a[3][2] * a[2][0]) * x + (a[3][1] * a[2][2] - a[3][2] * a[2][1]) * y + a[3][3] * a[2][2] - a[3][2] * a[2][3]);
+    answer = QVector4D(screenCoordinates.x(), screenCoordinates.y(), (h - (a[2][0] * x + a[2][1] * y + a[2][3]) * w) / a[2][2], w);
+    for(int i = 0; i < 2; i++) answer[i] *= w;
 }
 
 bool GLWidget::isSelected(const QVector3D &vertex, const QVector2D &min, const QVector2D &max)
 {
     QVector4D result = finalMatrix * QVector4D(vertex, 1);
     if(projection == PERSPECTIVE) for(int i = 0; i < 2; i++) result[i] /= result[3];
-    return result.x() > min.x() && result.x() < max.x() && result.y() >
-            min.y() && result.y() < max.y();
+    return result.x() > min.x() && result.x() < max.x() && result.y() > min.y() && result.y() < max.y();
 }

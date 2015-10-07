@@ -51,11 +51,8 @@ void TRotate::function(Action action, QMouseEvent *event)
     else
     {
         bool execute = action == EXECUTE;
-        const QVector2D &lastPosition = execute ? widget->getLastPosition() :
-                                           widget->getStartPosition();
-        QVector2D currentPosition = execute ? QVector2D(event->x() -
-            widget->getHalfWidth(), widget->getHalfHeight() - event->y()) :
-                                              widget->getCurrentPosition();
+        const QVector2D &lastPosition = execute ? widget->getLastPosition() : widget->getStartPosition();
+        QVector2D currentPosition = execute ? QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y()) : widget->getCurrentPosition();
         QVector2D toCurrent = (currentPosition - pivotOnScreen).normalized();
         QVector2D toLast = (lastPosition - pivotOnScreen).normalized();
 
