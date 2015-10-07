@@ -125,14 +125,15 @@ RESOURCES += \
 # check all matrices in glwidget
 # rotate - custom pivot
 # draw points over wireframe overlay
+# ortho for 3d
+
 
 # unite all setters/getters in classes
 # in model->load() replace fscanf with cin
-# move "countSomeMatrix" to function that is called later (and perspective)
-# in mainwindow::selectAll add selectableObject
-# TSelect - START AND DRAW have common code
+#
 # in GLWidget::draw vertices should not repeat! - fix after textures
 # remove unneeded #include
+# glwidget - remove setCurrentPosition ?
 
 # tool Cylinder!!! - FINAL ( height )
 # rotate around custom axis

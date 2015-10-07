@@ -495,11 +495,6 @@ void GLWidget::wheelEvent( QWheelEvent *event )
     else scale *= exp( dy );
 }
 
-void GLWidget::countFinalInverseMatrix( bool perspective )
-{
-    countFinalMatrix( perspective );
-    finalMatrixInverse = finalMatrix.inverted();
-}
 
 void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix )
 {
@@ -526,12 +521,26 @@ void GLWidget::addSelectedFace( int num )
                         selectedColor ) );
 }
 
+void GLWidget::countRotationMatrices()
+{
+    rotationMatrix.setToIdentity();
+    rotationMatrix.scale( aspect, 1, 1 );
+    rotationMatrix *= projectionWithoutTranslation;
+
+    rotationMatrixInverse = rotationMatrix.inverted();
+}
+
+void GLWidget::countFinalInverseMatrix()
+{
+    countFinalMatrix();
+    finalMatrixInverse = finalMatrix.inverted();
+}
+
+
 void GLWidget::fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point )
 {
-    bool perspective = projection == PERSPECTIVE;
-    countFinalMatrix( perspective );
     QVector4D temp = finalMatrix * QVector4D( vector, point );
-    if( point && perspective ) for( int i = 0; i < 2; i++ )
+    if( point && projection == PERSPECTIVE ) for( int i = 0; i < 2; i++ )
         temp[ i ] /= temp[ 3 ];
     answer = QVector2D( temp[ 0 ], temp[ 1 ] );
 }
@@ -543,10 +552,8 @@ void GLWidget::fromScreenToWorld(QVector3D &answer, QMouseEvent *event, bool for
 
 void GLWidget::_fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, bool forcedHeight, double height )
 {
-    bool perspective = projection == PERSPECTIVE;
-    countFinalInverseMatrix(perspective);
     QVector4D worldCoordinates;
-    if(perspective)
+    if(projection == PERSPECTIVE)
     {
         double a[4][4];
         int i, j;
@@ -583,14 +590,7 @@ bool GLWidget::isSelected(const QVector3D &vertex, const QVector2D &min, const Q
             min.y() && result.y() < max.y();
 }
 
-void GLWidget::countRotationMatrices()
-{
-    rotationMatrix.setToIdentity();
-    rotationMatrix.scale( aspect, 1, 1 );
-    rotationMatrix *= projectionWithoutTranslation;
 
-    rotationMatrixInverse = rotationMatrix.inverted();
-}
 
 void GLWidget::setCurrentPosition( double x, double y )
 {

@@ -1,6 +1,6 @@
 #include "tpan.h"
 #include "glwidget.h"
-#include "functions.h"
+#include "mathfunctions.h"
 
 TPan::TPan(MainWindow *mainWindow) : Tool(mainWindow)
 {

@@ -34,17 +34,10 @@ void TSelect::function(Action action, QMouseEvent *event)
     case START:
     {
         QVector2D min, max;
-        const QVector2D &startPosition = widget->getStartPosition();
-        QVector2D currentPosition(event->x() - widget->
-             getHalfWidth(), widget->getHalfHeight() - event->y());
+        QVector2D currentPosition(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
+        countMinAndMax(min, max, currentPosition);
 
-        min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);
-        min.setY(qMin(startPosition.y(), currentPosition.y()) - 5);
-        max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);
-        max.setY(qMax(startPosition.y(), currentPosition.y()) + 5);
-
-        bool perspective = projection == PERSPECTIVE;
-        widget->countFinalMatrix(perspective);
+        widget->countFinalMatrix();
         int j;
         if(workWithVert)
         {
@@ -78,12 +71,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         vertices.resize(4);
 
         QVector2D min, max;
-        const QVector2D &startPosition = widget->getStartPosition();
-        const QVector2D &currentPosition = widget->getCurrentPosition();
-        min.setX(qMin(startPosition.x(), currentPosition.x()) - 1);
-        min.setY(qMin(startPosition.y(), currentPosition.y()) - 1);
-        max.setX(qMax(startPosition.x(), currentPosition.x()) + 1);
-        max.setY(qMax(startPosition.y(), currentPosition.y()) + 1);
+        countMinAndMax(min, max, widget->getCurrentPosition());
 
         vertices[0].position = min;
         vertices[1].position.setX(max.x());
@@ -104,8 +92,7 @@ void TSelect::function(Action action, QMouseEvent *event)
 
         //exept drawing here we check is vertices are selected (inside rectangle)
         //this should be in EXECUTE, but here "min" and "max" are counted already
-        bool perspective = projection == PERSPECTIVE;
-        widget->countFinalMatrix(perspective);
+        widget->countFinalMatrix();
         int j;
         if(workWithVert)
         {
@@ -152,3 +139,13 @@ void TSelect::function(Action action, QMouseEvent *event)
     }
 }
 
+void TSelect::countMinAndMax(QVector2D &min, QVector2D &max, const QVector2D &currentPosition)
+{
+    GLWidget *widget = *_activeWidget;
+    const QVector2D &startPosition = widget->getStartPosition();
+
+    min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);
+    min.setY(qMin(startPosition.y(), currentPosition.y()) - 5);
+    max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);
+    max.setY(qMax(startPosition.y(), currentPosition.y()) + 5);
+}

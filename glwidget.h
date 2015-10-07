@@ -76,9 +76,7 @@ public:
     const QMatrix4x4 &getFinalInverseMatrix()
     { return finalMatrixInverse; };
 
-    void countFinalMatrix( bool perspective )
-    { finalMatrix = ( perspective ? toolMatrixPerspectiveInverse :
-        toolMatrixInverse ) * projectionMatrix; };
+
 
     const QMatrix4x4 &getRotationMatrix()
     { return rotationMatrix; };
@@ -107,11 +105,17 @@ public:
     VertexAndIndexData &getToolData()
     { return toolData; };
 
-    void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point );
-    void countFinalInverseMatrix( bool perspective );
-    void countRotationMatrices();
-    void setCurrentPosition( double x, double y );
 
+    void countRotationMatrices();
+    void countFinalInverseMatrix();
+    void countFinalMatrix()
+    { finalMatrix = ( projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse ) * projectionMatrix; };
+
+
+    void setCurrentPosition( double x, double y );//????
+
+
+    void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point );
     void fromScreenToWorld(QVector3D &answer, QMouseEvent *event, bool forcedHeight = false, double height = 0);
     void _fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, bool forcedHeight = false, double height = 0);
     void screenCoordinatesPerspective(QVector4D &answer, double a[ 4 ][ 4 ], double h, const QVector4D &screenCoordinates );

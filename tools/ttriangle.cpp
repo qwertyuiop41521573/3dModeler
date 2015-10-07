@@ -36,8 +36,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
         max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);
         max.setY(qMax(startPosition.y(), currentPosition.y()) + 5);
 
-        bool perspective = widget->getProjection() == PERSPECTIVE;
-        widget->countFinalMatrix(perspective);
+        widget->countFinalMatrix();
         int j;
         for(i = 0; i < vertexSize; i++)
         {

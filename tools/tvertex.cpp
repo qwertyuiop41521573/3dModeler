@@ -27,6 +27,7 @@ void TVertex::function(Action action, QMouseEvent *event)
     vector <Vertex> &vertex = model->getVertex();
     int vertexSize = vertex.size();
     if(action == DRAW) return;
+    widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {
         QVector3D newVertex;

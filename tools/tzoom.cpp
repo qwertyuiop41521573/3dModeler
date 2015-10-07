@@ -1,6 +1,6 @@
 #include "tzoom.h"
 #include "glwidget.h"
-#include "functions.h"
+#include "mathfunctions.h"
 
 TZoom::TZoom(MainWindow *mainWindow) : Tool(mainWindow)
 {

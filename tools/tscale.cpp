@@ -47,14 +47,14 @@ void TScale::function(Action action, QMouseEvent *event)
             widget->getHalfWidth(), widget->getHalfHeight() - event->y()) :
                                               widget->getCurrentPosition();
         QVector2D dr = currentPosition - lastPosition;
-        bool perspective = widget->getProjection() == PERSPECTIVE;
-        if(!perspective) dr *= 3;
+        if(widget->getProjection() != PERSPECTIVE) dr *= 3;
 
         QVector2D temp = QVector2D(widget->getStartPosition()) -
                 pivotOnScreen;
 
         QVector2D e[3];
         double drTransformed[3];
+        widget->countFinalMatrix();
         for(i = 0; i < 3; i++)
         {
             widget->fromWorldToScreen(e[i], QVector3D(i == 0, i == 1, i ==
@@ -62,8 +62,6 @@ void TScale::function(Action action, QMouseEvent *event)
             drTransformed[i] = QVector2D::dotProduct(e[i], dr);
             if(QVector2D::dotProduct(e[i], temp) < 0) drTransformed[i] *= -1;
         }
-
-        widget->countFinalInverseMatrix(perspective);
 
         for(i = 0; i < 3; i++) scaleFactor[i] = exp(drTransformed[i] / 50000);
         if(action == DRAW)

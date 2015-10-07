@@ -24,6 +24,7 @@ void TPlane::function(Action action, QMouseEvent *event)
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
     int i;
+    widget->countFinalInverseMatrix();
 
     switch(action)
     {
@@ -76,7 +77,6 @@ void TPlane::function(Action action, QMouseEvent *event)
             }
             else
             {
-                widget->countFinalInverseMatrix(false);
                 QVector2D startPosition = QVector2D(widget->getFinalMatrix() *
                            QVector4D(vertex[vertexSize - 4].getPosition(), 1));
                 QVector2D currentPosition = QVector2D(event->x() - widget->

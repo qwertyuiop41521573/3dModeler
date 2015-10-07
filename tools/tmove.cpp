@@ -40,9 +40,8 @@ void TMove::function(Action action, QMouseEvent *event)
             getHalfWidth(), widget->getHalfHeight() - event->y()) : widget->
                                               getCurrentPosition();
         QVector2D dr = currentPosition - lastPosition;
-        bool perspective = widget->getProjection() == PERSPECTIVE;
-        if(perspective) dr *= 10;
-        widget->countFinalInverseMatrix(perspective);
+        if(widget->getProjection() == PERSPECTIVE) dr *= 10;
+        widget->countFinalInverseMatrix();
         drInWorld = QVector3D(widget->getFinalInverseMatrix() *
                                   QVector4D(dr.x(), dr.y(), 0.f, 0.f));
         if(action == DRAW)
