@@ -3,19 +3,23 @@
 
 #include "tellipse.h"
 
+#include "gui/myspinbox.h"
+
 class TCylinder : public TEllipse
 {
 public:
     TCylinder(MainWindow *mainWindow);
 
-       void function(Action action, QMouseEvent *event);
+    void function(Action action, QMouseEvent *event);
 
 signals:
 
 public slots:
 
 private:
-       void createWallsAndSecondCap(const QVector3D &height);
+    MySpinBox *spinBoxHeight;
+
+    void createWallsAndSecondCap(bool final);
 };
 
 #endif // TCYLINDER_H

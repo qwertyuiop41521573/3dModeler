@@ -18,7 +18,10 @@ signals:
 public slots:
 
 protected:
-    MySpinBox *spinBox[8];
+    MySpinBox *spinBoxSegments;
+    MySpinBox *spinBox[6];
+    MySpinBox *spinBoxRadius;
+
     MyCheckBoxMW *checkBoxCircle;
 
     QVector3D normal;
@@ -28,7 +31,7 @@ protected:
 
 private:
     void allocateCap(bool flip = false);
-    void createCap(QVector4D rotatingVertex, double angle, const QVector3D normal, const QMatrix4x4 &scaleAndTranslate);
+    void createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate);
 
     QVector3D startPosition3D;
 };

@@ -2,10 +2,21 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
+#include "gui/mylabel.h"
+
 TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)
 {
     button->setText("Cylinder");
     finalButton->setText("Create Cylinder");
+
+    MyLabel *height = new MyLabel("Height", 70);
+    spinBoxHeight = new MySpinBox;
+    spinBoxHeight->setMinimum(0);
+    spinBoxHeight->setValue(1);
+
+    layout->addWidget(height, 7, 0, 1, 2);
+    layout->addWidget(spinBoxHeight, 7, 2, 1, 2);
+
     _hasStage2 = true;
 }
 
@@ -21,7 +32,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
-    int segments = spinBox[0]->value();
+    int segments = spinBoxSegments->value();
     int i;
 
 
@@ -31,7 +42,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     //    TEllipse::function(action, event);
     case FINAL:
     {
-        createWallsAndSecondCap(normal);
+        createWallsAndSecondCap(true);
         for(i = 0; i <= segments; i++) vertex[vertexSize + i].select();
         break;
     }
@@ -43,7 +54,6 @@ void TCylinder::function(Action action, QMouseEvent *event)
             Projection projection = widget->getProjection();
             double dy = (widget->getHalfHeight() - event->y() - widget->
                          getLastPosition().y()) / double(100);
-            QVector3D normal = createNormal(widget->getCamera().rotation());
 
             for(i = -segments - 1; i < 0; i++) vertex[vertexSize + i].
                     addToPosition(normal * dy);
@@ -102,7 +112,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         widget->setToolIsOn(true);
         setStage2(true);
 
-        createWallsAndSecondCap(QVector3D(0, 0, 0));
+        createWallsAndSecondCap(false);
 
         for(i = 0; i <= segments; i++) vertex[vertexSize + i].select(NEW);
 
@@ -111,15 +121,16 @@ void TCylinder::function(Action action, QMouseEvent *event)
     }
 }
 
-void TCylinder::createWallsAndSecondCap(const QVector3D &height)
+void TCylinder::createWallsAndSecondCap(bool final)
 {
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
-    int segments = spinBox[0]->value();
+    int segments = spinBoxSegments->value();
     int i;
 
+    QVector3D height = final ? normal * spinBoxHeight->value() : QVector3D(0, 0, 0);
     //add vertices for second cap
     vertex.resize(vertexSize + segments + 1);
     //second cap

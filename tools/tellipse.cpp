@@ -15,10 +15,13 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     finalButton = new QPushButton("Create Ellipse");
 
     int i;
-    for(i = 0; i < 8; i++) spinBox[i] = new MySpinBox;
-    spinBox[0]->setMinimum(3);
-    spinBox[0]->setValue(18);
-    spinBox[0]->setMaximum(10000);
+    spinBoxSegments = new MySpinBox;
+    for(i = 0; i < 6; i++) spinBox[i] = new MySpinBox;
+    spinBoxRadius = new MySpinBox;
+
+    spinBoxSegments->setMinimum(3);
+    spinBoxSegments->setValue(18);
+    spinBoxSegments->setMaximum(10000);
 
     MyLabel *segments = new MyLabel("Segments:", 70);
 
@@ -32,22 +35,22 @@ TEllipse::TEllipse(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
                                                   ':', 25);
     MyLabel *radius = new MyLabel("Radius:", 70);
 
-    spinBox[7]->setMinimum(0);
-    spinBox[7]->setValue(1);
+    spinBoxRadius->setMinimum(0);
+    spinBoxRadius->setValue(1);
 
     layout->addWidget(segments, 0, 0, 1, 2);
-    layout->addWidget(spinBox[0], 0, 2, 1, 2);
+    layout->addWidget(spinBoxSegments, 0, 2, 1, 2);
     layout->addWidget(checkBoxCircle, 1, 0, 1, 4);
     layout->addWidget(center, 2, 0, 1, 4);
     layout->addWidget(normalLabel, 2, 2, 1, 4);
     for(i = 0; i < 6; i++)
     {
         layout->addWidget(label[i], 3 + i % 3, 2 * (i / 3));
-        layout->addWidget(spinBox[1 + i], 3 + i % 3, 2 * (i / 3) + 1);
+        layout->addWidget(spinBox[i], 3 + i % 3, 2 * (i / 3) + 1);
     }
     layout->addWidget(radius, 6, 0, 1, 2);
-    layout->addWidget(spinBox[7], 6, 2, 1, 2);
-    layout->addWidget(finalButton, 7, 0, 1, 4);
+    layout->addWidget(spinBoxRadius, 6, 2, 1, 2);
+    layout->addWidget(finalButton, 8, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
 }
 
@@ -60,7 +63,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
-    int segments = spinBox[0]->value();
+    int segments = spinBoxSegments->value();
     int i;
 
     //argument should be true for cylinder and false for ellipse, so we
@@ -81,13 +84,13 @@ void TEllipse::function(Action action, QMouseEvent *event)
     }
     case FINAL:
     {
-        for(i = 0; i < 3; i++) normal[i] = spinBox[4 + i]->value();
+        for(i = 0; i < 3; i++) normal[i] = spinBox[3 + i]->value();
         if(normal.length() == 0) return;
         normal.normalize();
-        double radius = spinBox[7]->value();
+        double radius = spinBoxRadius->value();
         if(radius == 0) return;
         QVector3D center;
-        for(i = 0; i < 3; i++) center[i] = spinBox[1 + i]->value();
+        for(i = 0; i < 3; i++) center[i] = spinBox[i]->value();
         //widget->countFinalInverseMatrix(false);
         //center of first cap
         vertex[vertexSize + segments].setPosition(center);
@@ -108,7 +111,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         scaleAndTranslate.translate(center);
         scaleAndTranslate.scale(radius, radius, radius);
 
-        createCap(rotatingVertex, angle, normal, scaleAndTranslate);
+        createCap(rotatingVertex, angle, scaleAndTranslate);
 
         for(i = 0; i <= segments; i++) vertex[vertexSize + i].select();
         break;
@@ -145,8 +148,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
                 double angle = 360 / double(segments);
                 if(!circle) angle *= sign(radius.x() * radius.y());
-                createCap({ 1.f, 0.f, 0.f, 1.f }, angle, { 0, 0, 1 },
-                                  scaleAndTranslate);
+                normal = { 0, 0, 1 };
+                createCap({ 1.f, 0.f, 0.f, 1.f }, angle, scaleAndTranslate);
             }
             else
             {
@@ -160,7 +163,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 QVector3D center = startPosition3D + radius;
                 vertex[vertexSize - 1].setPosition(center);
 
-                QVector3D normal = createNormal(widget->getCamera().rotation());
+                normal = createNormal(widget->getCamera().rotation());
                 QMatrix4x4 scaleAndTranslate;
                 scaleAndTranslate.setToIdentity();
                 scaleAndTranslate.translate(center);
@@ -179,8 +182,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                                                          radius.y() * radius.z());
                 if(projection == TOP || projection == BOTTOM) angle *= -1;
                 bool front = projection == FRONT || projection == BACK;
-                createCap({ !front, front, 0.f, 1.f }, angle, normal,
-                                  scaleAndTranslate);
+                createCap({ !front, front, 0.f, 1.f }, angle, scaleAndTranslate);
             }
         }
         break;
@@ -212,7 +214,7 @@ void TEllipse::allocateCap(bool flip)
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
     int triangleSize = triangle.size();
-    int segments = spinBox[0]->value();
+    int segments = spinBoxSegments->value();
     int i;
 
     //resize vectors and set triangle indices for first cap :
@@ -232,11 +234,11 @@ QVector3D TEllipse::createNormal(const QVector3D &camRot)
         0, 1) : QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
 }
 
-void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QVector3D normal, const QMatrix4x4 &scaleAndTranslate)
+void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)
 {
     vector <Vertex> &vertex = model->getVertex();
     int vertexSize = vertex.size();
-    int segments = spinBox[0]->value();
+    int segments = spinBoxSegments->value();
 
     QMatrix4x4 rotation;
     rotation.setToIdentity();
