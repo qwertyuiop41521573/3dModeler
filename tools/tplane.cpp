@@ -32,12 +32,12 @@ void TPlane::function(Action action, QMouseEvent *event)
         allocateCap(_hasStage2);
 
         QVector3D worldCoordinates;
-        widget->fromScreenToWorld(worldCoordinates, event);
+        widget->fromScreenToWorld(&worldCoordinates, event);
         //all cap vertices are in 1 point
         for(int i = 0; i < 4; i++)
         {
             vertex[vertexSize + i] = worldCoordinates;
-            vertex[vertexSize + i].select(NEW);
+            vertex[vertexSize + i].setNewSelected(true);
         }
         break;
     }
@@ -60,12 +60,12 @@ void TPlane::function(Action action, QMouseEvent *event)
                 //    depends on camera angle
                 double height = vertex[vertexSize - 4].getPosition().z();
                 QVector3D worldCoordinates;
-                widget->fromScreenToWorld(worldCoordinates, event, true, height);
+                widget->fromScreenToWorld(&worldCoordinates, event, true, height);
                 vertex[vertexSize - 2].setPosition(worldCoordinates);
                 diagonal = QVector2D(vertex[vertexSize - 2].getPosition() - vertex[vertexSize - 4].getPosition());
                 if(square)
                 {
-                    countDiagonalForSquare(diagonal);
+                    countDiagonalForSquare(&diagonal);
                     vertex[vertexSize - 2].setPosition(vertex[vertexSize - 4].getPosition() + QVector3D(diagonal, 0));
                 }
                 posB = QVector3D(vertex[vertexSize - 4].getPosition().x(), vertex[vertexSize - 2].getPosition().y(), height);
@@ -78,12 +78,12 @@ void TPlane::function(Action action, QMouseEvent *event)
                 diagonal = currentPosition - startPosition;
                 if(square)
                 {
-                    countDiagonalForSquare(diagonal);
+                    countDiagonalForSquare(&diagonal);
                     currentPosition = startPosition + diagonal;
                 }
-                widget->_fromScreenToWorld(vertex[vertexSize - 2].getEditablePosition(), QVector4D(currentPosition, 0, 1));
-                widget->_fromScreenToWorld(posB, QVector4D(startPosition.x(), currentPosition.y(), 0, 1));
-                widget->_fromScreenToWorld(posA, QVector4D(currentPosition.x(), startPosition.y(), 0, 1));
+                widget->_fromScreenToWorld(&vertex[vertexSize - 2].getEditablePosition(), QVector4D(currentPosition, 0, 1));
+                widget->_fromScreenToWorld(&posB, QVector4D(startPosition.x(), currentPosition.y(), 0, 1));
+                widget->_fromScreenToWorld(&posA, QVector4D(currentPosition.x(), startPosition.y(), 0, 1));
             }
             //flipping the cap (or not)
             int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;
@@ -103,18 +103,18 @@ void TPlane::function(Action action, QMouseEvent *event)
             planeFailed = true;
             return;
         }
-        for(i = 1; i < 5; i++) vertex[vertexSize - i].select();
+        for(i = 1; i < 5; i++) vertex[vertexSize - i].setSelected(true, false);
     }
     }
 }
 
-void TPlane::countDiagonalForSquare(QVector2D &diagonal)
+void TPlane::countDiagonalForSquare(QVector2D *diagonal)
 {
     //square diagonal length is equal to length of projection (of
     //    line we draw) to this diagonal
-    QVector2D squareDiagonal(sign(diagonal.x()), sign(diagonal.y()));
-    double length = QVector2D::dotProduct(diagonal, squareDiagonal) / double(2);
-    diagonal = squareDiagonal * length;
+    QVector2D squareDiagonal(sign(diagonal->x()), sign(diagonal->y()));
+    double length = QVector2D::dotProduct(*diagonal, squareDiagonal) / double(2);
+    *diagonal = squareDiagonal * length;
 }
 
 void TPlane::allocateCap(bool flip)

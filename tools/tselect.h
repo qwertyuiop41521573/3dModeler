@@ -19,7 +19,7 @@ public slots:
 private:
     MyCheckBox *checkBox[2];
 
-    void countMinAndMax(QVector2D &min, QVector2D &max, const QVector2D &currentPosition);
+    void countMinAndMax(QVector2D *min, QVector2D *max, const QVector2D &currentPosition);
 };
 
 #endif // TSELECT_H

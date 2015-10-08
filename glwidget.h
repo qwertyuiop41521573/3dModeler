@@ -124,10 +124,10 @@ public:
     { finalMatrix = (projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse) * projectionMatrix; };
 
 
-    void fromWorldToScreen(QVector2D &answer, const QVector3D &vector, bool point);
-    void fromScreenToWorld(QVector3D &answer, QMouseEvent *event, bool forcedHeight = false, double height = 0);
-    void _fromScreenToWorld(QVector3D &answer, const QVector4D &screenCoordinates, bool forcedHeight = false, double height = 0);
-    void screenCoordinatesPerspective(QVector4D &answer, double a[4][4], double h, const QVector4D &screenCoordinates);
+    void fromWorldToScreen(QVector2D *answer, const QVector3D &vector, bool point);
+    void fromScreenToWorld(QVector3D *answer, QMouseEvent *event, bool forcedHeight = false, double height = 0);
+    void _fromScreenToWorld(QVector3D *answer, const QVector4D &screenCoordinates, bool forcedHeight = false, double height = 0);
+    void screenCoordinatesPerspective(QVector4D *answer, double a[4][4], double h, const QVector4D &screenCoordinates);
     bool isSelected(const QVector3D &vertex, const QVector2D &min, const QVector2D &max);
 
 protected:

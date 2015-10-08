@@ -77,11 +77,11 @@ void TEllipse::function(Action action, QMouseEvent *event)
     {
         allocateCap(_hasStage2);
         widget->countFinalInverseMatrix();
-        widget->fromScreenToWorld(startPosition3D, event);
+        widget->fromScreenToWorld(&startPosition3D, event);
         for(i = 0; i <= segments; i++)
         {
             vertex[vertexSize + i] = startPosition3D;
-            vertex[vertexSize + i].select(NEW);
+            vertex[vertexSize + i].setNewSelected(true);
         }
         break;
     }
@@ -120,7 +120,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         createCap(rotatingVertex, angle, scaleAndTranslate);
 
-        for(i = 0; i <= segments; i++) vertex[vertexSize + i].select();
+        for(i = 0; i <= segments; i++) vertex[vertexSize + i].setSelected(true);
         break;
     }
 
@@ -139,7 +139,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             {
                 double height = startPosition3D.z();
                 QVector3D worldCoordinates;
-                widget->fromScreenToWorld(worldCoordinates, event, true, height);
+                widget->fromScreenToWorld(&worldCoordinates, event, true, height);
                 QVector2D radius = QVector2D(worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
                 vertex[vertexSize - 1].setPosition(center);
@@ -164,7 +164,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                     widget->getHalfWidth(), widget->getHalfHeight() - event->y());
                 QVector3D worldCoordinates;
 
-                widget->_fromScreenToWorld(worldCoordinates, QVector4D(currentPosition, 0, 1));
+                widget->_fromScreenToWorld(&worldCoordinates, QVector4D(currentPosition, 0, 1));
                 QVector3D radius = (worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
                 vertex[vertexSize - 1].setPosition(center);
@@ -203,7 +203,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             return;
         }
 
-        for(int i = 1; i < segments + 2; i++) vertex[vertexSize - i].select();
+        for(int i = 1; i < segments + 2; i++) vertex[vertexSize - i].setSelected(true, false);
     }
     }
 }

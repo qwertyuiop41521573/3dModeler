@@ -21,7 +21,7 @@ protected:
     bool planeFailed;
 
 private:
-    void countDiagonalForSquare(QVector2D &diagonal);
+    void countDiagonalForSquare(QVector2D *diagonal);
     void allocateCap(bool flip = false);
 };
 

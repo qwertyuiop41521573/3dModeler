@@ -308,14 +308,14 @@ void MainWindow::save()
 
 void MainWindow::selectAll()
 {
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++) model->getVertex()[i].select();
-    else for(int i = 0; i < model->getTriangle().size(); i++) model->getTriangle()[i].select();
+    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++) model->getVertex()[i].setSelected(true);
+    else for(int i = 0; i < model->getTriangle().size(); i++) model->getTriangle()[i].setSelected(true);
 }
 
 void MainWindow::selectNone()
 {
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++) model->getVertex()[i].deselect();
-    else for(int i = 0; i < model->getTriangle().size(); i++) model->getTriangle()[i].deselect();
+    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++) model->getVertex()[i].setSelected(false);
+    else for(int i = 0; i < model->getTriangle().size(); i++) model->getTriangle()[i].setSelected(false);
 }
 
 bool MainWindow::openFileDialog(QString action)
@@ -376,7 +376,7 @@ void MainWindow::snapTogether()
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexNumber = vertex.size();
-    for( i = 0; i < vertexNumber; i++ )
+    for(i = 0; i < vertexNumber; i++)
     {
         if(vertex[i].selected())
         {

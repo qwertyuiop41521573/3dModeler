@@ -20,8 +20,7 @@ private:
     MySpinBox *spinBoxAngle;
     MyCheckBoxMW *checkBoxCustomAxis;
 
-    bool getAxis(QMatrix4x4 &rotation, double angle);
-    bool createRotationMatrix(QMatrix4x4 &rotation, double angle);
+    bool createRotationMatrix(QMatrix4x4 *rotation, double angle);
 };
 
 #endif // TROTATE_H

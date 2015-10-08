@@ -91,14 +91,12 @@ RESOURCES += \
 # options ( colors )
 # about
 # panels can detatch
+# all tools should be in File, Edit...
+# model info
+
 # open popular formats
 # Undo, Redo
-# isModified
-# if model is wrong, viewports should display background
-# read/write textured model, and non-textured too
-# all tools should be in File, Edit...
-# save with .mdl
-# model info
+# rewrite Model class
 # grid
 # basic tools: create(  box, sphere, teapot? ), extrude
 # textures
@@ -106,28 +104,27 @@ RESOURCES += \
 # select option - ignore backfacing
 # selecting faces in textured
 # weld vertices
-# finish 'delete'
-# when deleting, deleted item swaps with last in vector, if it is last, vector
-#       shrinks
-# pivot to orbit
+# delete tool (replace vector with list? forwrd_list?)
+# pivot to orbit and other tools
 # items selected label
 # triangles selected by clicking or drawing rectangle inside them
 # backface of selected triangle has another color
-# plane - option for sqauare ( hold shift ), toolBox - option for cube
-#       ( hold shift )
+# plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
 # toolBox - capture mouse movement in whole window, not in widget
-# toolElipse!! - create from center
+# toolElipse - create from center
 # box and plane - segments
 # cylinder - no cap option
 # option - flip triangles
-# correct button width
-# flat and smooth shaded should have light
 # check all matrices in glwidget
-# rotate - custom pivot
 # draw points over wireframe overlay
 # ortho for 3d
+# ellipse and cylinder - radial segments, replace creating second cap in createWallsAndSecondCap with TEllipse::createCap ?
 
-# in glwidget add sin(inRadians...
+# select - fix (blue vertices outside rectangle) - get back newSelected - comment it!
+# select -> DRAW -> triangles - add bool checked[] not to repeat vertices, find similar mistakes;
+# toolWithPivot - common code for vertices and triangles
+
+
 
 # in model->load() replace fscanf with cin
 # in GLWidget::draw vertices should not repeat! - fix after textures
@@ -135,3 +132,5 @@ RESOURCES += \
 
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
+
+# commit: replaced & with * in functions that change argument

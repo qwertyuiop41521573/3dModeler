@@ -46,7 +46,7 @@ void TRotate::function(Action action, QMouseEvent *event)
     rotation.setToIdentity();
     if(action == FINAL)
     {
-        if(!createRotationMatrix(rotation, spinBoxAngle->value())) return;
+        if(!createRotationMatrix(&rotation, spinBoxAngle->value())) return;
     }
     else
     {
@@ -85,7 +85,7 @@ void TRotate::function(Action action, QMouseEvent *event)
             rotation.rotate(angle, 0, 0, 1);
             rotation *= widget->getRotationMatrix();
         }
-        else if(!createRotationMatrix(rotation, angle)) return;
+        else if(!createRotationMatrix(&rotation, angle)) return;
     }
 
     //create transformation matrix
@@ -97,27 +97,25 @@ void TRotate::function(Action action, QMouseEvent *event)
     transform();
 }
 
-bool TRotate::getAxis(QMatrix4x4 &rotation, double angle)
-{
-    QVector3D axis;
-    for(int i = 0; i < 3; i++) axis[i] = spinBox[i]->value();
-    if(axis.isNull()) return false;
-    axis.normalize();
-    rotation.rotate(angle, axis);
-    return true;
-}
-
-bool TRotate::createRotationMatrix(QMatrix4x4 &rotation, double angle)
+bool TRotate::createRotationMatrix(QMatrix4x4 *rotation, double angle)
 {
     GLWidget *widget = *_activeWidget;
 
     if(checkBoxCustomAxis->isChecked())
     {
         widget->countRotationMatrices();
-        rotation *= widget->getRotationMatrixInverse();
-        rotation.rotate(angle, 0, 0, 1);
-        rotation *= widget->getRotationMatrix();
+        *rotation *= widget->getRotationMatrixInverse();
+        rotation->rotate(angle, 0, 0, 1);
+        *rotation *= widget->getRotationMatrix();
         return true;
     }
-    else return getAxis(rotation, angle);
+    else
+    {
+        QVector3D axis;
+        for(int i = 0; i < 3; i++) axis[i] = spinBox[i]->value();
+        if(axis.isNull()) return false;
+        axis.normalize();
+        rotation->rotate(angle, axis);
+        return true;
+    }
 }

@@ -33,16 +33,12 @@ void TVertex::function(Action action, QMouseEvent *event)
     if(action == START || action == FINAL)
     {
         QVector3D newVertex;
-        if(action == START) widget->fromScreenToWorld(newVertex, event);
+        if(action == START) widget->fromScreenToWorld(&newVertex, event);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
         vertex.push_back(newVertex);
-        vertex[vertexSize].select(NEW);
+        vertex[vertexSize].setNewSelected(true);
         if(action == FINAL) action = STOP;
     }
-    if(action == EXECUTE) widget->fromScreenToWorld(vertex[vertexSize - 1].getEditablePosition(), event);
-    if(action == STOP)
-    {
-        vertexSize = vertex.size();
-        vertex[vertexSize - 1].select();
-    }
+    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[vertexSize - 1].getEditablePosition(), event);
+    if(action == STOP) vertex[vertex.size() - 1].setSelected(true, false);
 }

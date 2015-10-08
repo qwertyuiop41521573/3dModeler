@@ -36,13 +36,13 @@ void TSelect::function(Action action, QMouseEvent *event)
     {
         QVector2D min, max;
         QVector2D currentPosition(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
-        countMinAndMax(min, max, currentPosition);
+        countMinAndMax(&min, &max, currentPosition);
 
         widget->countFinalMatrix();
         int j;
         if(workWithVert)
         {
-            for(i = 0; i < vertexSize; i++) if(widget->isSelected(vertex[i].getPosition(), min, max)) vertex[i].select(NEW);
+            for(i = 0; i < vertexSize; i++) if(widget->isSelected(vertex[i].getPosition(), min, max)) vertex[i].setNewSelected(true);
         }
         else
         {
@@ -72,7 +72,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         vertices.resize(4);
 
         QVector2D min, max;
-        countMinAndMax(min, max, widget->getCurrentPosition());
+        countMinAndMax(&min, &max, widget->getCurrentPosition());
 
         vertices[0].position = min;
         vertices[1].position.setX(max.x());
@@ -97,18 +97,18 @@ void TSelect::function(Action action, QMouseEvent *event)
         int j;
         if(workWithVert)
         {
-            for(i = 0; i < vertexSize; i++) if(widget->isSelected(vertex[i].getPosition(), min, max)) vertex[i].select(NEW);
+            for(i = 0; i < vertexSize; i++) vertex[i].setNewSelected(widget->isSelected(vertex[i].getPosition(), min, max));
         }
         else
         {
             for(i = 0; i < triangleSize; i++)
             {
-               // triangle[i].deselect();
+                triangle[i].setNewSelected(false);
                 for(j = 0; j < 3; j++)
                 {
                     if(widget->isSelected(vertex[triangle[i].getIndex(j)].getPosition(), min, max))
                     {
-                        triangle[i].select(NEW);
+                        triangle[i].setNewSelected(true);
                         break;
                     }
                 }
@@ -127,22 +127,22 @@ void TSelect::function(Action action, QMouseEvent *event)
         }
         for(i = 0; i < selObj.size(); i++)
         {
-            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) selObj[i]->select(selObj[i]->newSelected());
-            if(checkBox[0]->isChecked()  && selObj[i]->newSelected())  selObj[i]->select();
-            if(checkBox[1]->isChecked()  && selObj[i]->newSelected())  selObj[i]->deselect();
+            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) selObj[i]->setSelected(selObj[i]->newSelected(), false);
+            if(checkBox[0]->isChecked()  && selObj[i]->newSelected())  selObj[i]->setSelected(true, false);
+            if(checkBox[1]->isChecked()  && selObj[i]->newSelected())  selObj[i]->setSelected(false, false);
         }
         break;
     }
     }
 }
 
-void TSelect::countMinAndMax(QVector2D &min, QVector2D &max, const QVector2D &currentPosition)
+void TSelect::countMinAndMax(QVector2D *min, QVector2D *max, const QVector2D &currentPosition)
 {
     GLWidget *widget = *_activeWidget;
     const QVector2D &startPosition = widget->getStartPosition();
 
-    min.setX(qMin(startPosition.x(), currentPosition.x()) - 5);
-    min.setY(qMin(startPosition.y(), currentPosition.y()) - 5);
-    max.setX(qMax(startPosition.x(), currentPosition.x()) + 5);
-    max.setY(qMax(startPosition.y(), currentPosition.y()) + 5);
+    min->setX(qMin(startPosition.x(), currentPosition.x()) - 5);
+    min->setY(qMin(startPosition.y(), currentPosition.y()) - 5);
+    max->setX(qMax(startPosition.x(), currentPosition.x()) + 5);
+    max->setY(qMax(startPosition.y(), currentPosition.y()) + 5);
 }

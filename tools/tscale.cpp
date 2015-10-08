@@ -52,7 +52,7 @@ void TScale::function(Action action, QMouseEvent *event)
         widget->countFinalMatrix();
         for(i = 0; i < 3; i++)
         {
-            widget->fromWorldToScreen(e[i], QVector3D(i == 0, i == 1, i == 2), false);
+            widget->fromWorldToScreen(&e[i], QVector3D(i == 0, i == 1, i == 2), false);
             drTransformed[i] = QVector2D::dotProduct(e[i], dr);
             if(QVector2D::dotProduct(e[i], temp) < 0) drTransformed[i] *= -1;
         }

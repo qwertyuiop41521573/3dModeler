@@ -19,3 +19,8 @@ double sinR(double x)
 {
     return sin(inRadians(x));
 }
+
+double tanR(double x)
+{
+    return tan(inRadians(x));
+}

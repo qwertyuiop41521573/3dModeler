@@ -85,7 +85,7 @@ void TBox::function(Action action, QMouseEvent *event)
             v += center;
             //record to model
             vertex[vertexSize + i].setPosition(v);
-            vertex[vertexSize + i].select();
+            vertex[vertexSize + i].setSelected(true);
         }
 
         triangle.resize( triangleSize + 12 );
@@ -152,7 +152,7 @@ void TBox::function(Action action, QMouseEvent *event)
             triangle.resize(triangle.size() - 12);
         }
         //deselect with "blue", select with "red"
-        else for(i = 1; i < 9; i++) vertex[vertexSize - i].select();
+        else for(i = 1; i < 9; i++) vertex[vertexSize - i].setSelected(true, false);
 
         widget->setToolIsOn(false);
         setStage2(false);
@@ -193,7 +193,7 @@ void TBox::function(Action action, QMouseEvent *event)
         {
             //the second cap is the same as first
             vertex[vertexSize + i] = vertex[vertexSize - 4 + i].getPosition();
-            vertex[vertexSize + i].select(NEW);
+            vertex[vertexSize + i].setNewSelected(true);
         }
         widget->setMouseTracking(true);
     }
