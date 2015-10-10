@@ -65,7 +65,6 @@ void TEllipse::function(Action action, QMouseEvent *event)
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -198,7 +197,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         {
             //remove cap
             vertex.resize(vertexSize - segments - 1);
-            triangle.resize(triangle.size() - segments);
+            triangle.erase(triangle.end() - segments, triangle.end());
             ellipseFailed = true;
             return;
         }
@@ -216,17 +215,15 @@ void TEllipse::allocateCap(bool flip)
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
     int segments = spinBoxSegments->value();
     int i;
 
     //resize vectors and set triangle indices for first cap :
     //resize
     vertex.resize(vertexSize + segments + 1);
-    triangle.resize(triangleSize + segments);
     //set indices
-    for(i = 0; i < segments - 1; i++) triangle[triangleSize + i].setIndices(vertexSize + i + flip, vertexSize + i + !flip, vertexSize + segments);
-    triangle[triangleSize + i].setIndices(vertexSize + (segments - 1) * !flip, vertexSize + (segments - 1) * flip, vertexSize + segments);
+    for(i = 0; i < segments - 1; i++) triangle.push_back({vertexSize + i + flip, vertexSize + i + !flip, vertexSize + segments});
+    triangle.push_back({vertexSize + (segments - 1) * !flip, vertexSize + (segments - 1) * flip, vertexSize + segments});
 }
 
 QVector3D TEllipse::createNormal(const QVector3D &camRot)

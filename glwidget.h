@@ -207,6 +207,7 @@ private:
     void drawAdittional();
     void prepareProgramColor(const QMatrix4x4 &matrix);
     void addSelectedFace(int num);
+    void line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3D color);
 };
 
 #endif // GLWIDGET_H

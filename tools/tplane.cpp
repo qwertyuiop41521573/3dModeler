@@ -20,7 +20,6 @@ void TPlane::function(Action action, QMouseEvent *event)
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
     int i;
     widget->countFinalInverseMatrix();
 
@@ -99,7 +98,7 @@ void TPlane::function(Action action, QMouseEvent *event)
         {
             //remove cap - last 4 vertices and 2 triangles
             vertex.resize(vertexSize - 4);
-            triangle.resize(triangle.size() - 2);
+            triangle.erase(triangle.end() - 2, triangle.end());
             planeFailed = true;
             return;
         }
@@ -122,10 +121,8 @@ void TPlane::allocateCap(bool flip)
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
 
     vertex.resize(vertexSize + 4);
-    triangle.resize(triangleSize + 2);
-    triangle[triangleSize    ].setIndices(vertexSize + !flip, vertexSize + flip, vertexSize + 2);
-    triangle[triangleSize + 1].setIndices(vertexSize + 2 * !flip, vertexSize + 2 * flip, vertexSize + 3);
+    triangle.push_back({vertexSize + !flip, vertexSize + flip, vertexSize + 2});
+    triangle.push_back({vertexSize + 2 * !flip, vertexSize + 2 * flip, vertexSize + 3});
 }

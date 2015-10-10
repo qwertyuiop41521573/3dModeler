@@ -33,44 +33,26 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(pare
     camera[PERSPECTIVE].setPosition(5 * sinR(30), 5 * cosR(30), 5 * tanR(15));
     camera[PERSPECTIVE].setRotation(15, 0,-120);
 
-    vector <VertexData_Color> &verticesG = grid.vertices;
-
-    verticesG.resize(88);
-    for(i = 0; i < 88; i++) verticesG[i].color = DARK_GRAY;
-    for(i = 0; i < 40; i++)
+    for(i = 0; i < 10; i++)
     {
-        verticesG[i].position.setX(i % 4 / 2 ? i / 4 - 10 : i % 2 ? 10 : -10);
-        verticesG[i].position.setY(i % 4 / 2 ? i % 2 ? 10 : -10 : i / 4 - 10);
-
-        verticesG[48 + i].position.setX(i % 4 / 2 ? i / 4 + 1 : i % 2 ? 10 : -10);
-        verticesG[48 + i].position.setY(i % 4 / 2 ? i % 2 ? 10 : -10 : i / 4 + 1);
+        line(&grid, {i - 10, -10, 0}, {i - 10, 10, 0}, DARK_GRAY);
+        line(&grid, {-10, i - 10, 0}, {10, i - 10, 0}, DARK_GRAY);
     }
 
-    verticesG[40].position.setX(-10);
-    verticesG[42].position.setX(1);
-    verticesG[43].position.setX(10);
-    verticesG[44].position.setY(-10);
-    verticesG[46].position.setY(1);
-    verticesG[47].position.setY(10);
+    line(&grid, {-10, 0, 0}, {0, 0, 0}, DARK_GRAY);
+    line(&grid, {1, 0, 0}, {10, 0, 0}, DARK_GRAY);
+    line(&grid, {0, -10, 0}, {0, 0, 0}, DARK_GRAY);
+    line(&grid, {0, 1, 0}, {0, 10, 0}, DARK_GRAY);
 
-    grid.indices.resize(88);
-    for(i = 0; i < 88; i++) grid.indices[i] = i;
+    for(i = 0; i < 10; i++)
+    {
+        line(&grid, {i + 1, -10, 0}, {i + 1, 10, 0}, DARK_GRAY);
+        line(&grid, {-10, i + 1, 0}, {10, i + 1, 0}, DARK_GRAY);
+    }
 
-    vector <VertexData_Color> &verticesA = axis.vertices;
-    verticesA.resize(6);
-
-    verticesA[0].color = RED;
-    verticesA[1].position.setX(1);
-    verticesA[1].color = RED;
-    verticesA[2].color = GREEN;
-    verticesA[3].position.setY(1);
-    verticesA[3].color = GREEN;
-    verticesA[4].color = BLUE;
-    verticesA[5].position.setZ(1);
-    verticesA[5].color = BLUE;
-
-    axis.indices.resize(6);
-    for(i = 0; i < 6; i++) axis.indices[i] = i;
+    line(&axis, {0, 0, 0}, {1, 0, 0}, RED);
+    line(&axis, {0, 0, 0}, {0, 1, 0}, GREEN);
+    line(&axis, {0, 0, 0}, {0, 0, 1}, BLUE);
 
     frame.vertices.resize(4);
     vector <GLuint> &indicesF = frame.indices;
@@ -527,4 +509,11 @@ bool GLWidget::isSelected(const QVector3D &vertex, const QVector2D &min, const Q
     QVector4D result = finalMatrix * QVector4D(vertex, 1);
     if(projection == PERSPECTIVE) for(int i = 0; i < 2; i++) result[i] /= result[3];
     return result.x() > min.x() && result.x() < max.x() && result.y() > min.y() && result.y() < max.y();
+}
+
+void GLWidget::line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3D color)
+{
+    data->vertices.push_back({a, color});
+    data->vertices.push_back({b, color});
+    for(int i = 0; i < 4; i++) data->indices.push_back(data->indices.size());
 }

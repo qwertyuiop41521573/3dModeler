@@ -25,7 +25,7 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
     {
         spinBox[i] = new MySpinBox;
         label[i] = new MyLabel(QString('X' + i % 3) + ':', 25);
-        int x = 2 * (i / 3), y = i % 3 + 2;
+        int x = 2 * (i / 3), y = 2 + i % 3;
         layout->addWidget(label[i], y, x);
         layout->addWidget(spinBox[i], y, x + 1);
     }
@@ -55,7 +55,6 @@ void TBox::function(Action action, QMouseEvent *event)
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
     int i;
 
     switch(action)
@@ -88,20 +87,19 @@ void TBox::function(Action action, QMouseEvent *event)
             vertex[vertexSize + i].setSelected(true);
         }
 
-        triangle.resize( triangleSize + 12 );
         //triangles of the box:
-        triangle[triangleSize     ].setIndices(vertexSize,     vertexSize + 1, vertexSize + 2);
-        triangle[triangleSize + 1 ].setIndices(vertexSize,     vertexSize + 2, vertexSize + 3);
-        triangle[triangleSize + 2 ].setIndices(vertexSize,     vertexSize + 5, vertexSize + 1);
-        triangle[triangleSize + 3 ].setIndices(vertexSize,     vertexSize + 4, vertexSize + 5);
-        triangle[triangleSize + 4 ].setIndices(vertexSize + 1, vertexSize + 6, vertexSize + 2);
-        triangle[triangleSize + 5 ].setIndices(vertexSize + 1, vertexSize + 5, vertexSize + 6);
-        triangle[triangleSize + 6 ].setIndices(vertexSize + 2, vertexSize + 7, vertexSize + 3);
-        triangle[triangleSize + 7 ].setIndices(vertexSize + 2, vertexSize + 6, vertexSize + 7);
-        triangle[triangleSize + 8 ].setIndices(vertexSize + 3, vertexSize + 4, vertexSize    );
-        triangle[triangleSize + 9 ].setIndices(vertexSize + 3, vertexSize + 7, vertexSize + 4);
-        triangle[triangleSize + 10].setIndices(vertexSize + 4, vertexSize + 6, vertexSize + 5);
-        triangle[triangleSize + 11].setIndices(vertexSize + 4, vertexSize + 7, vertexSize + 6);
+        triangle.push_back({vertexSize,     vertexSize + 1, vertexSize + 2});
+        triangle.push_back({vertexSize,     vertexSize + 2, vertexSize + 3});
+        triangle.push_back({vertexSize,     vertexSize + 5, vertexSize + 1});
+        triangle.push_back({vertexSize,     vertexSize + 4, vertexSize + 5});
+        triangle.push_back({vertexSize + 1, vertexSize + 6, vertexSize + 2});
+        triangle.push_back({vertexSize + 1, vertexSize + 5, vertexSize + 6});
+        triangle.push_back({vertexSize + 2, vertexSize + 7, vertexSize + 3});
+        triangle.push_back({vertexSize + 2, vertexSize + 6, vertexSize + 7});
+        triangle.push_back({vertexSize + 3, vertexSize + 4, vertexSize    });
+        triangle.push_back({vertexSize + 3, vertexSize + 7, vertexSize + 4});
+        triangle.push_back({vertexSize + 4, vertexSize + 6, vertexSize + 5});
+        triangle.push_back({vertexSize + 4, vertexSize + 7, vertexSize + 6});
 
         break;
     }
@@ -149,7 +147,7 @@ void TBox::function(Action action, QMouseEvent *event)
         {
             //remove box - last 8 vertices and 12 triangles
             vertex.resize(vertexSize - 8);
-            triangle.resize(triangle.size() - 12);
+            triangle.erase(triangle.end() - 12, triangle.end());
         }
         //deselect with "blue", select with "red"
         else for(i = 1; i < 9; i++) vertex[vertexSize - i].setSelected(true, false);
@@ -176,18 +174,17 @@ void TBox::function(Action action, QMouseEvent *event)
         //adding elements to create box from it's cap (4 vertices and 10
         //    triangles)
         vertex.resize(vertexSize + 4);
-        triangle.resize(triangleSize + 10);
 
-        triangle[triangleSize    ].setIndices(vertexSize - 4, vertexSize + 1, vertexSize - 3);
-        triangle[triangleSize + 1].setIndices(vertexSize - 4, vertexSize,     vertexSize + 1);
-        triangle[triangleSize + 2].setIndices(vertexSize - 3, vertexSize + 2, vertexSize - 2);
-        triangle[triangleSize + 3].setIndices(vertexSize - 3, vertexSize + 1, vertexSize + 2);
-        triangle[triangleSize + 4].setIndices(vertexSize - 2, vertexSize + 3, vertexSize - 1);
-        triangle[triangleSize + 5].setIndices(vertexSize - 2, vertexSize + 2, vertexSize + 3);
-        triangle[triangleSize + 6].setIndices(vertexSize - 1, vertexSize,     vertexSize - 4);
-        triangle[triangleSize + 7].setIndices(vertexSize - 1, vertexSize + 3, vertexSize    );
-        triangle[triangleSize + 8].setIndices(vertexSize,     vertexSize + 2, vertexSize + 1);
-        triangle[triangleSize + 9].setIndices(vertexSize,     vertexSize + 3, vertexSize + 2);
+        triangle.push_back({vertexSize - 4, vertexSize + 1, vertexSize - 3});
+        triangle.push_back({vertexSize - 4, vertexSize,     vertexSize + 1});
+        triangle.push_back({vertexSize - 3, vertexSize + 2, vertexSize - 2});
+        triangle.push_back({vertexSize - 3, vertexSize + 1, vertexSize + 2});
+        triangle.push_back({vertexSize - 2, vertexSize + 3, vertexSize - 1});
+        triangle.push_back({vertexSize - 2, vertexSize + 2, vertexSize + 3});
+        triangle.push_back({vertexSize - 1, vertexSize,     vertexSize - 4});
+        triangle.push_back({vertexSize - 1, vertexSize + 3, vertexSize    });
+        triangle.push_back({vertexSize,     vertexSize + 2, vertexSize + 1});
+        triangle.push_back({vertexSize,     vertexSize + 3, vertexSize + 2});
 
         for(i = 0; i < 4; i++)
         {

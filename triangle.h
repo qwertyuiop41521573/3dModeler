@@ -6,7 +6,7 @@
 class Triangle : public SelectableObject
 {
 public:
-    Triangle(int a =-1, int b =-1, int c =-1)
+    Triangle(int a, int b, int c)
     { setIndices(a, b, c); };
 
     Triangle(int *values)

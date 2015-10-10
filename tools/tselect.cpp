@@ -128,8 +128,8 @@ void TSelect::function(Action action, QMouseEvent *event)
         for(i = 0; i < selObj.size(); i++)
         {
             if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) selObj[i]->setSelected(selObj[i]->newSelected(), false);
-            if(checkBox[0]->isChecked()  && selObj[i]->newSelected())  selObj[i]->setSelected(true, false);
-            if(checkBox[1]->isChecked()  && selObj[i]->newSelected())  selObj[i]->setSelected(false, false);
+            if(checkBox[0]->isChecked()  && selObj[i]->newSelected()) selObj[i]->setSelected(true, false);
+            if(checkBox[1]->isChecked()  && selObj[i]->newSelected()) selObj[i]->setSelected(false, false);
         }
         break;
     }

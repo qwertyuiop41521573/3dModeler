@@ -93,21 +93,23 @@ RESOURCES += \
 # panels can detatch
 # all tools should be in File, Edit...
 # model info
-
 # open popular formats
+
+
+# delete tool (replace vector with list? forwrd_list?)
+# pivot to orbit and other tools
+# triangles selected by clicking or drawing rectangle inside them
+
 # Undo, Redo
 # rewrite Model class
 # grid
-# basic tools: create(  box, sphere, teapot? ), extrude
+# basic tools: create(sphere, teapot? ...), extrude, bend ...
 # textures
 # light
 # select option - ignore backfacing
 # selecting faces in textured
 # weld vertices
-# delete tool (replace vector with list? forwrd_list?)
-# pivot to orbit and other tools
 # items selected label
-# triangles selected by clicking or drawing rectangle inside them
 # backface of selected triangle has another color
 # plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
 # toolBox - capture mouse movement in whole window, not in widget
@@ -119,18 +121,11 @@ RESOURCES += \
 # draw points over wireframe overlay
 # ortho for 3d
 # ellipse and cylinder - radial segments, replace creating second cap in createWallsAndSecondCap with TEllipse::createCap ?
-
-# select - fix (blue vertices outside rectangle) - get back newSelected - comment it!
-# select -> DRAW -> triangles - add bool checked[] not to repeat vertices, find similar mistakes;
-# toolWithPivot - common code for vertices and triangles
-
-
-
-# in model->load() replace fscanf with cin
-# in GLWidget::draw vertices should not repeat! - fix after textures
 # axis lines should be like wireframe overlay
+
+# in GLWidget::draw vertices should not repeat! - fix after "textures"
+# select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
+
 
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
-
-# commit: replaced & with * in functions that change argument

@@ -36,7 +36,6 @@ void TRotate::function(Action action, QMouseEvent *event)
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
     int i, j, k;
 
     ToolWithPivot::function(action, event);

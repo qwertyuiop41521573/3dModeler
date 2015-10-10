@@ -84,6 +84,7 @@ private:
     MyComboBox *renderingMode;
     QCheckBox *wireframeOverlay;
     MyComboBox *projection;
+
     MyPushButton *hideViewportButtons[4];
     QPushButton *maximizeButton;
 

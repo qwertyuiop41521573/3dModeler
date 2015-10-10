@@ -25,7 +25,6 @@ void TTriangle::function(Action action, QMouseEvent *event)
         GLWidget *widget = *_activeWidget;
         vector <Triangle> &triangle = model->getTriangle();
         int vertexSize = vertex.size();
-        int triangleSize = triangle.size();
 
         for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
 
