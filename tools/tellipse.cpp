@@ -149,11 +149,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 QMatrix4x4 scaleAndTranslate;
                 scaleAndTranslate.setToIdentity();
                 scaleAndTranslate.translate(center);
-                if(circle)
-                {
-                    double length = radius.length();
-                    scaleAndTranslate.scale(length, length, 1);
-                }
+                if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), 1);
                 else scaleAndTranslate.scale(radius.x(), radius.y(), 1);
 
                 double angle = 360 / double(segments);
@@ -176,11 +172,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 QMatrix4x4 scaleAndTranslate;
                 scaleAndTranslate.setToIdentity();
                 scaleAndTranslate.translate(center);
-                if(circle)
-                {
-                    double length = radius.length();
-                    scaleAndTranslate.scale(length, length, length);
-                }
+                if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), radius.length());
                 else
                 {
                     for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] = sign(radius[i]);
@@ -197,7 +189,9 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if ellipse is a line
-        if(QVector3D::crossProduct(vertex[ind[segments - 1]].getPosition() - vertex[ind[segments]].getPosition(), vertex[ind[segments - 2]].getPosition() - vertex[ind[segments]].getPosition()).length() == 0)
+        QVector3D v1 = vertex[ind[segments - 1]].getPosition() - vertex[ind[segments]].getPosition();
+        QVector3D v2 = vertex[ind[segments - 2]].getPosition() - vertex[ind[segments]].getPosition();
+        if(QVector3D::crossProduct(v1, v2).length() == 0)
         {
             //remove cap
             removeAll(segments);
@@ -220,10 +214,8 @@ void TEllipse::triangulateCap(bool flip)
     int segments = spinBoxSegments->value();
     int i;
 
-    //resize vectors and set triangle indices for first cap :
-    //set indices
-    for(i = 0; i < segments - 1; i++) triangle.push_back({ind[i + flip], ind[i + !flip], ind[segments]});
-    triangle.push_back({ind[(segments - 1) * !flip], ind[(segments - 1) * flip], ind[segments]});
+    //set triangle indices for first cap
+    for(i = 0; i < segments; i++) triangle.push_back({ind[(i + flip) % segments], ind[(i + !flip) % segments], ind[segments]});
 }
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)

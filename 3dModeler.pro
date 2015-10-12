@@ -97,8 +97,6 @@ RESOURCES += \
 # model info
 # open popular formats
 
-
-# delete tool (replace vector with list? forwrd_list?)
 # pivot to orbit and other tools
 # triangles selected by clicking or drawing rectangle inside them
 
@@ -132,8 +130,4 @@ RESOURCES += \
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
 
-# rewrite tools to work with vertices in random places of array
-    # remove vertexSize
-    # check all cross products!
-# tools done: vertex, plane, box, ellipse, cylinder;
-
+# cylinder - check crossProduct

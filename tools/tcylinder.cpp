@@ -64,9 +64,10 @@ void TCylinder::function(Action action, QMouseEvent *event)
             //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
             QVector3D v1 = vertex[ind[0]].getPosition() - vertex[ind[segments]].getPosition();
             QVector3D v2 = vertex[ind[1]].getPosition() - vertex[ind[segments]].getPosition();
+            QVector3D h = vertex[ind[segments]].getPosition() - vertex[ind[2 * segments + 1]].getPosition();
 
             //flip if needed
-            if(QVector3D::dotProduct(normal, vertex[ind[segments]].getPosition() - vertex[ind[2 * segments + 1]].getPosition()) * QVector3D::dotProduct(normal, QVector3D::crossProduct(v1, v2)) > 0)
+            if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) > 0)
             {
                 QVector3D temp;
                 for(i = 0; i < segments / 2; i++)
@@ -120,21 +121,18 @@ void TCylinder::createWallsAndSecondCap(bool final)
 
     QVector3D height = final ? normal * spinBoxHeight->value() : QVector3D(0, 0, 0);
     //add vertices for second cap
-    //second cap
     for(i = 0; i <= segments; i++) ind.push_back(vertex.push(vertex[ind[i]].getPosition() + height));
 
     //add triangles for walls and second cap
 
     //cap
-    for(i = 0; i < segments - 1; i++) triangle.push_back({ind[segments + 1 + i], ind[segments + 1 + i + 1], ind[segments + 1 + segments]});
-    triangle.push_back({ind[segments + 1 + segments - 1], ind[segments + 1], ind[segments + 1 + segments]});
+    for(i = 0; i < segments; i++) triangle.push_back({ind[segments + 1 + i], ind[segments + 1 + (i + 1) % segments], ind[segments + 1 + segments]});
 
     //wall
-    for(i = 0; i < segments - 1; i++)
+    for(i = 0; i < segments; i++)
     {
-        triangle.push_back({ind[segments + 1 + i + 1], ind[segments + 1 + i], ind[i]});
-        triangle.push_back({ind[i], ind[1 + i], ind[segments + 1 + i + 1]});
+        int t = (i + 1) % segments;
+        triangle.push_back({ind[segments + 1 + t], ind[segments + 1 + i], ind[i]});
+        triangle.push_back({ind[i], ind[t], ind[segments + 1 + t]});
     }
-    triangle.push_back({ind[segments + 1], ind[segments + 1 + segments - 1], ind[segments - 1]});
-    triangle.push_back({ind[segments - 1], ind[0], ind[segments + 1]});
 }

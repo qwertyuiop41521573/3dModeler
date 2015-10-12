@@ -152,11 +152,11 @@ void GLWidget::draw(bool wireframe)
     int vertexNumber = vertex.size();
     int triangleNumber = triangle.size();
 
-    if(_isActive)
+  /*  if(_isActive)
     {
         for(i = 0; i < vertexNumber; i++) cerr << vertex[i].exists() << ' ';
         cerr << '\n';
-    }
+    }*/
 
     switch(renderingModeCurrent)
     {

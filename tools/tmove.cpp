@@ -24,7 +24,6 @@ void TMove::function(Action action, QMouseEvent *event)
 
     GLWidget *widget = *_activeWidget;
     vector <Vertex> &vertex = model->getVertex();
-    int vertexSize = vertex.size();
     int i;
 
     QVector3D drInWorld; //(not on screen)

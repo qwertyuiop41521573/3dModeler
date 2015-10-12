@@ -103,6 +103,9 @@ void TSelect::function(Action action, QMouseEvent *event)
         {
             for(i = 0; i < triangleSize; i++)
             {
+
+
+
                 triangle[i].setNewSelected(false);
                 for(j = 0; j < 3; j++)
                 {

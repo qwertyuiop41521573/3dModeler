@@ -35,6 +35,7 @@ void TVertex::function(Action action, QMouseEvent *event)
         QVector3D newVertex;
         if(action == START) widget->fromScreenToWorld(&newVertex, event);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
+        ind.clear();
         ind.push_back(vertex.push(newVertex));
         vertex[ind[0]].setNewSelected(true);
         if(action == FINAL) action = STOP;

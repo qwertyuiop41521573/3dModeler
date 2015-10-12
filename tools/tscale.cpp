@@ -28,7 +28,6 @@ void TScale::function(Action action, QMouseEvent *event)
     GLWidget *widget = *_activeWidget;
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
-    int vertexSize = vertex.size();
     int i, j, k;
 
     ToolWithPivot::function(action, event);

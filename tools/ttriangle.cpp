@@ -24,7 +24,6 @@ void TTriangle::function(Action action, QMouseEvent *event)
     {
         GLWidget *widget = *_activeWidget;
         vector <Triangle> &triangle = model->getTriangle();
-        int vertexSize = vertex.size();
 
         for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
 
@@ -38,7 +37,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
 
         widget->countFinalMatrix();
         int j;
-        for(i = 0; i < vertexSize; i++)
+        for(i = 0; i < vertex.size(); i++)
         {
             bool selectedBefore = false;
             for(j = 0; j < newTriangle.size(); j++)
