@@ -2,6 +2,9 @@
 
 #include "gui/myframe.h"
 
+
+#include <iostream>
+
 using namespace std;
 
 MainWindow::MainWindow()
@@ -407,47 +410,88 @@ void MainWindow::snapTogether()
 
 void MainWindow::deleteSlot()
 {
-/*    int i, j;
-    vector <int> deleteList;
-    for( i = 0; i < model->triangleNumber; i++ )
-    {
-        if( triangle[ i ].isSelected() )
-            deleteList.push_back( i );
-    }
-    int offset = 0;
-    for( i = 0; i + offset < model->triangleNumber; i++ )
-    {
-        if( i == deleteList[ offset ] )
-        {
-            offset++;
-            for( j = 0; i + 1 + j < model->triangleNumber; j++ )
-                if( offset + j < deleteList.size() && i + 1 + j != deleteList[ offset + j ] ) break;
-            offset += j;
-        }
-        if( offset ) triangle[ i ] = triangle[ i + offset ];
-    }
-    model->triangleNumber -= deleteList.size();*/
+    int i, j;
+    vector <int> vertexList, triangleList;
 
- /*   int i, j;
-    vector <int> deleteList;
-    for( i = 0; i < model->vertexNumber; i++ )
+    bool chain;
+    int end;
+    if(workWithElements[0]->isChecked())
     {
-        if( model->vertex[ i ].isSelected() )
-            deleteList.push_back( i );
-    }
-    int offset = 0;
-    for( i = 0; i + offset < model->vertexNumber; i++ )
-    {
-        if( i == deleteList[ offset ] )
+        vector <Vertex> &vertex = model->getVertex();
+
+       // cout << vertex.size() << ' ';
+        for(i = 0; i < vertex.size(); i++) if(vertex[i].selected())
         {
-            offset++;
-            for( j = 0; i + 1 + j < model->vertexNumber; j++ )
-                if( offset + j < deleteList.size() && i + 1 + j != deleteList[ offset + j ] ) break;
-            offset += j;
+            vertexList.push_back(i);
+            vertex[i].remove();
         }
-        if( offset ) model->vertex[ i ] = model->vertex[ i + offset ];
+
+       /* chain = false;
+        for(i = vertexList.size() - 1; i > 0; i--)
+        {
+            if(vertexList[i] == vertexList[i - 1] - 1)
+            {
+                if(!chain) end = i;
+                chain = true;
+            }
+            else
+            {
+                if(chain) vertex.erase(vertex.begin() + vertexList[i + 1], vertex.begin() + vertexList[end] + 1);
+                else vertex.erase(vertex.begin() + vertexList[i]);
+                chain = false;
+            }
+        }
+        if(chain) vertex.erase(vertex.begin() + vertexList[0], vertex.begin() + vertexList[end] + 1);
+        else vertex.erase(vertex.begin() + vertexList[0]);*/
+
+        vector <Triangle> &triangle = model->getTriangle();
+        bool selected;
+        int k;
+        for(i = 0; i < triangle.size(); i++)
+        {
+            selected = false;
+            for(j = 0; j < 3; j++)
+            {
+                for(k = 0; k < vertexList.size(); k++)
+                {
+                    if(vertexList[k] == triangle[i].getIndex(j))
+                    {
+                        triangleList.push_back(i);
+                        selected = true;
+                        break;
+                    }
+                }
+                if(selected) break;
+            }
+        }
+
+        chain = false;
+        for(i = triangleList.size() - 1; i > 0; i--)
+        {
+            if(triangleList[i] == triangleList[i - 1] - 1)
+            {
+                if(!chain) end = i;
+                chain = true;
+            }
+            else
+            {
+                if(chain) triangle.erase(triangle.begin() + triangleList[i + 1], triangle.begin() + triangleList[end] + 1);
+                else triangle.erase(triangle.begin() + triangleList[i]);
+                chain = false;
+            }
+        }
+        if(triangleList.size())
+        {
+            if(chain) triangle.erase(triangle.begin() + triangleList[0], triangle.begin() + triangleList[end] + 1);
+            else triangle.erase(triangle.begin() + triangleList[0]);
+        }
     }
-    model->vertexNumber -= deleteList.size();*/
+
+   /*
+    for(i = 0; i < triangle.size(); i++)
+    {
+        if(triangle[i].isSelected()) deleteList.push_back(i);
+    }*/
 }
 
 Model *MainWindow::getModel()

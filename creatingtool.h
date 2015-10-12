@@ -1,0 +1,21 @@
+#ifndef CREATINGTOOL_H
+#define CREATINGTOOL_H
+
+#include "toolwithwidget.h"
+
+class CreatingTool : public ToolWithWidget
+{
+public:
+    CreatingTool(MainWindow *mainWindow);
+
+signals:
+
+public slots:
+
+protected:
+    vector <int> ind;
+
+    void removeAll(int triangleNumber);
+};
+
+#endif // CREATINGTOOL_H

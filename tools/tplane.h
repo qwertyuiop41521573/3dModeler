@@ -1,11 +1,11 @@
 #ifndef TPLANE_H
 #define TPLANE_H
 
-#include "toolwithwidget.h"
+#include "creatingtool.h"
 
 #include "gui/mycheckboxmw.h"
 
-class TPlane : public ToolWithWidget
+class TPlane : public CreatingTool
 {
 public:
     TPlane(MainWindow *mainWindow);
@@ -18,11 +18,11 @@ public slots:
     
 protected:
     MyCheckBoxMW *checkBoxSquare;
+
     bool planeFailed;
 
 private:
     void countDiagonalForSquare(QVector2D *diagonal);
-    void allocateCap(bool flip = false);
 };
 
 #endif // TPLANE_H

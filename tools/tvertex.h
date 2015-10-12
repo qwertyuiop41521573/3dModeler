@@ -1,11 +1,11 @@
 #ifndef TVERTEX_H
 #define TVERTEX_H
 
-#include "toolwithwidget.h"
+#include "creatingtool.h"
 
 #include "gui/myspinbox.h"
 
-class TVertex : public ToolWithWidget
+class TVertex : public CreatingTool
 {
 public:
     TVertex(MainWindow *mainWindow);

@@ -31,6 +31,12 @@ public:
     void multiplyPosition(const QMatrix4x4 &matrix)
     { position = QVector3D(matrix * QVector4D(position, 1)); };
 
+    bool exists()
+    { return _exists; };
+
+    void remove()
+    { _exists = false; };
+
     void setPosition(float x, float y);
     void setPosition(float x, float y, float z);
     void setUV(float u, float v);
@@ -41,6 +47,8 @@ public:
 private:
     QVector3D position;
     QVector2D UVCoordinates;
+
+    bool _exists = true;
 };
 
 #endif // VERTEX_H

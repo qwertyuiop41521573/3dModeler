@@ -12,6 +12,9 @@
 #define LIGHT_BLUE QVector3D(0, 0.4, 0.7)
 #define WHITE      QVector3D(1, 1, 1)
 
+#include <iostream>
+using namespace std;
+
 GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(parent)
 {
     _mainWindow = mainWindow;
@@ -149,6 +152,12 @@ void GLWidget::draw(bool wireframe)
     int vertexNumber = vertex.size();
     int triangleNumber = triangle.size();
 
+    if(_isActive)
+    {
+        for(i = 0; i < vertexNumber; i++) cerr << vertex[i].exists() << ' ';
+        cerr << '\n';
+    }
+
     switch(renderingModeCurrent)
     {
     //draw vertices
@@ -161,19 +170,17 @@ void GLWidget::draw(bool wireframe)
             glPointSize(4);
             programColor->bind();
             prepareProgramColor(projectionMatrix);
-            vertices_col.resize(vertexNumber);
-            indices.resize(vertexNumber);
 
-            for(i = 0; i < vertexNumber; i++)
-            {
-                vertices_col[i].position = vertex[i].getPosition();
-                vertices_col[i].color = vertex[i].newSelected() ? BLUE : vertex[i].selected() ? RED : BLACK;
-                indices[i] = i;
-            }
-            glBufferData(GL_ARRAY_BUFFER, vertexNumber * vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexNumber * GLuintSize, indices.data(), GL_STATIC_DRAW);
+            vertices_col.clear();
+            for(i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertices_col.push_back({vertex[i].getPosition(), vertex[i].newSelected() ? BLUE : vertex[i].selected() ? RED : BLACK});
+            int vertSize = vertices_col.size();
+            indices.resize(vertSize);
+            for(i = 0; i < vertSize; i++) indices[i] = i;
 
-            glDrawElements(GL_POINTS, vertexNumber, GL_UNSIGNED_INT, 0);
+            glBufferData(GL_ARRAY_BUFFER, vertSize * vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertSize * GLuintSize, indices.data(), GL_STATIC_DRAW);
+
+            glDrawElements(GL_POINTS, vertSize, GL_UNSIGNED_INT, 0);
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(1);

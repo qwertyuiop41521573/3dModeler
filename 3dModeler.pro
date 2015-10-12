@@ -39,7 +39,8 @@ SOURCES += \
     selectableobject.cpp \
     transformingtool.cpp \
     toolwithpivot.cpp \
-    mathfunctions.cpp
+    mathfunctions.cpp \
+    creatingtool.cpp
 
 
 HEADERS += \
@@ -79,7 +80,8 @@ HEADERS += \
     selectableobject.h \
     transformingtool.h \
     toolwithpivot.h \
-    mathfunctions.h
+    mathfunctions.h \
+    creatingtool.h
 
 
 RESOURCES += \
@@ -129,3 +131,9 @@ RESOURCES += \
 
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
+
+# rewrite tools to work with vertices in random places of array
+    # remove vertexSize
+    # check all cross products!
+# tools done: vertex, plane, box, ellipse, cylinder;
+

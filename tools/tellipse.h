@@ -1,12 +1,12 @@
 #ifndef TELLIPSE_H
 #define TELLIPSE_H
 
-#include "toolwithwidget.h"
+#include "creatingtool.h"
 
 #include "gui/myspinbox.h"
 #include "gui/mycheckboxmw.h"
 
-class TEllipse : public ToolWithWidget
+class TEllipse : public CreatingTool
 {
 public:
     TEllipse(MainWindow *mainWindow);
@@ -27,10 +27,8 @@ protected:
     QVector3D normal;
     bool ellipseFailed;
 
-    QVector3D createNormal(const QVector3D &camRot);
-
 private:
-    void allocateCap(bool flip = false);
+    void triangulateCap(bool flip = false);
     void createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate);
 
     QVector3D startPosition3D;

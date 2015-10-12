@@ -4,7 +4,7 @@
 
 #include "gui/mylabel.h"
 
-TVertex::TVertex(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+TVertex::TVertex(MainWindow *mainWindow) : CreatingTool(mainWindow)
 {
     button->setText("Vertex");
     finalButton = new QPushButton("Create Vertex");
@@ -25,20 +25,20 @@ TVertex::TVertex(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
 void TVertex::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
-    vector <Vertex> &vertex = model->getVertex();
-    int vertexSize = vertex.size();
     if(action == DRAW) return;
+
+    GLWidget *widget = *_activeWidget;
+    VertexContainer &vertex = model->getVertex();
     widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {
         QVector3D newVertex;
         if(action == START) widget->fromScreenToWorld(&newVertex, event);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
-        vertex.push_back(newVertex);
-        vertex[vertexSize].setNewSelected(true);
+        ind.push_back(vertex.push(newVertex));
+        vertex[ind[0]].setNewSelected(true);
         if(action == FINAL) action = STOP;
     }
-    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[vertexSize - 1].getEditablePosition(), event);
-    if(action == STOP) vertex[vertex.size() - 1].setSelected(true, false);
+    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ind[0]].getEditablePosition(), event);
+    if(action == STOP) vertex[ind[0]].setSelected(true, false);
 }
