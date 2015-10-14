@@ -129,5 +129,3 @@ RESOURCES += \
 
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
-
-# fix selecting triangles in !PERSPECTIVE viewports

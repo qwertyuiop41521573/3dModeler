@@ -114,12 +114,13 @@ void GLWidget::paintGL()
     setupProjection();
     draw();
     drawAdittional();
-    if(wireframeOverlay)
+    if(renderingMode == WIREFRAME || wireframeOverlay)
     {
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT, GL_LINE);
         draw(true);
     }
+    if(_isActive && toolIsOn) drawToolLines();
 }
 
 void GLWidget::setupProjection()
@@ -158,10 +159,7 @@ void GLWidget::draw(bool wireframe)
         cerr << '\n';
     }*/
 
-    switch(renderingModeCurrent)
-    {
-    //draw vertices
-    case WIREFRAME:
+    if(wireframe)
     {
         glDisable(GL_CULL_FACE);
         color = BLACK;
@@ -184,8 +182,10 @@ void GLWidget::draw(bool wireframe)
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(1);
-        break;
     }
+
+    switch(renderingModeCurrent)
+    {
         //draw triangles
     case FLAT_SHADED:
     {
@@ -300,20 +300,6 @@ void GLWidget::drawAdittional()
     QVector3D color;
     if(_isActive)
     {
-        if(toolIsOn)
-        {
-            toolData.vertices.clear();
-            toolData.indices.clear();
-            (*activeTool)->function(DRAW);
-            int vertexNumber = toolData.vertices.size();
-            int indexNumber = toolData.indices.size();
-            for(i = 0; i < vertexNumber; i++) toolData.vertices[i].color = WHITE;
-            prepareProgramColor(toolMatrix);
-            glBufferData(GL_ARRAY_BUFFER, vertexNumber * vertexData_ColorSize, toolData.vertices.data(), GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber * GLuintSize, toolData.indices.data(), GL_STATIC_DRAW);
-
-            glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT, 0);
-        }
         color = LIGHT_BLUE;
         glLineWidth(4);
     }
@@ -523,4 +509,20 @@ void GLWidget::line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3
     data->vertices.push_back({a, color});
     data->vertices.push_back({b, color});
     for(int i = 0; i < 4; i++) data->indices.push_back(data->indices.size());
+}
+
+void GLWidget::drawToolLines()
+{
+    toolData.vertices.clear();
+    toolData.indices.clear();
+    (*activeTool)->function(DRAW);
+    int vertexNumber = toolData.vertices.size();
+    int indexNumber = toolData.indices.size();
+    for(int i = 0; i < vertexNumber; i++) toolData.vertices[i].color = WHITE;
+    prepareProgramColor(toolMatrix);
+    glBufferData(GL_ARRAY_BUFFER, vertexNumber * vertexData_ColorSize, toolData.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber * GLuintSize, toolData.indices.data(), GL_STATIC_DRAW);
+    glDisable(GL_DEPTH_TEST);
+    glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT, 0);
+    glEnable(GL_DEPTH_TEST);
 }
