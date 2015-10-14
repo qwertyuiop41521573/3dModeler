@@ -90,7 +90,7 @@ RESOURCES += \
 
 # TODO:
 #
-# options ( colors )
+# options (colors)
 # about
 # panels can detatch
 # all tools should be in File, Edit...
@@ -130,4 +130,6 @@ RESOURCES += \
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
 
-# cylinder - check crossProduct
+# fix selecting triangles in !PERSPECTIVE viewports
+
+# commit: "triangles selected by clicking or drawing rectangle inside them"

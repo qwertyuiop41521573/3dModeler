@@ -513,8 +513,8 @@ void GLWidget::screenCoordinatesPerspective(QVector4D *answer, double a[4][4], d
 
 bool GLWidget::isSelected(const QVector3D &vertex, const QVector2D &min, const QVector2D &max)
 {
-    QVector4D result = finalMatrix * QVector4D(vertex, 1);
-    if(projection == PERSPECTIVE) for(int i = 0; i < 2; i++) result[i] /= result[3];
+    QVector2D result;
+    fromWorldToScreen(&result, vertex);
     return result.x() > min.x() && result.x() < max.x() && result.y() > min.y() && result.y() < max.y();
 }
 
