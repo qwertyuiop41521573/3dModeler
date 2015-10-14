@@ -131,5 +131,3 @@ RESOURCES += \
 # tCylinder->widget() is not hidden as it is the biggest widget
 
 # fix selecting triangles in !PERSPECTIVE viewports
-
-# commit: "triangles selected by clicking or drawing rectangle inside them"

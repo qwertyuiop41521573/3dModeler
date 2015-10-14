@@ -191,15 +191,41 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
                 if(minT.x() > max.x() || maxT.x() < min.x() || minT.y() > max.y() || maxT.y() < min.y()) continue;
 
-                if(
-                           (minT.y() < rectanglePoints[0].y() && maxT.y() > rectanglePoints[0].y())
-                    //    || (minT.y() < rectanglePoints[2].y() && maxT.y() > rectanglePoints[2].y())
-                     //   || (minT.x() < rectanglePoints[0].x() && maxT.x() > rectanglePoints[0].x())
-                      //  || (minT.x() < rectanglePoints[1].x() && maxT.x() > rectanglePoints[1].x())
-                        )
+                //loop through coordinates: [0] ~ .x(), [1] ~ .y()
+                for(int l = 0; l < 2; l++)
                 {
-                    triangle[i].setNewSelected(true);
-                    break;
+                    //loop through rectangle sides (0 - lower, 1 - higher)
+                    for(k = 0; k < 2; k ++)
+                    {
+                        int recPoint = k * (2 - l);
+
+                        if(minT[l] < rectanglePoints[recPoint][l] && maxT[l] > rectanglePoints[recPoint][l])
+                        {
+                            QVector2D &v1 = vertexOnScreen[triangle[i].getIndex(j)];
+                            QVector2D &v2 = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
+
+                            bool shouldBeSelected = false;
+                            if(v1[!l] == v2[!l])
+                            {
+                                if(v1[!l] > min[!l] && v1[!l] < max[!l]) shouldBeSelected = true;
+                            }
+                            else
+                            {
+                                double tan = (v1[l] - v2[l]) / (v1[!l] - v2[!l]);
+                                if(tan != 0)
+                                {
+                                    double b = v1[l] - tan * v1[!l];
+                                    double x = (rectanglePoints[recPoint][l] - b) / tan;
+                                    if(x > min[!l] && x < max[!l]) shouldBeSelected = true;
+                                }
+                            }
+                            if(shouldBeSelected)
+                            {
+                                triangle[i].setNewSelected(true);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
