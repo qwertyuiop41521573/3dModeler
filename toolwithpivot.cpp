@@ -13,14 +13,12 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     GLWidget *widget = *_activeWidget;
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
-    int vertexSize = vertex.size();
-    int triangleSize = triangle.size();
     int i, j, k;
 
     QVector3D min, max;
     if(workWithElements[0]->isChecked())
     {
-        for(i = 0; i < vertexSize; i++)
+        for(i = 0; i < vertex.size(); i++)
         {
             if(vertex[i].selected())
             {
@@ -28,7 +26,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
                 break;
             }
         }
-        for(i++; i < vertexSize; i++)
+        for(i++; i < vertex.size(); i++)
         {
             if(vertex[i].selected())
             {
@@ -43,7 +41,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     else
     {
         int index;
-        for(i = 0; i < triangleSize; i++)
+        for(i = 0; i < triangle.size(); i++)
         {
             if(triangle[i].selected())
             {
@@ -52,9 +50,9 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
             }
         }
 
-        checked.resize(vertexSize);
-        for(i = 0; i < vertexSize; i++) checked[i] = false;
-        for( ; i < triangleSize; i++)
+        checked.resize(vertex.size());
+        for(i = 0; i < vertex.size(); i++) checked[i] = false;
+        for( ; i < triangle.size(); i++)
         {
             if(triangle[i].selected())
             {

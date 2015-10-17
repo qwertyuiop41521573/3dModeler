@@ -41,5 +41,12 @@ void TVertex::function(Action action, QMouseEvent *event)
         if(action == FINAL) action = STOP;
     }
     if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ind[0]].getEditablePosition(), event);
-    if(action == STOP) vertex[ind[0]].setSelected(true, false);
+    if(action == STOP)
+    {
+        vertex[ind[0]].setSelected(true, false);
+
+        Journal &journal = _mainWindow->getJournal();
+        journal.newRecord(CREATE);
+        journal.add(vertex[ind[0]], ind[0]);
+    }
 }

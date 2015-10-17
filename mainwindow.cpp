@@ -222,6 +222,12 @@ void MainWindow::createActionsAndMenus()
     QAction *saveAsAction = new QAction(tr("&Save As"), this);
     connect(saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
 
+    QAction *undoAction = new QAction(tr("&Undo"), this);
+    undoAction->setShortcut(tr("Ctrl+Z"));
+    connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
+    QAction *redoAction = new QAction(tr("&Redo"), this);
+    redoAction->setShortcut(tr("Ctrl+Shift+Z"));
+    connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
     QAction *selectAllAction = new QAction(tr("&Select All"), this);
     selectAllAction->setShortcut(tr("Ctrl+A"));
     connect(selectAllAction, SIGNAL(triggered()), this, SLOT(selectAll()));
@@ -244,6 +250,8 @@ void MainWindow::createActionsAndMenus()
     fileMenu->addAction(exitAction);
 
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
+    editMenu->addAction(undoAction);
+    editMenu->addAction(redoAction);
     editMenu->addAction(selectAllAction);
     editMenu->addAction(selectNoneAction);
     editMenu->addAction(snapTogetherAction);
@@ -410,43 +418,23 @@ void MainWindow::snapTogether()
 
 void MainWindow::deleteSlot()
 {
-    int i, j;
-    vector <int> vertexList, triangleList;
+    int i, j, k;
+    vector <int> vertexList, triangleList, vertexList2;
+    vector <Vertex> &vertex = model->getVertex();
+    vector <Triangle> &triangle = model->getTriangle();
 
     bool chain;
     int end;
     if(workWithElements[0]->isChecked())
     {
-        vector <Vertex> &vertex = model->getVertex();
-
-       // cout << vertex.size() << ' ';
         for(i = 0; i < vertex.size(); i++) if(vertex[i].selected())
         {
             vertexList.push_back(i);
             vertex[i].remove();
         }
 
-       /* chain = false;
-        for(i = vertexList.size() - 1; i > 0; i--)
-        {
-            if(vertexList[i] == vertexList[i - 1] - 1)
-            {
-                if(!chain) end = i;
-                chain = true;
-            }
-            else
-            {
-                if(chain) vertex.erase(vertex.begin() + vertexList[i + 1], vertex.begin() + vertexList[end] + 1);
-                else vertex.erase(vertex.begin() + vertexList[i]);
-                chain = false;
-            }
-        }
-        if(chain) vertex.erase(vertex.begin() + vertexList[0], vertex.begin() + vertexList[end] + 1);
-        else vertex.erase(vertex.begin() + vertexList[0]);*/
-
-        vector <Triangle> &triangle = model->getTriangle();
         bool selected;
-        int k;
+        int l;
         for(i = 0; i < triangle.size(); i++)
         {
             selected = false;
@@ -458,40 +446,59 @@ void MainWindow::deleteSlot()
                     {
                         triangleList.push_back(i);
                         selected = true;
+                        for(l = 0; l < 3; l++) if(l != j) vertexList2.push_back(triangle[i].getIndex(l));
                         break;
                     }
                 }
                 if(selected) break;
             }
+        }        
+    }
+    else
+    {
+        for(i = 0; i < triangle.size(); i++) if(triangle[i].selected())
+        {
+            triangleList.push_back(i);
+            for(j = 0; j < 3; j++) vertexList2.push_back(triangle[i].getIndex(j));
         }
 
-        chain = false;
-        for(i = triangleList.size() - 1; i > 0; i--)
-        {
-            if(triangleList[i] == triangleList[i - 1] - 1)
-            {
-                if(!chain) end = i;
-                chain = true;
-            }
-            else
-            {
-                if(chain) triangle.erase(triangle.begin() + triangleList[i + 1], triangle.begin() + triangleList[end] + 1);
-                else triangle.erase(triangle.begin() + triangleList[i]);
-                chain = false;
-            }
-        }
-        if(triangleList.size())
-        {
-            if(chain) triangle.erase(triangle.begin() + triangleList[0], triangle.begin() + triangleList[end] + 1);
-            else triangle.erase(triangle.begin() + triangleList[0]);
-        }
     }
 
-   /*
-    for(i = 0; i < triangle.size(); i++)
+    chain = false;
+    for(i = triangleList.size() - 1; i > 0; i--)
     {
-        if(triangle[i].isSelected()) deleteList.push_back(i);
-    }*/
+        if(triangleList[i] == triangleList[i - 1] - 1)
+        {
+            if(!chain) end = i;
+            chain = true;
+        }
+        else
+        {
+            if(chain) triangle.erase(triangle.begin() + triangleList[i + 1], triangle.begin() + triangleList[end] + 1);
+            else triangle.erase(triangle.begin() + triangleList[i]);
+            chain = false;
+        }
+    }
+    if(triangleList.size())
+    {
+        if(chain) triangle.erase(triangle.begin() + triangleList[0], triangle.begin() + triangleList[end] + 1);
+        else triangle.erase(triangle.begin() + triangleList[0]);
+    }
+
+    for(i = 0; i < vertexList2.size(); i++)
+    {
+        if(triangle.size() == 0)
+        {
+            vertex[vertexList2[i]].remove();
+            continue;
+        }
+        for(j = 0; j < triangle.size(); j++)
+        {
+            for(k = 0; k < 3; k++) if(triangle[j].getIndex(k) == vertexList2[i]) break;
+            if(k < 3) break;
+        }
+        if(j == triangle.size()) vertex[vertexList2[i]].remove();
+    }
 }
 
 Model *MainWindow::getModel()
@@ -503,3 +510,33 @@ void MainWindow::stopQuickAccess()
 {
     setActiveTool(lastTool);
 };
+
+void MainWindow::undo()
+{
+    if(journal.isEmpty()) return;
+    const Record &rec = journal.current();
+
+    if(rec.type() == CREATE)
+    {
+        const vector <VertexAndIndex> &vertices = rec.getVerticesRO();
+        for(int i = 0; i < vertices.size(); i++) model->getVertex()[vertices[i].index].remove();
+    }
+    if(rec.type() == DELETE)
+    {
+
+    }
+
+    journal.undo();
+}
+
+void MainWindow::redo()
+{
+    if(journal.isFull()) return;
+    const Record &rec = journal.next();
+    if(rec.type() == CREATE)
+    {
+        const vector <VertexAndIndex> &vertices = rec.getVerticesRO();
+        for(int i = 0; i < vertices.size(); i++) model->getVertex()[vertices[i].index] = vertices[i].vertex;
+    }
+    journal.redo();
+}

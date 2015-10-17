@@ -12,24 +12,22 @@ TransformingTool::TransformingTool(MainWindow *mainWindow) : ToolWithWidget(main
 void TransformingTool::transform()
 {
     vector <Vertex> &vertex = model->getVertex();
-    int vertexSize = vertex.size();
     int i;
 
     if(workWithElements[0]->isChecked())
     {
-        for(i = 0; i < vertexSize; i++) if(vertex[i].selected()) toTransform.push_back(i);
+        for(i = 0; i < vertex.size(); i++) if(vertex[i].selected()) toTransform.push_back(i);
     }
     else
     {
         vector <Triangle> &triangle = model->getTriangle();
-        int triangleSize = triangle.size();
         int j;
 
         int index;
-        checked.resize(vertexSize);
-        for(i = 0; i < vertexSize; i++) checked[i] = false;
+        checked.resize(vertex.size());
+        for(i = 0; i < vertex.size(); i++) checked[i] = false;
 
-        for(i = 0; i < triangleSize; i++)
+        for(i = 0; i < triangle.size(); i++)
         {
             if(triangle[i].selected())
             {

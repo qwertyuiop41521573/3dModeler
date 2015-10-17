@@ -40,7 +40,9 @@ SOURCES += \
     transformingtool.cpp \
     toolwithpivot.cpp \
     mathfunctions.cpp \
-    creatingtool.cpp
+    creatingtool.cpp \
+    record.cpp \
+    journal.cpp
 
 
 HEADERS += \
@@ -81,7 +83,9 @@ HEADERS += \
     transformingtool.h \
     toolwithpivot.h \
     mathfunctions.h \
-    creatingtool.h
+    creatingtool.h \
+    record.h \
+    journal.h
 
 
 RESOURCES += \
@@ -100,17 +104,15 @@ RESOURCES += \
 # pivot to orbit and other tools
 # triangles selected by clicking or drawing rectangle inside them
 
-# Undo, Redo
+
 # rewrite Model class
 # grid
 # basic tools: create(sphere, teapot? ...), extrude, bend ...
 # textures
 # light
-# select option - ignore backfacing
 # selecting faces in textured
 # weld vertices
 # items selected label
-# backface of selected triangle has another color
 # plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
 # toolBox - capture mouse movement in whole window, not in widget
 # toolElipse - create from center
@@ -126,6 +128,9 @@ RESOURCES += \
 # in GLWidget::draw vertices should not repeat! - fix after "textures"
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
 
-
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
+
+# Undo, Redo
+# backface of selected triangle has another color
+# select option - ignore backfacing

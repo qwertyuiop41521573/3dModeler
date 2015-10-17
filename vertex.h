@@ -31,7 +31,7 @@ public:
     void multiplyPosition(const QMatrix4x4 &matrix)
     { position = QVector3D(matrix * QVector4D(position, 1)); };
 
-    bool exists()
+    bool exists() const
     { return _exists; };
 
     void remove()
@@ -43,6 +43,8 @@ public:
 
     bool operator ==(const Vertex &vertex)
     { return position == vertex.getPosition(); };
+
+    void operator =(const Vertex &vertex);
 
 private:
     QVector3D position;

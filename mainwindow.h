@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "glwidget.h"
+#include "journal.h"
 
 #include "gui/mypushbutton.h"
 #include "gui/mycombobox.h"
@@ -40,6 +41,9 @@ public:
     GLWidget **getActiveWidget()
     { return &widgetActive; };
 
+    Journal &getJournal()
+    { return journal; };
+
     void quickAccessToolOrbit();
     void quickAccessToolPan();
     void stopQuickAccess();
@@ -57,6 +61,8 @@ private slots:
     void saveAs()
     { if(openFileDialog("Save") ) model->save(); };
 
+    void undo();
+    void redo();
     void selectAll();
     void selectNone();
     void snapTogether();
@@ -106,6 +112,7 @@ private:
 
     QRadioButton *workWithElements[2];
 
+    Journal journal;
 
     void createActionsAndMenus();
     bool saveRequest();
