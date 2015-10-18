@@ -14,11 +14,13 @@ public:
 
     void setSelected(bool selected, bool newSelected);
 
-    bool selected()
+    bool selected() const
     { return _selected; };
 
-    bool newSelected()
+    bool newSelected() const
     { return _newSelected; };
+
+    void operator =(const SelectableObject &selObj);
 
 private:
     //it's more logical to create "enum { YES, NO, NEW } SelectedState" instead of this 2 bools, but then some things in TSelect won't work - vertices that enter selection rectangle become blue (newSelected), but when they leave rectangle it's unknown what color they had (red or black - selected or not) before entering rectangle

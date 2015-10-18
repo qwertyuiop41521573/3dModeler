@@ -37,6 +37,9 @@ public:
     void remove()
     { _exists = false; };
 
+    void undoRemove()
+    { _exists = true; };
+
     void setPosition(float x, float y);
     void setPosition(float x, float y, float z);
     void setUV(float u, float v);

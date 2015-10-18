@@ -9,8 +9,9 @@ using namespace std;
 // not working
 
 
-Model::Model()
+Model::Model(Journal *journal)
 {
+    vertex = new VertexContainer(journal);
 }
 
 bool Model::load( const char *newFileName )
@@ -78,7 +79,7 @@ bool Model::load( const char *newFileName )
 void Model::clear()
 {
     //vertexNumber = triangleNumber = 0;
-    vertex.clear();
+   // vertex.clear();
     triangle.clear();
     isEmpty = true;
     isModified = loaded = false;

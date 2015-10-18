@@ -42,7 +42,8 @@ SOURCES += \
     mathfunctions.cpp \
     creatingtool.cpp \
     record.cpp \
-    journal.cpp
+    journal.cpp \
+    vertexcontainer.cpp
 
 
 HEADERS += \
@@ -85,7 +86,8 @@ HEADERS += \
     mathfunctions.h \
     creatingtool.h \
     record.h \
-    journal.h
+    journal.h \
+    vertexcontainer.h
 
 
 RESOURCES += \
@@ -134,3 +136,7 @@ RESOURCES += \
 # Undo, Redo
 # backface of selected triangle has another color
 # select option - ignore backfacing
+# move some funtions from mainwindow.cpp?
+
+# now: undo, redo for triangles
+

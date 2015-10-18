@@ -67,6 +67,9 @@ void TSelect::function(Action action, QMouseEvent *event)
     }
     case STOP:
     {
+        Journal &journal = _mainWindow->getJournal();
+        journal.newRecord(SELECT);
+
         vector <Vertex> &vertex = model->getVertex();
         vector <Triangle> &triangle = model->getTriangle();
         bool workWithVert = workWithElements[0]->isChecked();
@@ -79,15 +82,31 @@ void TSelect::function(Action action, QMouseEvent *event)
             if(workWithVert) selObj[i] = &vertex[i];
             else selObj[i] = &triangle[i];
         }
+
+        bool record;
         for(i = 0; i < selObj.size(); i++)
         {
-            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) selObj[i]->setSelected(selObj[i]->newSelected(), false);
-            if(checkBox[0]->isChecked()  && selObj[i]->newSelected())  selObj[i]->setSelected(true, false);
-            if(checkBox[1]->isChecked()  && selObj[i]->newSelected())  selObj[i]->setSelected(false, false);
+            record = false;
+            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
+            {
+                if(selObj[i]->selected() != selObj[i]->newSelected()) record = true;
+                selObj[i]->setSelected(selObj[i]->newSelected());
+            }
+            if(checkBox[0]->isChecked() && selObj[i]->newSelected())
+            {
+                if(!selObj[i]->selected()) record = true;
+                selObj[i]->setSelected(true);
+            }
+            if(checkBox[1]->isChecked() && selObj[i]->newSelected())
+            {
+                if(selObj[i]->selected()) record = true;
+                selObj[i]->setSelected(false);
+            }
+            selObj[i]->setNewSelected(false);
+            if(record) journal.add(i);
         }
 
-
-
+        if(!journal.currentRecordIsEmpty()) journal.submit();
         break;
     }
     }

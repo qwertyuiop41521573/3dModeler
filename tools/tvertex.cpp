@@ -32,6 +32,8 @@ void TVertex::function(Action action, QMouseEvent *event)
     widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {
+        _mainWindow->getJournal().newRecord(CREATE);
+
         QVector3D newVertex;
         if(action == START) widget->fromScreenToWorld(&newVertex, event);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
@@ -44,9 +46,6 @@ void TVertex::function(Action action, QMouseEvent *event)
     if(action == STOP)
     {
         vertex[ind[0]].setSelected(true, false);
-
-        Journal &journal = _mainWindow->getJournal();
-        journal.newRecord(CREATE);
-        journal.add(vertex[ind[0]], ind[0]);
+        _mainWindow->getJournal().submit();
     }
 }

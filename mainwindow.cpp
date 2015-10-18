@@ -12,7 +12,8 @@ MainWindow::MainWindow()
     int i;
     QWidget *centralWidget = new QWidget;
 
-    model = new Model;
+    model = new Model(&journal);
+    journal.setModel(model);
 
     //tools
     tPan = new TPan(this);
@@ -420,8 +421,10 @@ void MainWindow::deleteSlot()
 {
     int i, j, k;
     vector <int> vertexList, triangleList, vertexList2;
-    vector <Vertex> &vertex = model->getVertex();
+    VertexContainer &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
+
+    journal.newRecord(REMOVE);
 
     bool chain;
     int end;
@@ -430,7 +433,7 @@ void MainWindow::deleteSlot()
         for(i = 0; i < vertex.size(); i++) if(vertex[i].selected())
         {
             vertexList.push_back(i);
-            vertex[i].remove();
+            vertex.remove(i);
         }
 
         bool selected;
@@ -446,7 +449,7 @@ void MainWindow::deleteSlot()
                     {
                         triangleList.push_back(i);
                         selected = true;
-                        for(l = 0; l < 3; l++) if(l != j) vertexList2.push_back(triangle[i].getIndex(l));
+                        for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(l));
                         break;
                     }
                 }
@@ -459,7 +462,7 @@ void MainWindow::deleteSlot()
         for(i = 0; i < triangle.size(); i++) if(triangle[i].selected())
         {
             triangleList.push_back(i);
-            for(j = 0; j < 3; j++) vertexList2.push_back(triangle[i].getIndex(j));
+            for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(j));
         }
 
     }
@@ -489,7 +492,7 @@ void MainWindow::deleteSlot()
     {
         if(triangle.size() == 0)
         {
-            vertex[vertexList2[i]].remove();
+            vertex.remove(vertexList2[i]);
             continue;
         }
         for(j = 0; j < triangle.size(); j++)
@@ -497,8 +500,10 @@ void MainWindow::deleteSlot()
             for(k = 0; k < 3; k++) if(triangle[j].getIndex(k) == vertexList2[i]) break;
             if(k < 3) break;
         }
-        if(j == triangle.size()) vertex[vertexList2[i]].remove();
+        if(j == triangle.size()) vertex.remove(vertexList2[i]);
     }
+
+    journal.submit();
 }
 
 Model *MainWindow::getModel()
@@ -515,15 +520,28 @@ void MainWindow::undo()
 {
     if(journal.isEmpty()) return;
     const Record &rec = journal.current();
+    int i;
 
-    if(rec.type() == CREATE)
+    switch(rec.type())
     {
-        const vector <VertexAndIndex> &vertices = rec.getVerticesRO();
-        for(int i = 0; i < vertices.size(); i++) model->getVertex()[vertices[i].index].remove();
+    case CREATE:
+    {
+        const vector <VertexAndIndex> &data = *rec.dataRO().createOrRemove;
+        for(i = 0; i < data.size(); i++) model->getVertex()[data[i].index].remove();
+        break;
     }
-    if(rec.type() == DELETE)
+    case REMOVE:
     {
-
+        const vector <VertexAndIndex> &data = *rec.dataRO().createOrRemove;
+        for(i = 0; i < data.size(); i++) model->getVertex()[data[i].index] = data[i].vertex;
+        break;
+    }
+    case SELECT:
+    {
+        const vector <SelValueAndIndex> &selVal = *rec.dataRO().select;
+        for(i = 0; i < selVal.size(); i++) model->getVertex()[selVal[i].index].setSelected(!selVal[i].value);
+        break;
+    }
     }
 
     journal.undo();
@@ -533,10 +551,37 @@ void MainWindow::redo()
 {
     if(journal.isFull()) return;
     const Record &rec = journal.next();
-    if(rec.type() == CREATE)
+
+    int i;
+
+    switch(rec.type())
     {
-        const vector <VertexAndIndex> &vertices = rec.getVerticesRO();
-        for(int i = 0; i < vertices.size(); i++) model->getVertex()[vertices[i].index] = vertices[i].vertex;
+    case CREATE:
+    {
+        const vector <VertexAndIndex> &data = *rec.dataRO().createOrRemove;
+        for(i = 0; i < data.size(); i++) model->getVertex()[data[i].index] = data[i].vertex;
+        break;
     }
+    case REMOVE:
+    {
+        const vector <VertexAndIndex> &data = *rec.dataRO().createOrRemove;
+        for(i = 0; i < data.size(); i++) model->getVertex()[data[i].index].remove();
+        break;
+    }
+    case SELECT:
+    {
+        const vector <SelValueAndIndex> &selVal = *rec.dataRO().select;
+        for(i = 0; i < selVal.size(); i++) model->getVertex()[selVal[i].index].setSelected(selVal[i].value);
+        break;
+    }
+    }
+
     journal.redo();
+}
+
+void MainWindow::addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index)
+{
+    for(int i = 0; i < vertexList->size(); i++) if((*vertexList)[i] == index) return;
+    for(int i = 0; i < vertexList2->size(); i++) if((*vertexList2)[i] == index) return;
+    vertexList2->push_back(index);
 }

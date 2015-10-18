@@ -4,15 +4,20 @@
 #include "record.h"
 #include "vertex.h"
 
+class Model;
+
 class Journal : public vector <Record>
 {
 public:
     Journal();
 
-    void newRecord(Type type);
+    void setModel(Model *model)
+    { _model = model; };
 
-    void add(Vertex vertex, int index)
-    { at(size() - 1).getVertices().push_back({vertex, index}); };
+    void newRecord(Type type);
+    void add(int index);
+    void submit();
+    void cancelRecord();
 
     const Record &current()
     { return at(_current); };
@@ -32,12 +37,19 @@ public:
     bool isFull()
     { return _current == size() - 1; };
 
+    bool currentRecordIsEmpty()
+    { return vertexList.size() == 0; };
+
 signals:
 
 public slots:
 
 private:
     int _current = -1;
+    Model *_model;
+
+    vector <int> vertexList;
+    Type currentType;
 };
 
 #endif // JOURNAL_H

@@ -117,6 +117,7 @@ private:
     void createActionsAndMenus();
     bool saveRequest();
     bool openFileDialog(QString title);
+    void addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index);
 };
 
 #endif // MAINWINDOW_H

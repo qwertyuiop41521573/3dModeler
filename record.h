@@ -5,7 +5,7 @@
 
 using namespace std;
 
-typedef enum { CREATE, CHANGE, DELETE } Type;
+typedef enum { CREATE, REMOVE, SELECT } Type;
 
 struct VertexAndIndex
 {
@@ -13,16 +13,28 @@ struct VertexAndIndex
     int index;
 };
 
+struct SelValueAndIndex
+{
+    bool value;
+    int index;
+};
+
+union Data
+{
+    vector <VertexAndIndex> *createOrRemove;
+    vector <SelValueAndIndex> *select;
+};
+
 class Record
 {
 public:
     Record(Type type);
 
-    const vector <VertexAndIndex> &getVerticesRO() const
-    { return vertices; };
+    const Data &dataRO() const
+    { return _data; };
 
-    vector <VertexAndIndex> &getVertices()
-    { return vertices; };
+    Data &data()
+    { return _data; };
 
     Type type() const
     { return _type; };
@@ -33,7 +45,7 @@ public slots:
 
 private:
     Type _type;
-    vector <VertexAndIndex> vertices;
+    Data _data;
 };
 
 #endif // RECORD_H
