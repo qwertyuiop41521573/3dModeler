@@ -11,7 +11,8 @@ using namespace std;
 
 Model::Model(Journal *journal)
 {
-    vertex = new VertexContainer(journal);
+    vertex = new ElementContainer <Vertex>(journal);
+    triangle = new ElementContainer <Triangle>(journal);
 }
 
 bool Model::load( const char *newFileName )
@@ -80,7 +81,7 @@ void Model::clear()
 {
     //vertexNumber = triangleNumber = 0;
    // vertex.clear();
-    triangle.clear();
+  //  triangle.clear();
     isEmpty = true;
     isModified = loaded = false;
 }

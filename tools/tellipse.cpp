@@ -62,7 +62,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
 
     GLWidget *widget = *_activeWidget;
-    VertexContainer &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
     int segments = spinBoxSegments->value();
     int i;
@@ -76,11 +76,12 @@ void TEllipse::function(Action action, QMouseEvent *event)
         widget->countFinalInverseMatrix();
         widget->fromScreenToWorld(&startPosition3D, event);
 
-        ind.clear();
+        ver.clear();
+        tri.clear();
         for(i = 0; i <= segments; i++)
         {
-            ind.push_back(vertex.push(startPosition3D));
-            vertex[ind[i]].setNewSelected(true);
+            ver.push_back(vertex.push(startPosition3D));
+            vertex[ver[i]].setNewSelected(true);
         }
         triangulateCap(_hasStage2);
         break;
@@ -114,16 +115,17 @@ void TEllipse::function(Action action, QMouseEvent *event)
         scaleAndTranslate.translate(center);
         scaleAndTranslate.scale(radius, radius, radius);
 
-        ind.clear();
-        for(i = 0; i < segments; i++) ind.push_back(vertex.push({{0, 0, 0}}));
+        ver.clear();
+        tri.clear();
+        for(i = 0; i < segments; i++) ver.push_back(vertex.push({{0, 0, 0}}));
         createCap(rotatingVertex, angle, scaleAndTranslate);
         //center of first cap
-        ind.push_back(vertex.push(center));
+        ver.push_back(vertex.push(center));
 
         triangulateCap(_hasStage2);
 
-        ind.resize(segments + 1);
-        for(i = 0; i <= segments; i++) vertex[ind[i]].setSelected(true);
+        ver.resize(segments + 1);
+        for(i = 0; i <= segments; i++) vertex[ver[i]].setSelected(true);
         break;
     }
 
@@ -145,7 +147,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 widget->fromScreenToWorld(&worldCoordinates, event, true, height);
                 QVector2D radius = QVector2D(worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
-                vertex[ind[segments]].setPosition(center);
+                vertex[ver[segments]].setPosition(center);
                 QMatrix4x4 scaleAndTranslate;
                 scaleAndTranslate.setToIdentity();
                 scaleAndTranslate.translate(center);
@@ -165,7 +167,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
                 widget->_fromScreenToWorld(&worldCoordinates, QVector4D(currentPosition, 0, 1));
                 QVector3D radius = (worldCoordinates - startPosition3D) / double(2);
                 QVector3D center = startPosition3D + radius;
-                vertex[ind[segments]].setPosition(center);
+                vertex[ver[segments]].setPosition(center);
 
                 const QVector3D &camRot = widget->getCamera().rotation();
                 normal = QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
@@ -189,8 +191,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if ellipse is a line
-        QVector3D v1 = vertex[ind[segments - 1]].getPosition() - vertex[ind[segments]].getPosition();
-        QVector3D v2 = vertex[ind[segments - 2]].getPosition() - vertex[ind[segments]].getPosition();
+        QVector3D v1 = vertex[ver[segments - 1]].getPosition() - vertex[ver[segments]].getPosition();
+        QVector3D v2 = vertex[ver[segments - 2]].getPosition() - vertex[ver[segments]].getPosition();
         if(QVector3D::crossProduct(v1, v2).length() == 0)
         {
             //remove cap
@@ -199,7 +201,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             return;
         }
 
-        for(i = 0; i <= segments; i++) vertex[ind[i]].setSelected(true, false);
+        for(i = 0; i <= segments; i++) vertex[ver[i]].setSelected(true, false);
     }
     }
 }
@@ -209,18 +211,17 @@ void TEllipse::triangulateCap(bool flip)
     //(flip == true) - ellipse's normal is directed down (in perspective)
     //    (needed for cylinder's lower cap
 
-    vector <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Triangle> &triangle = model->getTriangle();
     int segments = spinBoxSegments->value();
     int i;
 
     //set triangle indices for first cap
-    for(i = 0; i < segments; i++) triangle.push_back({ind[(i + flip) % segments], ind[(i + !flip) % segments], ind[segments]});
+    for(i = 0; i < segments; i++) tri.push_back(triangle.push({ver[(i + flip) % segments], ver[(i + !flip) % segments], ver[segments]}));
 }
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)
 {
-    VertexContainer &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->getVertex();
     int segments = spinBoxSegments->value();
 
     QMatrix4x4 rotation;
@@ -229,7 +230,7 @@ void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x
     for(int i = 0; i < segments; i++)
     {
         rotatingVertex = rotation * rotatingVertex;
-        vertex[ind[i]].setPosition(QVector3D(scaleAndTranslate * rotatingVertex));
+        vertex[ver[i]].setPosition(QVector3D(scaleAndTranslate * rotatingVertex));
     }
 }
 

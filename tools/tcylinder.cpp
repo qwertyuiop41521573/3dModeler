@@ -29,8 +29,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     if(action != STOP && action != STAGE2) TEllipse::function(action, event);
 
     GLWidget *widget = *_activeWidget;
-    VertexContainer &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Vertex> &vertex = model->getVertex();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -48,7 +47,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             return;
         }
         createWallsAndSecondCap(true);
-        for(i = 0; i <= segments; i++) vertex[ind[segments + 1 + i]].setSelected(true);
+        for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].setSelected(true);
         break;
     }
     //if(!_stage2) is done in TEllipse::function(action, event);
@@ -59,12 +58,12 @@ void TCylinder::function(Action action, QMouseEvent *event)
             Projection projection = widget->getProjection();
             double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
 
-            for(i = 0; i <= segments; i++) vertex[ind[segments + 1 + i]].addToPosition(normal * dy);
+            for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].addToPosition(normal * dy);
 
             //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
-            QVector3D v1 = vertex[ind[0]].getPosition() - vertex[ind[segments]].getPosition();
-            QVector3D v2 = vertex[ind[1]].getPosition() - vertex[ind[segments]].getPosition();
-            QVector3D h = vertex[ind[segments]].getPosition() - vertex[ind[2 * segments + 1]].getPosition();
+            QVector3D v1 = vertex[ver[0]].getPosition() - vertex[ver[segments]].getPosition();
+            QVector3D v2 = vertex[ver[1]].getPosition() - vertex[ver[segments]].getPosition();
+            QVector3D h = vertex[ver[segments]].getPosition() - vertex[ver[2 * segments + 1]].getPosition();
 
             //flip if needed
             if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) > 0)
@@ -72,12 +71,12 @@ void TCylinder::function(Action action, QMouseEvent *event)
                 QVector3D temp;
                 for(i = 0; i < segments / 2; i++)
                 {
-                    temp = vertex[ind[segments + 1 + i]].getPosition();
-                    vertex[ind[segments + 1 + i]] = vertex[ind[2 * segments - i]];
-                    vertex[ind[2 * segments - i]].setPosition(temp);
-                    temp = vertex[ind[i]].getPosition();
-                    vertex[ind[i]] = vertex[ind[segments - 1 - i]];
-                    vertex[ind[segments - 1 - i]].setPosition(temp);
+                    temp = vertex[ver[segments + 1 + i]].getPosition();
+                    vertex[ver[segments + 1 + i]] = vertex[ver[2 * segments - i]];
+                    vertex[ver[2 * segments - i]].setPosition(temp);
+                    temp = vertex[ver[i]].getPosition();
+                    vertex[ver[i]] = vertex[ver[segments - 1 - i]];
+                    vertex[ver[segments - 1 - i]].setPosition(temp);
                 }
             }
         }
@@ -87,8 +86,8 @@ void TCylinder::function(Action action, QMouseEvent *event)
     {
         //if height == 0 we remove cylinder (2 * segments + 2 vertices and 4 *
         //    segments triangles
-        if(vertex[ind[2 * segments + 1]] == vertex[ind[segments]]) removeAll(4 * segments);
-        else for(i = 0; i < 2 * segments + 2; i++) vertex[ind[i]].setSelected(true, false);
+        if(vertex[ver[2 * segments + 1]] == vertex[ver[segments]]) removeAll(4 * segments);
+        else for(i = 0; i < 2 * segments + 2; i++) vertex[ver[i]].setSelected(true, false);
         widget->setToolIsOn(false);
         setStage2(false);
         widget->setMouseTracking(false);
@@ -105,7 +104,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
 
         createWallsAndSecondCap(false);
 
-        for(i = 0; i <= segments; i++) vertex[ind[segments + 1 + i]].setNewSelected(true);
+        for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].setNewSelected(true);
 
         widget->setMouseTracking(true);
     }
@@ -114,25 +113,25 @@ void TCylinder::function(Action action, QMouseEvent *event)
 
 void TCylinder::createWallsAndSecondCap(bool final)
 {
-    VertexContainer &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Vertex> &vertex = model->getVertex();
+    ElementContainer <Triangle> &triangle = model->getTriangle();
     int segments = spinBoxSegments->value();
     int i;
 
     QVector3D height = final ? normal * spinBoxHeight->value() : QVector3D(0, 0, 0);
     //add vertices for second cap
-    for(i = 0; i <= segments; i++) ind.push_back(vertex.push(vertex[ind[i]].getPosition() + height));
+    for(i = 0; i <= segments; i++) ver.push_back(vertex.push(vertex[ver[i]].getPosition() + height));
 
     //add triangles for walls and second cap
 
     //cap
-    for(i = 0; i < segments; i++) triangle.push_back({ind[segments + 1 + i], ind[segments + 1 + (i + 1) % segments], ind[segments + 1 + segments]});
+    for(i = 0; i < segments; i++) tri.push_back(triangle.push({ver[segments + 1 + i], ver[segments + 1 + (i + 1) % segments], ver[segments + 1 + segments]}));
 
     //wall
     for(i = 0; i < segments; i++)
     {
         int t = (i + 1) % segments;
-        triangle.push_back({ind[segments + 1 + t], ind[segments + 1 + i], ind[i]});
-        triangle.push_back({ind[i], ind[t], ind[segments + 1 + t]});
+        tri.push_back(triangle.push({ver[segments + 1 + t], ver[segments + 1 + i], ver[i]}));
+        tri.push_back(triangle.push({ver[i], ver[t], ver[segments + 1 + t]}));
     }
 }

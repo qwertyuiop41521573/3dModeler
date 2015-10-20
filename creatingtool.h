@@ -13,7 +13,8 @@ signals:
 public slots:
 
 protected:
-    vector <int> ind;
+    vector <int> ver;
+    vector <int> tri;
 
     void removeAll(int triangleNumber);
 };

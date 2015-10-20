@@ -1,9 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "triangle.h"
-#include "vertexcontainer.h"
-
+#include "elementcontainer.h"
 
 #include <iostream>
 
@@ -25,15 +23,15 @@ public:
     QString fileName;
     bool loaded = false;
 
-    VertexContainer &getVertex()
+    ElementContainer <Vertex> &getVertex()
     { return *vertex; };
 
-    vector <Triangle> &getTriangle()
-    { return triangle; };
+    ElementContainer <Triangle> &getTriangle()
+    { return *triangle; };
 
 private:
-    VertexContainer *vertex;
-    vector <Triangle> triangle;
+    ElementContainer <Vertex> *vertex;
+    ElementContainer <Triangle> *triangle;
 };
 
 #endif // MODEL_H

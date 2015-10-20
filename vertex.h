@@ -5,9 +5,9 @@
 #include <QMatrix4x4>
 
 #include "camera.h"
-#include "selectableobject.h"
+#include "element.h"
 
-class Vertex : public SelectableObject
+class Vertex : public Element
 {
 public:
     Vertex(const QVector3D &newPosition = { 0, 0, 0 })
@@ -31,14 +31,6 @@ public:
     void multiplyPosition(const QMatrix4x4 &matrix)
     { position = QVector3D(matrix * QVector4D(position, 1)); };
 
-    bool exists() const
-    { return _exists; };
-
-    void remove()
-    { _exists = false; };
-
-    void undoRemove()
-    { _exists = true; };
 
     void setPosition(float x, float y);
     void setPosition(float x, float y, float z);
@@ -52,8 +44,6 @@ public:
 private:
     QVector3D position;
     QVector2D UVCoordinates;
-
-    bool _exists = true;
 };
 
 #endif // VERTEX_H

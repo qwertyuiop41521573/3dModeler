@@ -36,14 +36,14 @@ SOURCES += \
     glwidget.cpp \
     camera.cpp \
     toolwithwidget.cpp \
-    selectableobject.cpp \
     transformingtool.cpp \
     toolwithpivot.cpp \
     mathfunctions.cpp \
     creatingtool.cpp \
     record.cpp \
     journal.cpp \
-    vertexcontainer.cpp
+    elementcontainer.cpp \
+    element.cpp
 
 
 HEADERS += \
@@ -80,14 +80,14 @@ HEADERS += \
     glwidget.h \
     camera.h \
     toolwithwidget.h \
-    selectableobject.h \
     transformingtool.h \
     toolwithpivot.h \
     mathfunctions.h \
     creatingtool.h \
     record.h \
     journal.h \
-    vertexcontainer.h
+    elementcontainer.h \
+    element.h
 
 
 RESOURCES += \
@@ -126,6 +126,7 @@ RESOURCES += \
 # ortho for 3d
 # ellipse and cylinder - radial segments, replace creating second cap in createWallsAndSecondCap with TEllipse::createCap ?
 # axis lines should be like wireframe overlay
+# hotkeys for WorkWithElements - 1 and 2 for vertices and triangles
 
 # in GLWidget::draw vertices should not repeat! - fix after "textures"
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
@@ -137,6 +138,6 @@ RESOURCES += \
 # backface of selected triangle has another color
 # select option - ignore backfacing
 # move some funtions from mainwindow.cpp?
+# TriangleContainer and vertex container have common push() function ? move it to base class or Container <Template>
 
 # now: undo, redo for triangles
-

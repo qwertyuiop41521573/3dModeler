@@ -32,6 +32,7 @@ protected:
     QGridLayout *layout;
     QPushButton *finalButton;
     Model *model;
+    Journal *journal;
     bool _stage2 = false;
     QRadioButton **workWithElements;
 };

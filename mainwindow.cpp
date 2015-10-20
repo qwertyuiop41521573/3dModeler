@@ -421,7 +421,7 @@ void MainWindow::deleteSlot()
 {
     int i, j, k;
     vector <int> vertexList, triangleList, vertexList2;
-    VertexContainer &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
 
     journal.newRecord(REMOVE);
@@ -430,7 +430,7 @@ void MainWindow::deleteSlot()
     int end;
     if(workWithElements[0]->isChecked())
     {
-        for(i = 0; i < vertex.size(); i++) if(vertex[i].selected())
+        for(i = 0; i < vertex.size(); i++) if(vertex[i].exists() && vertex[i].selected())
         {
             vertexList.push_back(i);
             vertex.remove(i);
@@ -440,26 +440,29 @@ void MainWindow::deleteSlot()
         int l;
         for(i = 0; i < triangle.size(); i++)
         {
-            selected = false;
-            for(j = 0; j < 3; j++)
+            if(triangle[i].exists())
             {
-                for(k = 0; k < vertexList.size(); k++)
+                selected = false;
+                for(j = 0; j < 3; j++)
                 {
-                    if(vertexList[k] == triangle[i].getIndex(j))
+                    for(k = 0; k < vertexList.size(); k++)
                     {
-                        triangleList.push_back(i);
-                        selected = true;
-                        for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(l));
-                        break;
+                        if(vertexList[k] == triangle[i].getIndex(j))
+                        {
+                            triangleList.push_back(i);
+                            selected = true;
+                            for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(l));
+                            break;
+                        }
                     }
+                    if(selected) break;
                 }
-                if(selected) break;
             }
         }        
     }
     else
     {
-        for(i = 0; i < triangle.size(); i++) if(triangle[i].selected())
+        for(i = 0; i < triangle.size(); i++) if(triangle[i].exists() && triangle[i].selected())
         {
             triangleList.push_back(i);
             for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(j));
@@ -467,6 +470,10 @@ void MainWindow::deleteSlot()
 
     }
 
+    for(i = 0; i < triangleList.size(); i++) triangle[triangleList[i]].remove();
+
+
+    /*
     chain = false;
     for(i = triangleList.size() - 1; i > 0; i--)
     {
@@ -487,6 +494,7 @@ void MainWindow::deleteSlot()
         if(chain) triangle.erase(triangle.begin() + triangleList[0], triangle.begin() + triangleList[end] + 1);
         else triangle.erase(triangle.begin() + triangleList[0]);
     }
+    */
 
     for(i = 0; i < vertexList2.size(); i++)
     {

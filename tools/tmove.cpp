@@ -23,7 +23,6 @@ void TMove::function(Action action, QMouseEvent *event)
     if(action == START || action == STOP) return;
 
     GLWidget *widget = *_activeWidget;
-    vector <Vertex> &vertex = model->getVertex();
     int i;
 
     QVector3D drInWorld; //(not on screen)

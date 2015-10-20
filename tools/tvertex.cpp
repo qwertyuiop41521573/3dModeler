@@ -28,24 +28,24 @@ void TVertex::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
 
     GLWidget *widget = *_activeWidget;
-    VertexContainer &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->getVertex();
     widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {
-        _mainWindow->getJournal().newRecord(CREATE);
+        journal->newRecord(CREATE);
 
         QVector3D newVertex;
         if(action == START) widget->fromScreenToWorld(&newVertex, event);
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
-        ind.clear();
-        ind.push_back(vertex.push(newVertex));
-        vertex[ind[0]].setNewSelected(true);
+        ver.clear();
+        ver.push_back(vertex.push(newVertex));
+        vertex[ver[0]].setNewSelected(true);
         if(action == FINAL) action = STOP;
     }
-    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ind[0]].getEditablePosition(), event);
+    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ver[0]].getEditablePosition(), event);
     if(action == STOP)
     {
-        vertex[ind[0]].setSelected(true, false);
-        _mainWindow->getJournal().submit();
+        vertex[ver[0]].setSelected(true, false);
+        journal->submit();
     }
 }

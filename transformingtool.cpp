@@ -16,7 +16,7 @@ void TransformingTool::transform()
 
     if(workWithElements[0]->isChecked())
     {
-        for(i = 0; i < vertex.size(); i++) if(vertex[i].selected()) toTransform.push_back(i);
+        for(i = 0; i < vertex.size(); i++) if(vertex[i].exists() && vertex[i].selected()) toTransform.push_back(i);
     }
     else
     {
@@ -29,7 +29,7 @@ void TransformingTool::transform()
 
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].selected())
+            if(triangle[i].exists() && triangle[i].selected())
             {
                 for(j = 0; j < 3; j++)
                 {

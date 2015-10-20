@@ -150,8 +150,6 @@ void GLWidget::draw(bool wireframe)
     int i;
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
-    int vertexNumber = vertex.size();
-    int triangleNumber = triangle.size();
 
   /*  if(_isActive)
     {
@@ -219,10 +217,13 @@ void GLWidget::draw(bool wireframe)
     if(renderingModeCurrent == TEXTURED && model->textured)
     {
         vertices_tex.clear();
-        for(i = 0; i < triangleNumber; i++)
+        for(i = 0; i < triangle.size(); i++)
         {
-            if(workWithElements[1]->isChecked() && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-            else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
+            if(triangle[i].exists())
+            {
+                if(workWithElements[1]->isChecked() && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
+                else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
+            }
         }
         structSize = vertexData_TextureSize;
         fragment = "a_texcoord";
@@ -234,10 +235,13 @@ void GLWidget::draw(bool wireframe)
     else
     {
         vertices_col.clear();
-        for(i = 0; i < triangleNumber; i++)
+        for(i = 0; i < triangle.size(); i++)
         {
-            if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-            else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), color });
+            if(triangle[i].exists())
+            {
+                if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
+                else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), color });
+            }
         }
         structSize = vertexData_ColorSize;
         fragment = "a_color";
@@ -516,13 +520,13 @@ void GLWidget::drawToolLines()
     toolData.vertices.clear();
     toolData.indices.clear();
     (*activeTool)->function(DRAW);
-    int vertexNumber = toolData.vertices.size();
-    int indexNumber = toolData.indices.size();
-    for(int i = 0; i < vertexNumber; i++) toolData.vertices[i].color = WHITE;
+    vector <VertexData_Color> &vertices = toolData.vertices;
+    vector <GLuint> &indices = toolData.indices;
+    for(int i = 0; i < vertices.size(); i++) vertices[i].color = WHITE;
     prepareProgramColor(toolMatrix);
-    glBufferData(GL_ARRAY_BUFFER, vertexNumber * vertexData_ColorSize, toolData.vertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber * GLuintSize, toolData.indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * vertexData_ColorSize, vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * GLuintSize, indices.data(), GL_STATIC_DRAW);
     glDisable(GL_DEPTH_TEST);
-    glDrawElements(GL_LINES, indexNumber, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
     glEnable(GL_DEPTH_TEST);
 }

@@ -1,9 +1,9 @@
 #ifndef TTRIANGLE_H
 #define TTRIANGLE_H
 
-#include "toolwithwidget.h"
+#include "creatingtool.h"
 
-class TTriangle : public ToolWithWidget
+class TTriangle : public CreatingTool
 {
 public:
     TTriangle(MainWindow *mainWindow);

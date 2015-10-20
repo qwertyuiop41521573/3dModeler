@@ -41,8 +41,8 @@ public:
     GLWidget **getActiveWidget()
     { return &widgetActive; };
 
-    Journal &getJournal()
-    { return journal; };
+    Journal *getJournal()
+    { return &journal; };
 
     void quickAccessToolOrbit();
     void quickAccessToolPan();

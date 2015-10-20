@@ -1,9 +1,9 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "selectableobject.h"
+#include "element.h"
 
-class Triangle : public SelectableObject
+class Triangle : public Element
 {
 public:
     Triangle(int a, int b, int c)

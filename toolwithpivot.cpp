@@ -20,7 +20,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     {
         for(i = 0; i < vertex.size(); i++)
         {
-            if(vertex[i].selected())
+            if(vertex[i].exists() && vertex[i].selected())
             {
                 min = max = vertex[i].getPosition();
                 break;
@@ -28,7 +28,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         }
         for(i++; i < vertex.size(); i++)
         {
-            if(vertex[i].selected())
+            if(vertex[i].exists() && vertex[i].selected())
             {
                 for(j = 0; j < 3; j++)
                 {
@@ -43,7 +43,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         int index;
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].selected())
+            if(triangle[i].exists() && triangle[i].selected())
             {
                 min = max = vertex[triangle[i].getIndex(0)].getPosition();
                 break;
@@ -54,7 +54,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         for(i = 0; i < vertex.size(); i++) checked[i] = false;
         for( ; i < triangle.size(); i++)
         {
-            if(triangle[i].selected())
+            if(triangle[i].exists() && triangle[i].selected())
             {
                 for(j = 0; j < 3; j++)
                 {

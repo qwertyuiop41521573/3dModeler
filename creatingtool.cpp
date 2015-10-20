@@ -7,7 +7,7 @@ CreatingTool::CreatingTool(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
 void CreatingTool::removeAll(int triangleNumber)
 {
-    for(int i = 0; i < ind.size(); i++) model->getVertex()[ind[i]].remove();
-    vector <Triangle> &triangle = model->getTriangle();
-    triangle.erase(triangle.end() - triangleNumber, triangle.end());
+    int i;
+    for(i = 0; i < ver.size(); i++) model->getVertex()[ver[i]].remove();
+    for(i = 0; i < tri.size(); i++) model->getTriangle()[tri[i]].remove();
 }

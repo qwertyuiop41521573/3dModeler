@@ -1,12 +1,12 @@
-#include "vertexcontainer.h"
+#include "elementcontainer.h"
 #include "journal.h"
 
-VertexContainer::VertexContainer(Journal *journal)// : vector <Vertex>
+template <class T> ElementContainer <T>::ElementContainer(Journal *journal)
 {
     _journal = journal;
 }
 
-int VertexContainer::push(Vertex vertex)
+template <class T> int ElementContainer <T>::push(T t)
 {
     int index;
     int i;
@@ -14,22 +14,24 @@ int VertexContainer::push(Vertex vertex)
     {
         if(!at(i).exists())
         {
-            at(i) = vertex;
+            at(i) = t;
             index = i;
             break;
         }
     }
     if(i == size())
     {
-        push_back(vertex);
+        push_back(t);
         index = size() - 1;
     }
     _journal->add(index);
     return index;
 }
 
-void VertexContainer::remove(int index)
+
+template <class T> void ElementContainer <T>::remove(int index)
 {
     _journal->add(index);
     at(index).remove();
 }
+

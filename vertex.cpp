@@ -22,7 +22,6 @@ void Vertex::setUV(float u, float v)
 
 void Vertex::operator =(const Vertex &vertex)
 {
-    SelectableObject::operator =(vertex);
+    Element::operator =(vertex);
     position = vertex.getPosition();
-    _exists = vertex.exists();
 }

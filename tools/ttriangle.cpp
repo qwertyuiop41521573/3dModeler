@@ -2,7 +2,7 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
-TTriangle::TTriangle(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+TTriangle::TTriangle(MainWindow *mainWindow) : CreatingTool(mainWindow)
 {
     button->setText("Triangle");
     finalButton = new QPushButton("Cancel");
@@ -23,7 +23,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
     if(action == START)
     {
         GLWidget *widget = *_activeWidget;
-        vector <Triangle> &triangle = model->getTriangle();
+
 
         for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
 
@@ -56,7 +56,9 @@ void TTriangle::function(Action action, QMouseEvent *event)
         }
         if(newTriangle.size() == 3)
         {
-            triangle.push_back(newTriangle.data());
+            journal->newRecord(CREATE);
+            tri.push_back(model->getTriangle().push(newTriangle.data()));
+            journal->submit();
             for(i = 0; i < 3; i++) vertex[newTriangle[i]].setSelected(true, false);
             newTriangle.clear();
         }
