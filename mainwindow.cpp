@@ -269,6 +269,11 @@ void MainWindow::newModel()
     setWindowTitle("3d Modeler");
 }
 
+void MainWindow::handleClose()
+{
+    if(saveRequest()) close();
+}
+
 void MainWindow::createActionsAndMenus()
 {
     QAction *openAction = new QAction(tr("&Open"), this);
@@ -276,7 +281,7 @@ void MainWindow::createActionsAndMenus()
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
     QAction *exitAction = new QAction(tr("&Exit"), this);
     exitAction->setShortcut(tr("Ctrl+Q"));
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(handleClose()));
     QAction *newAction = new QAction(tr("&New"), this);
     newAction->setShortcut(tr("Ctrl+N"));
     connect(newAction, SIGNAL(triggered()), this, SLOT(newModel()));

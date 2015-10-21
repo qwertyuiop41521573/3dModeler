@@ -60,6 +60,8 @@ private slots:
     void saveAs()
     { if(openFileDialog("Save") ) model->save(); };
 
+    void handleClose();
+
     void undo();
     void redo();
     void selectAll();
