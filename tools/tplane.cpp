@@ -27,6 +27,7 @@ void TPlane::function(Action action, QMouseEvent *event)
     case START:
     {
         _busy = true;
+        journal->newRecord(CREATE);
         //create the cap without other parts    
         //all cap vertices are in 1 point
 
@@ -107,7 +108,11 @@ void TPlane::function(Action action, QMouseEvent *event)
             return;
         }
         for(i = 0; i < 4; i++) vertex[ver[i]].setSelected(true, false);
-        if(!_hasStage2) _busy = false;
+        if(!_hasStage2)
+        {
+            _busy = false;
+            journal->submit();
+        }
     }
     }
 }

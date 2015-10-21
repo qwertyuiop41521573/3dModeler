@@ -16,4 +16,5 @@ void Element::operator =(const Element &element)
     _selected = element.selected();
     _newSelected = element.newSelected();
     _exists = element.exists();
+    _isVertex = element.isVertex();
 }

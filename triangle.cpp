@@ -4,17 +4,18 @@
 
 using namespace std;
 
-Triangle::Triangle(int *values)
+Triangle::Triangle(int a, int b, int c)
 {
-    for(int i = 0; i < 3; i++) index[i] = values[i];
     _isVertex = false;
-}
-
-void Triangle::setIndices(int a, int b, int c)
-{
     index[0] = a;
     index[1] = b;
     index[2] = c;
+}
+
+Triangle::Triangle(int *values)
+{
+    _isVertex = false;
+    for(int i = 0; i < 3; i++) index[i] = values[i];
 }
 
 void Triangle::operator =(const Triangle &triangle)

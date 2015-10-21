@@ -74,6 +74,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case START:
     {
         _busy = true;
+        journal->newRecord(CREATE);
         widget->countFinalInverseMatrix();
         widget->fromScreenToWorld(&startPosition3D, event);
 
@@ -118,6 +119,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         ver.clear();
         tri.clear();
+        journal->newRecord(CREATE);
         for(i = 0; i < segments; i++) ver.push_back(vertex.push({{0, 0, 0}}));
         createCap(rotatingVertex, angle, scaleAndTranslate);
         //center of first cap
@@ -125,8 +127,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         triangulateCap(_hasStage2);
 
-        ver.resize(segments + 1);
         for(i = 0; i <= segments; i++) vertex[ver[i]].setSelected(true);
+        if(!_hasStage2) journal->submit();
         break;
     }
 
@@ -204,7 +206,11 @@ void TEllipse::function(Action action, QMouseEvent *event)
         }
 
         for(i = 0; i <= segments; i++) vertex[ver[i]].setSelected(true, false);
-        if(!_hasStage2) _busy = false;
+        if(!_hasStage2)
+        {
+            _busy = false;
+            journal->submit();
+        }
     }
     }
 }

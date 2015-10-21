@@ -141,7 +141,3 @@ RESOURCES += \
 # select option - ignore backfacing
 # move some funtions from mainwindow.cpp?
 # TriangleContainer and vertex container have common push() function ? move it to base class or Container <Template>
-
-
-# now:
-# selectAll / none should record to journal

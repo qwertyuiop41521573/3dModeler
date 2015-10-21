@@ -320,14 +320,40 @@ void MainWindow::save()
 
 void MainWindow::selectAll()
 {
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++) model->getVertex()[i].setSelected(true);
-    else for(int i = 0; i < model->getTriangle().size(); i++) model->getTriangle()[i].setSelected(true);
+    journal.newRecord(SELECT);
+    bool record = false;
+    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++)
+    {
+        if(!record && !model->getVertex()[i].selected()) record = true;
+        model->getVertex()[i].setSelected(true);
+        journal.add(i);
+    }
+    else for(int i = 0; i < model->getTriangle().size(); i++)
+    {
+        if(!record && !model->getTriangle()[i].selected()) record = true;
+        model->getTriangle()[i].setSelected(true);
+        journal.add(i);
+    }
+    if(record) journal.submit();
 }
 
 void MainWindow::selectNone()
 {
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++) model->getVertex()[i].setSelected(false);
-    else for(int i = 0; i < model->getTriangle().size(); i++) model->getTriangle()[i].setSelected(false);
+    journal.newRecord(SELECT);
+    bool record = false;
+    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++)
+    {
+        if(!record && model->getVertex()[i].selected()) record = true;
+        model->getVertex()[i].setSelected(false);
+        journal.add(i);
+    }
+    else for(int i = 0; i < model->getTriangle().size(); i++)
+    {
+        if(!record && model->getTriangle()[i].selected()) record = true;
+        model->getTriangle()[i].setSelected(false);
+        journal.add(i);
+    }
+    if(record) journal.submit();
 }
 
 bool MainWindow::openFileDialog(QString action)
@@ -602,9 +628,12 @@ void MainWindow::redo()
     case SELECT:
     {
         Select &data = *rec.dataRO().select;
-        int ind = data[i].index;
-        Element &element = data.vertices() ? (Element&)model->getVertex()[ind] : (Element&)model->getTriangle()[ind];
-        for(i = 0; i < data.size(); i++) element.setSelected(data[i].value);
+        for(i = 0; i < data.size(); i++)
+        {
+            int ind = data[i].index;
+            Element &element = data.vertices() ? (Element&)model->getVertex()[ind] : (Element&)model->getTriangle()[ind];
+            element.setSelected(data[i].value);
+        }
         break;
     }
     }

@@ -63,7 +63,6 @@ void TBox::function(Action action, QMouseEvent *event)
     {
         for(i = 0; i < 3; i++) if(spinBox[i + 3]->value() == 0) return;
 
-
         QVector3D center, size;
         for(i = 0; i < 3; i++)
         {
@@ -71,6 +70,7 @@ void TBox::function(Action action, QMouseEvent *event)
             size[i] = spinBox[i + 3]->value();
         }
 
+        journal->newRecord(CREATE);
         for(i = 0; i < 8; i++)
         {
             //cube with center at(0.5, 0.5, 0.5) and size(1, 1, 1)
@@ -100,6 +100,7 @@ void TBox::function(Action action, QMouseEvent *event)
         tri.push_back(triangle.push({ver[4], ver[6], ver[5]}));
         tri.push_back(triangle.push({ver[4], ver[7], ver[6]}));
 
+        journal->submit();
         break;
     }
     //if we drag pressed mouse in viewport
@@ -153,6 +154,7 @@ void TBox::function(Action action, QMouseEvent *event)
         setStage2(false);
         widget->setMouseTracking(false);
         _busy = false;
+        journal->submit();
         break;
     }
     //"stage1" was dragging pressed mouse (and drawing the cap of box),
@@ -175,7 +177,7 @@ void TBox::function(Action action, QMouseEvent *event)
         for(i = 0; i < 4; i++)
         {
             //the second cap is the same as first
-            ver.push_back(vertex.push(vertex[ver[i]]));
+            ver.push_back(vertex.push(vertex[ver[i]].getPosition()));
             vertex[ver[4 + i]].setNewSelected(true);
         }
 

@@ -48,6 +48,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         }
         createWallsAndSecondCap(true);
         for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].setSelected(true);
+        journal->submit();
         break;
     }
     //if(!_stage2) is done in TEllipse::function(action, event);
@@ -92,6 +93,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         setStage2(false);
         widget->setMouseTracking(false);
         _busy = false;
+        journal->submit();
         break;
     }
     case STAGE2:
