@@ -26,6 +26,7 @@ void TPlane::function(Action action, QMouseEvent *event)
     {
     case START:
     {
+        _busy = true;
         //create the cap without other parts    
         //all cap vertices are in 1 point
 
@@ -100,11 +101,13 @@ void TPlane::function(Action action, QMouseEvent *event)
         if(vertex[ver[3]] == vertex[ver[2]] || vertex[ver[1]] == vertex[ver[2]])
         {
             //remove cap - last 4 vertices and 2 triangles
-            removeAll(2);
+            removeAll();
             planeFailed = true;
+            _busy = false;
             return;
         }
         for(i = 0; i < 4; i++) vertex[ver[i]].setSelected(true, false);
+        if(!_hasStage2) _busy = false;
     }
     }
 }

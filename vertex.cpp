@@ -1,5 +1,11 @@
 #include "vertex.h"
 
+Vertex::Vertex(const QVector3D &newPosition)
+{
+    position = newPosition;
+    _isVertex = true;
+}
+
 void Vertex::setPosition(float x, float y)
 {
     position.setX(x);

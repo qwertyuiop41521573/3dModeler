@@ -9,8 +9,8 @@ TOrbit::TOrbit(MainWindow *mainWindow) : Tool(mainWindow)
 void TOrbit::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
-    if(action != EXECUTE || widget->getProjection() != PERSPECTIVE)
-        return;
+    if(action != EXECUTE || widget->getProjection() != PERSPECTIVE) return;
+
     Camera &camera = widget->getCamera();
     double rotZ = (-event->x() + widget->getHalfWidth() + widget->getLastPosition().x()) / double(2);
     double rotX = (widget->getLastPosition().y() - widget->getHalfHeight() + event->y()) / double(2);

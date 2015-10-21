@@ -144,7 +144,7 @@ void TBox::function(Action action, QMouseEvent *event)
         if(vertex[ver[7]] == vertex[ver[3]])
         {
             //remove box - last 8 vertices and 12 triangles
-            removeAll(12);
+            removeAll();
         }
         //deselect with "blue", select with "red"
         else for(i = 0; i < 8; i++) vertex[ver[i]].setSelected(true, false);
@@ -152,6 +152,7 @@ void TBox::function(Action action, QMouseEvent *event)
         widget->setToolIsOn(false);
         setStage2(false);
         widget->setMouseTracking(false);
+        _busy = false;
         break;
     }
     //"stage1" was dragging pressed mouse (and drawing the cap of box),
@@ -164,6 +165,7 @@ void TBox::function(Action action, QMouseEvent *event)
         planeFailed = false;
         TPlane::function(STOP, event);
         if(planeFailed) return;
+
 
         widget->setToolIsOn(true);
         setStage2(true);

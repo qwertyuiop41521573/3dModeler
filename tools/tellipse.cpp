@@ -73,6 +73,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     {
     case START:
     {
+        _busy = true;
         widget->countFinalInverseMatrix();
         widget->fromScreenToWorld(&startPosition3D, event);
 
@@ -196,12 +197,14 @@ void TEllipse::function(Action action, QMouseEvent *event)
         if(QVector3D::crossProduct(v1, v2).length() == 0)
         {
             //remove cap
-            removeAll(segments);
+            removeAll();
             ellipseFailed = true;
+            _busy = false;
             return;
         }
 
         for(i = 0; i <= segments; i++) vertex[ver[i]].setSelected(true, false);
+        if(!_hasStage2) _busy = false;
     }
     }
 }

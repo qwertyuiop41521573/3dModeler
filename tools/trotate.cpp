@@ -30,13 +30,21 @@ TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
 
 void TRotate::function(Action action, QMouseEvent *event)
 {
-    if(action == STOP) return;
+    if(action == STOP)
+    {
+        _busy = false;
+        return;
+    }
 
     GLWidget *widget = *_activeWidget;
     int i, j, k;
 
     ToolWithPivot::function(action, event);
-    if(action == START) return;
+    if(action == START)
+    {
+        _busy = true;
+        return;
+    }
 
     QMatrix4x4 rotation;
     rotation.setToIdentity();

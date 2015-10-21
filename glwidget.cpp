@@ -142,6 +142,7 @@ void GLWidget::setupProjection()
 
 void GLWidget::draw(bool wireframe)
 {
+
     RenderingMode renderingModeCurrent = wireframe ? WIREFRAME : renderingMode;
 
     QVector3D color;
@@ -150,6 +151,9 @@ void GLWidget::draw(bool wireframe)
     int i;
     vector <Vertex> &vertex = model->getVertex();
     vector <Triangle> &triangle = model->getTriangle();
+  /*  int a = 0;
+     for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) a++;
+             cerr << a << '\n';*/
 
   /*  if(_isActive)
     {

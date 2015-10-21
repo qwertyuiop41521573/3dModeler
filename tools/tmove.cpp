@@ -20,7 +20,11 @@ TMove::TMove(MainWindow *mainWindow) : TransformingTool(mainWindow)
 
 void TMove::function(Action action, QMouseEvent *event)
 {
-    if(action == START || action == STOP) return;
+    if(action == START || action == STOP)
+    {
+        _busy = action == START;
+        return;
+    }
 
     GLWidget *widget = *_activeWidget;
     int i;

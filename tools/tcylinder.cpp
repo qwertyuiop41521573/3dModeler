@@ -43,7 +43,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         if(ellipseFailed) return;
         if(spinBoxHeight->value() == 0)
         {
-            removeAll(segments);
+            removeAll();
             return;
         }
         createWallsAndSecondCap(true);
@@ -86,11 +86,12 @@ void TCylinder::function(Action action, QMouseEvent *event)
     {
         //if height == 0 we remove cylinder (2 * segments + 2 vertices and 4 *
         //    segments triangles
-        if(vertex[ver[2 * segments + 1]] == vertex[ver[segments]]) removeAll(4 * segments);
+        if(vertex[ver[2 * segments + 1]] == vertex[ver[segments]]) removeAll();
         else for(i = 0; i < 2 * segments + 2; i++) vertex[ver[i]].setSelected(true, false);
         widget->setToolIsOn(false);
         setStage2(false);
         widget->setMouseTracking(false);
+        _busy = false;
         break;
     }
     case STAGE2:

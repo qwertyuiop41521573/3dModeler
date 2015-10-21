@@ -27,11 +27,16 @@ public:
     bool hasStage2()
     { return _hasStage2; };
 
+    bool busy()
+    { return _busy; };
+
 protected:
     MainWindow *_mainWindow;
     bool _hasStage2 = false;
     GLWidget **_activeWidget;
     QPushButton *button;
+
+    bool _busy = false;
 
 private slots:
     void handleClick(bool pressed);

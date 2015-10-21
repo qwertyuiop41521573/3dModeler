@@ -35,7 +35,11 @@ void TVertex::function(Action action, QMouseEvent *event)
         journal->newRecord(CREATE);
 
         QVector3D newVertex;
-        if(action == START) widget->fromScreenToWorld(&newVertex, event);
+        if(action == START)
+        {
+            _busy = true;
+            widget->fromScreenToWorld(&newVertex, event);
+        }
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
         ver.clear();
         ver.push_back(vertex.push(newVertex));
@@ -45,6 +49,7 @@ void TVertex::function(Action action, QMouseEvent *event)
     if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ver[0]].getEditablePosition(), event);
     if(action == STOP)
     {
+        _busy = false;
         vertex[ver[0]].setSelected(true, false);
         journal->submit();
     }

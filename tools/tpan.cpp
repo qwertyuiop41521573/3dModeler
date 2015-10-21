@@ -9,9 +9,9 @@ TPan::TPan(MainWindow *mainWindow) : Tool(mainWindow)
 
 void TPan::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
     if(action == EXECUTE)
     {
+        GLWidget *widget = *_activeWidget;
         double dx = widget->getLastPosition().x() - event->x() + widget->getHalfWidth();
         double dy = widget->getLastPosition().y() - widget->getHalfHeight() + event->y();
         const QVector3D &rotation = widget->getCamera().rotation();

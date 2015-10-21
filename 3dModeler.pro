@@ -130,6 +130,8 @@ RESOURCES += \
 
 # in GLWidget::draw vertices should not repeat! - fix after "textures"
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
+# journal - create, remove for vertex, triangle - make some abstraction
+# move add(int index) to Element ?
 
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
@@ -140,4 +142,6 @@ RESOURCES += \
 # move some funtions from mainwindow.cpp?
 # TriangleContainer and vertex container have common push() function ? move it to base class or Container <Template>
 
-# now: undo, redo for triangles
+
+# now:
+# selectAll / none should record to journal

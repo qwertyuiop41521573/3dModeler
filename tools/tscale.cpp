@@ -23,13 +23,21 @@ TScale::TScale(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
 
 void TScale::function(Action action, QMouseEvent *event)
 {
-    if(action == STOP) return;
+    if(action == STOP)
+    {
+        _busy = false;
+        return;
+    }
 
     GLWidget *widget = *_activeWidget;
     int i, j, k;
 
     ToolWithPivot::function(action, event);
-    if(action == START) return;
+    if(action == START)
+    {
+        _busy = true;
+        return;
+    }
 
     QVector3D scaleFactor;
     if(action == FINAL) for(i = 0; i < 3; i++) scaleFactor[i] = spinBox[i]->value();

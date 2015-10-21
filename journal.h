@@ -3,6 +3,7 @@
 
 #include "record.h"
 #include "vertex.h"
+#include <QRadioButton>
 
 class Model;
 
@@ -11,13 +12,13 @@ class Journal : public vector <Record>
 public:
     Journal();
 
-    void setModel(Model *model)
-    { _model = model; };
+    void setVariables(Model *model, QRadioButton **workWithElements);
 
     void newRecord(Type type);
+    void addVertex(int index);
+    void addTriangle(int index);
     void add(int index);
     void submit();
-    void cancelRecord();
 
     const Record &current()
     { return at(_current); };
@@ -38,7 +39,7 @@ public:
     { return _current == size() - 1; };
 
     bool currentRecordIsEmpty()
-    { return vertexList.size() == 0; };
+    { return list.size() == 0; };
 
 signals:
 
@@ -47,8 +48,9 @@ public slots:
 private:
     int _current = -1;
     Model *_model;
+    QRadioButton **_workWithElements;
 
-    vector <int> vertexList;
+    vector <int> vertexList, triangleList, list;
     Type currentType;
 };
 

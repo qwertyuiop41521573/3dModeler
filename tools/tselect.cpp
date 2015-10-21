@@ -26,6 +26,7 @@ void TSelect::function(Action action, QMouseEvent *event)
     {
     case START:
     {
+        _busy = true;
         QVector2D min, max;
         QVector2D currentPosition(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
         countMinAndMax(&min, &max, currentPosition);
@@ -67,6 +68,7 @@ void TSelect::function(Action action, QMouseEvent *event)
     }
     case STOP:
     {
+        _busy = false;
         journal->newRecord(SELECT);
 
         vector <Vertex> &vertex = model->getVertex();

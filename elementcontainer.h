@@ -14,8 +14,7 @@ template <class T> class ElementContainer : public vector <T>
 {
 public:
     ElementContainer(Journal *journal);
-    int push(T t);
-
+    int push(const T &t);
     void remove(int index);
 
     using vector <T>::size;

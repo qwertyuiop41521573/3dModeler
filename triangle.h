@@ -6,19 +6,19 @@
 class Triangle : public Element
 {
 public:
-    Triangle(int a, int b, int c)
+    Triangle(int a = -1, int b = -1, int c = -1)
     { setIndices(a, b, c); };
 
-    Triangle(int *values)
-    { for(int i = 0; i < 3; i++) index[i] = values[i]; };
+    Triangle(int *values);
 
-    int getIndex(int num)
+    int getIndex(int num) const
     { return index[num]; };
 
     void setIndex(int num, int newIndex)
     { index[num] = newIndex; };
 
     void setIndices(int a, int b, int c);
+    void operator =(const Triangle &triangle);
 
 private:
     int index[3];

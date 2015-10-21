@@ -16,7 +16,7 @@ protected:
     vector <int> ver;
     vector <int> tri;
 
-    void removeAll(int triangleNumber);
+    void removeAll();
 };
 
 #endif // CREATINGTOOL_H

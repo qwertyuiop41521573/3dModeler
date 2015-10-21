@@ -24,7 +24,6 @@ void TTriangle::function(Action action, QMouseEvent *event)
     {
         GLWidget *widget = *_activeWidget;
 
-
         for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
 
         QVector2D min, max;
@@ -54,8 +53,10 @@ void TTriangle::function(Action action, QMouseEvent *event)
                 vertex[i].setNewSelected(true);
             }
         }
+        if(newTriangle.size() == 1) _busy = true;
         if(newTriangle.size() == 3)
         {
+            _busy = false;
             journal->newRecord(CREATE);
             tri.push_back(model->getTriangle().push(newTriangle.data()));
             journal->submit();
@@ -65,6 +66,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
     }
     else
     {
+        _busy = false;
         for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(false);
         newTriangle.clear();
     }

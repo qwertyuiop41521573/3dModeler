@@ -10,8 +10,7 @@
 class Vertex : public Element
 {
 public:
-    Vertex(const QVector3D &newPosition = { 0, 0, 0 })
-    { position = newPosition; };
+    Vertex(const QVector3D &newPosition = { 0, 0, 0 });
 
     QVector3D &getEditablePosition()
     { return position; };
