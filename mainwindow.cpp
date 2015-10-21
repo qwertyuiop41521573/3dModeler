@@ -593,6 +593,18 @@ void MainWindow::undo()
         }
         break;
     }
+    case EDIT:
+    {
+        const Edit &data = *rec.dataRO().edit;
+        const vector <int> &list = data.list();
+        const QMatrix4x4 &transformation = data.transformation().inverted();
+        for(int i = 0; i < list.size(); i++)
+        {
+            Vertex &vertex = model->getVertex()[list[i]];
+            vertex.setPosition(transformation * vertex.getPosition());
+        }
+        break;
+    }
     }
 
     journal.undo();
@@ -633,6 +645,18 @@ void MainWindow::redo()
             int ind = data[i].index;
             Element &element = data.vertices() ? (Element&)model->getVertex()[ind] : (Element&)model->getTriangle()[ind];
             element.setSelected(data[i].value);
+        }
+        break;
+    }
+    case EDIT:
+    {
+        const Edit &data = *rec.dataRO().edit;
+        const vector <int> &list = data.list();
+        const QMatrix4x4 &transformation = data.transformation();
+        for(int i = 0; i < list.size(); i++)
+        {
+            Vertex &vertex = model->getVertex()[list[i]];
+            vertex.setPosition(transformation * vertex.getPosition());
         }
         break;
     }

@@ -22,7 +22,7 @@ void TMove::function(Action action, QMouseEvent *event)
 {
     if(action == START || action == STOP)
     {
-        _busy = action == START;
+        TransformingTool::function(action, 0);
         return;
     }
 
@@ -58,5 +58,5 @@ void TMove::function(Action action, QMouseEvent *event)
     transformation.setToIdentity();
     transformation.translate(drInWorld[0], drInWorld[1], drInWorld[2]);
 
-    transform();
+    TransformingTool::function(action, 0);
 }

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-typedef enum { CREATE, REMOVE, SELECT } Type;
+typedef enum { CREATE, REMOVE, SELECT, EDIT } Type;
 
 template <class T> class ElementWithIndex
 {
@@ -82,10 +82,48 @@ private:
     bool _vertices;
 };
 
+class Edit
+{
+public:
+    Edit()
+    {
+        _transformation = new QMatrix4x4;
+        _transformation->setToIdentity();
+    }
+
+    ~Edit()
+    {
+        delete _list;
+        delete _transformation;
+    }
+
+    void setList(const vector <int> &list)
+    {
+        _list = new vector <int>(list.size());
+        for(int i = 0;i < list.size(); i++) _list->at(i) = list[i];
+    }
+
+    void transform(const QMatrix4x4 &matrix)
+    {
+        *_transformation = matrix * *_transformation;
+    }
+
+    const vector <int> &list() const
+    { return *_list; };
+
+    const QMatrix4x4 &transformation() const
+    { return *_transformation; };
+
+private:
+    vector <int> *_list;
+    QMatrix4x4 *_transformation;
+};
+
 union Data
 {
     CreateOrRemove *createOrRemove;
     Select *select;
+    Edit *edit;
 };
 
 class Record

@@ -27,15 +27,7 @@ template <class T> int ElementContainer <T>::push(const T &t)
 
     if(i == size())
     {
-        static int count = 0;
-        count++;
-        if(count == 5)
-        {
-            cerr << "Q";
-        }
-        cerr << "(q " << t.isVertex() << "; ";
         push_back(t);
-        cerr << "w " << t.isVertex() << ") ";
         index = size() - 1;
     }
 

@@ -6,6 +6,14 @@ Journal::Journal()
 
 }
 
+void Journal::push()
+{
+    for(int i = _current + 1; i < size(); i++) at(i).clean();
+    erase(begin() + _current + 1, end());
+    push_back(currentType);
+    _current++;
+}
+
 void Journal::setVariables(Model *model, QRadioButton **workWithElements)
 {
     _model = model;
@@ -13,7 +21,7 @@ void Journal::setVariables(Model *model, QRadioButton **workWithElements)
 }
 
 void Journal::newRecord(Type type)
- {
+{
     currentType = type;
     if(type == CREATE || type == REMOVE)
     {
@@ -21,6 +29,7 @@ void Journal::newRecord(Type type)
         triangleList.clear();
     }
     if(type == SELECT) list.clear();
+    if(type == EDIT) push();
 };
 
 void Journal::addVertex(int index)
@@ -38,18 +47,26 @@ void Journal::add(int index)
     list.push_back(index);
 }
 
+void Journal::addList(const vector<int> &list)
+{
+    at(size() - 1).data().edit->setList(list);
+}
+
+void Journal::transform(const QMatrix4x4 &matrix)
+{
+    at(size() - 1).data().edit->transform(matrix);
+}
+
 void Journal::submit()
 {
+
     int i;
-    for(i = _current + 1; i < size(); i++) at(i).clean();
-    erase(begin() + _current + 1, end());
-    push_back(currentType);
-    _current++;
 
     switch(currentType)
     {
     case CREATE:
     {
+        push();
         CreateOrRemove &data = *at(size() - 1).data().createOrRemove;
         for(i = 0; i < vertexList.size(); i++) data.ver().push_back({_model->getVertex()[vertexList[i]], vertexList[i]});
         for(i = 0; i < triangleList.size(); i++) data.tri().push_back({_model->getTriangle()[triangleList[i]], triangleList[i]});
@@ -57,6 +74,7 @@ void Journal::submit()
     }
     case REMOVE:
     {
+        push();
         CreateOrRemove &data = *at(size() - 1).data().createOrRemove;
         vector <ElementWithIndex <Vertex> > &vertex = data.ver();
         for(i = 0; i < vertexList.size(); i++)
@@ -75,6 +93,7 @@ void Journal::submit()
     }
     case SELECT:
     {
+        push();
         Select &data = *at(size() - 1).data().select;
         data.setVertices(_workWithElements[0]->isChecked());
         for(i = 0; i < list.size(); i++)
@@ -82,6 +101,18 @@ void Journal::submit()
             int ind = list[i];
             Element &element = data.vertices() ? (Element&)_model->getVertex()[ind] : (Element&)_model->getTriangle()[ind];
             data.push_back({element.selected(), ind});
+        }
+        break;
+    }
+    case EDIT:
+    {
+        QMatrix4x4 id;
+        id.setToIdentity();
+        if(at(size() - 1).dataRO().edit->transformation() == id)
+        {
+            at(size() - 1).clean();
+            erase(end());
+            _current--;
         }
         break;
     }

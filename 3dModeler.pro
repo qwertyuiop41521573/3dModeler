@@ -136,7 +136,6 @@ RESOURCES += \
 # loading and saving model is corrupted
 # tCylinder->widget() is not hidden as it is the biggest widget
 
-# Undo, Redo
 # backface of selected triangle has another color
 # select option - ignore backfacing
 # move some funtions from mainwindow.cpp?

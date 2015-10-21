@@ -25,17 +25,17 @@ void TScale::function(Action action, QMouseEvent *event)
 {
     if(action == STOP)
     {
-        _busy = false;
+        TransformingTool::function(action, event);
         return;
     }
 
     GLWidget *widget = *_activeWidget;
     int i, j, k;
 
-    ToolWithPivot::function(action, event);
+    ToolWithPivot::function(action, 0);
     if(action == START)
     {
-        _busy = true;
+        TransformingTool::function(action, 0);
         return;
     }
 
@@ -84,5 +84,5 @@ void TScale::function(Action action, QMouseEvent *event)
     transformation.scale(scaleFactor);
     transformation.translate(-pivot);
 
-    transform();
+    TransformingTool::function(action, 0);
 }

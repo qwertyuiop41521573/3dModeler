@@ -18,6 +18,8 @@ public:
     void addVertex(int index);
     void addTriangle(int index);
     void add(int index);
+    void addList(const vector <int> &list);
+    void transform(const QMatrix4x4 &matrix);
     void submit();
 
     const Record &current()
@@ -52,6 +54,8 @@ private:
 
     vector <int> vertexList, triangleList, list;
     Type currentType;
+
+    void push();
 };
 
 #endif // JOURNAL_H

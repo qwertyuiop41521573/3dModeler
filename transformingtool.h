@@ -22,6 +22,7 @@ protected:
     QMatrix4x4 transformation;
 
     void transform();
+    void function(Action action, QMouseEvent *event);
 };
 
 #endif // TRANSFORMINGTOOL_H

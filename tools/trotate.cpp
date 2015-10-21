@@ -32,7 +32,7 @@ void TRotate::function(Action action, QMouseEvent *event)
 {
     if(action == STOP)
     {
-        _busy = false;
+        TransformingTool::function(action, 0);
         return;
     }
 
@@ -42,7 +42,7 @@ void TRotate::function(Action action, QMouseEvent *event)
     ToolWithPivot::function(action, event);
     if(action == START)
     {
-        _busy = true;
+        TransformingTool::function(action, 0);
         return;
     }
 
@@ -98,7 +98,7 @@ void TRotate::function(Action action, QMouseEvent *event)
     transformation *= rotation;
     transformation.translate(-pivot);
 
-    transform();
+    TransformingTool::function(action, 0);
 }
 
 bool TRotate::createRotationMatrix(QMatrix4x4 *rotation, double angle)
