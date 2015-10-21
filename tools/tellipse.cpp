@@ -62,8 +62,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Vertex> &vertex = model->vertex();
+    vector <Triangle> &triangle = model->triangle();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -220,7 +220,7 @@ void TEllipse::triangulateCap(bool flip)
     //(flip == true) - ellipse's normal is directed down (in perspective)
     //    (needed for cylinder's lower cap
 
-    ElementContainer <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Triangle> &triangle = model->triangle();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -230,7 +230,7 @@ void TEllipse::triangulateCap(bool flip)
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)
 {
-    ElementContainer <Vertex> &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->vertex();
     int segments = spinBoxSegments->value();
 
     QMatrix4x4 rotation;

@@ -68,8 +68,8 @@ void Journal::submit()
     {
         push();
         CreateOrRemove &data = *at(size() - 1).data().createOrRemove;
-        for(i = 0; i < vertexList.size(); i++) data.ver().push_back({_model->getVertex()[vertexList[i]], vertexList[i]});
-        for(i = 0; i < triangleList.size(); i++) data.tri().push_back({_model->getTriangle()[triangleList[i]], triangleList[i]});
+        for(i = 0; i < vertexList.size(); i++) data.ver().push_back({_model->vertex()[vertexList[i]], vertexList[i]});
+        for(i = 0; i < triangleList.size(); i++) data.tri().push_back({_model->triangle()[triangleList[i]], triangleList[i]});
         break;
     }
     case REMOVE:
@@ -79,14 +79,14 @@ void Journal::submit()
         vector <ElementWithIndex <Vertex> > &vertex = data.ver();
         for(i = 0; i < vertexList.size(); i++)
         {
-            vertex.push_back({_model->getVertex()[vertexList[i]], vertexList[i]});
+            vertex.push_back({_model->vertex()[vertexList[i]], vertexList[i]});
             vertex[vertex.size() - 1].value().undoRemove();
         }
         vector <ElementWithIndex <Triangle> > &triangle = data.tri();
 
         for(i = 0; i < triangleList.size(); i++)
         {
-            triangle.push_back({_model->getTriangle()[triangleList[i]], triangleList[i]});
+            triangle.push_back({_model->triangle()[triangleList[i]], triangleList[i]});
             triangle[triangle.size() - 1].value().undoRemove();
         }
         break;
@@ -99,7 +99,7 @@ void Journal::submit()
         for(i = 0; i < list.size(); i++)
         {
             int ind = list[i];
-            Element &element = data.vertices() ? (Element&)_model->getVertex()[ind] : (Element&)_model->getTriangle()[ind];
+            Element &element = data.vertices() ? (Element&)_model->vertex()[ind] : (Element&)_model->triangle()[ind];
             data.push_back({element.selected(), ind});
         }
         break;

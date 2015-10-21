@@ -149,8 +149,8 @@ void GLWidget::draw(bool wireframe)
     glBindBuffer(GL_ARRAY_BUFFER, modelVboIds[0]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelVboIds[1]);
     int i;
-    vector <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    vector <Vertex> &vertex = model->vertex();
+    vector <Triangle> &triangle = model->triangle();
   /*  int a = 0;
      for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) a++;
              cerr << a << '\n';*/
@@ -210,7 +210,7 @@ void GLWidget::draw(bool wireframe)
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glShadeModel(GL_SMOOTH);
-        if(!model->textured) color = SHADED;
+        if(!model->textured()) color = SHADED;
     }
     }
     int j;
@@ -218,7 +218,7 @@ void GLWidget::draw(bool wireframe)
     QString fragment;
     selectedFaces.clear();
     int verticesLength;
-    if(renderingModeCurrent == TEXTURED && model->textured)
+    if(renderingModeCurrent == TEXTURED && model->textured())
     {
         vertices_tex.clear();
         for(i = 0; i < triangle.size(); i++)
@@ -441,9 +441,9 @@ void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix)
 
 void GLWidget::addSelectedFace(int num)
 {
-    vector <Triangle> &triangle = model->getTriangle();
+    vector <Triangle> &triangle = model->triangle();
     QVector3D selectedColor(triangle[num].newSelected() ? BLUE : RED);
-    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(model->getVertex()[triangle[num].getIndex(j)].getPosition(), selectedColor));
+    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(model->vertex()[triangle[num].getIndex(j)].getPosition(), selectedColor));
 }
 
 void GLWidget::countRotationMatrices()

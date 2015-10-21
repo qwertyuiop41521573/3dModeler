@@ -11,8 +11,8 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     if(action != START && action != FINAL) return;
 
     GLWidget *widget = *_activeWidget;
-    vector <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    vector <Vertex> &vertex = model->vertex();
+    vector <Triangle> &triangle = model->triangle();
     int i, j, k;
 
     QVector3D min, max;

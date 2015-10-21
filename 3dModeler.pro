@@ -102,17 +102,10 @@ RESOURCES += \
 # all tools should be in File, Edit...
 # model info
 # open popular formats
-
-# pivot to orbit and other tools
-# triangles selected by clicking or drawing rectangle inside them
-
-
-# rewrite Model class
-# grid
-# basic tools: create(sphere, teapot? ...), extrude, bend ...
 # textures
 # light
 # selecting faces in textured
+
 # weld vertices
 # items selected label
 # plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
@@ -127,16 +120,16 @@ RESOURCES += \
 # ellipse and cylinder - radial segments, replace creating second cap in createWallsAndSecondCap with TEllipse::createCap ?
 # axis lines should be like wireframe overlay
 # hotkeys for WorkWithElements - 1 and 2 for vertices and triangles
+# basic tools: create sphere, extrude, bend ...
 
 # in GLWidget::draw vertices should not repeat! - fix after "textures"
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
 # journal - create, remove for vertex, triangle - make some abstraction
 # move add(int index) to Element ?
 
-# loading and saving model is corrupted
+
+
+# textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget
 
-# backface of selected triangle has another color
-# select option - ignore backfacing
-# move some funtions from mainwindow.cpp?
-# TriangleContainer and vertex container have common push() function ? move it to base class or Container <Template>
+

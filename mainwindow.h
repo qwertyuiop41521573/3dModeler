@@ -54,10 +54,9 @@ public:
 private slots:
     void open();
 
-    void newFile()
-    { if(saveRequest()) model->clear(); };
+    void newModel();
 
-    void save();
+    bool save();
     void saveAs()
     { if(openFileDialog("Save") ) model->save(); };
 

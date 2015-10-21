@@ -13,25 +13,37 @@ public:
     Model(Journal *journal);
     bool load(const char *fileName);
     void clear();
-    void save();
+    bool save();
 
-    bool textured;
-    string texture;
+    bool textured()
+    { return _textured; };
 
-    bool isEmpty = true;
-    bool isModified = false;
-    QString fileName;
-    bool loaded = false;
+    bool empty();
 
-    ElementContainer <Vertex> &getVertex()
-    { return *vertex; };
+    ElementContainer <Vertex> &vertex()
+    { return *_vertex; };
 
-    ElementContainer <Triangle> &getTriangle()
-    { return *triangle; };
+    ElementContainer <Triangle> &triangle()
+    { return *_triangle; };
+
+    const QString &fileName()
+    { return _fileName; };
+
+    void setFileName(const QString &fileName)
+    { _fileName = fileName; };
+
+    bool loaded()
+    { return _loaded; };
 
 private:
-    ElementContainer <Vertex> *vertex;
-    ElementContainer <Triangle> *triangle;
+    bool _textured;
+
+    QString _fileName;
+    bool _loaded = false;
+
+private:
+    ElementContainer <Vertex> *_vertex;
+    ElementContainer <Triangle> *_triangle;
 };
 
 #endif // MODEL_H

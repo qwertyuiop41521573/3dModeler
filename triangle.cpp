@@ -4,18 +4,12 @@
 
 using namespace std;
 
-Triangle::Triangle(int a, int b, int c)
+Triangle::Triangle(int a, int b, int c) : Element()
 {
     _isVertex = false;
     index[0] = a;
     index[1] = b;
     index[2] = c;
-}
-
-Triangle::Triangle(int *values)
-{
-    _isVertex = false;
-    for(int i = 0; i < 3; i++) index[i] = values[i];
 }
 
 void Triangle::operator =(const Triangle &triangle)

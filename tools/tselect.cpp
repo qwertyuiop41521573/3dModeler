@@ -15,6 +15,11 @@ TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
         layout->addWidget(checkBox[i], 0, i, 1, 2);
     }
 
+    ignoreBackfacing = new QCheckBox;
+    ignoreBackfacing->setText("Ignore Backfacing");
+    ignoreBackfacing->setChecked(true);
+    layout->addWidget(ignoreBackfacing, 1, 0, 1, 3);
+
     _widget->hide();
 }
 
@@ -71,8 +76,8 @@ void TSelect::function(Action action, QMouseEvent *event)
         _busy = false;
         journal->newRecord(SELECT);
 
-        vector <Vertex> &vertex = model->getVertex();
-        vector <Triangle> &triangle = model->getTriangle();
+        vector <Vertex> &vertex = model->vertex();
+        vector <Triangle> &triangle = model->triangle();
         bool workWithVert = workWithElements[0]->isChecked();
         int i;
 
@@ -130,8 +135,8 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
     GLWidget *widget = *_activeWidget;
     //work with vertices
     bool workWithVert = workWithElements[0]->isChecked();
-    vector <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    vector <Vertex> &vertex = model->vertex();
+    vector <Triangle> &triangle = model->triangle();
     int i;
 
     widget->countFinalMatrix();
@@ -160,94 +165,94 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].exists())
+            if(!triangle[i].exists()) continue;
+            triangle[i].setNewSelected(false);
+
+            if(ignoreBackfacing->isChecked() && QVector3D::crossProduct(vertexOnScreen[triangle[i].getIndex(1)] - vertexOnScreen[triangle[i].getIndex(0)], vertexOnScreen[triangle[i].getIndex(2)] - vertexOnScreen[triangle[i].getIndex(0)]).z() < 0) continue;
+
+            //check if triangle and rectangle can have common points
+            minT = maxT = vertexOnScreen[triangle[i].getIndex(0)];
+            for(j = 1; j < 3; j++)
             {
-                triangle[i].setNewSelected(false);
+                const QVector2D &v = vertexOnScreen[triangle[i].getIndex(j)];
+                if(v.x() < minT.x()) minT.setX(v.x());
+                if(v.y() < minT.y()) minT.setY(v.y());
+                if(v.x() > maxT.x()) maxT.setX(v.x());
+                if(v.y() > maxT.y()) maxT.setY(v.y());
+            }
+            if(min.x() > maxT.x() || minT.x() > max.x() || min.y() > maxT.y() || minT.y() > max.y()) continue;
 
-                //check if triangle and rectangle can have common points
-                minT = maxT = vertexOnScreen[triangle[i].getIndex(0)];
-                for(j = 1; j < 3; j++)
+            //check if some vertex of triangle is inside rectangle
+            for(j = 0; j < 3; j++)
+            {
+                if(selected[triangle[i].getIndex(j)])
                 {
-                    const QVector2D &v = vertexOnScreen[triangle[i].getIndex(j)];
-                    if(v.x() < minT.x()) minT.setX(v.x());
-                    if(v.y() < minT.y()) minT.setY(v.y());
-                    if(v.x() > maxT.x()) maxT.setX(v.x());
-                    if(v.y() > maxT.y()) maxT.setY(v.y());
+                    triangle[i].setNewSelected(true);
+                    break;
                 }
-                if(min.x() > maxT.x() || minT.x() > max.x() || min.y() > maxT.y() || minT.y() > max.y()) continue;
+            }
+            if(triangle[i].newSelected()) continue;
 
-                //check if some vertex of triangle is inside rectangle
-                for(j = 0; j < 3; j++)
+            //check if some point of rectangle (like vertex) is inside triangle
+            normal = QVector3D::crossProduct(vertexOnScreen[triangle[i].getIndex(1)] - vertexOnScreen[triangle[i].getIndex(0)], vertexOnScreen[triangle[i].getIndex(2)] - vertexOnScreen[triangle[i].getIndex(0)]).z();
+            for(j = 0; j < 4; j++)
+            {
+                for(k = 0; k < 3; k++)
                 {
-                    if(selected[triangle[i].getIndex(j)])
-                    {
-                        triangle[i].setNewSelected(true);
-                        break;
-                    }
+                    edge = vertexOnScreen[triangle[i].getIndex((k + 1) % 3)] - vertexOnScreen[triangle[i].getIndex(k)];
+                    fromVertexToCurrent = rectanglePoints[j] - vertexOnScreen[triangle[i].getIndex(k)];
+                    if(QVector3D::crossProduct(edge, fromVertexToCurrent).z() * normal <= 0) break;
                 }
-                if(triangle[i].newSelected()) continue;
+                if(k == 3) triangle[i].setNewSelected(true);
+            }
+            if(triangle[i].newSelected()) continue;
 
-                //check if some point of rectangle (like vertex) is inside triangle
-                normal = QVector3D::crossProduct(vertexOnScreen[triangle[i].getIndex(1)] - vertexOnScreen[triangle[i].getIndex(0)], vertexOnScreen[triangle[i].getIndex(2)] - vertexOnScreen[triangle[i].getIndex(0)]).z();
-                for(j = 0; j < 4; j++)
+            //check if edges of triangle and rectangle intersect
+            //loop through triangle edges
+            for(j = 0; j < 3; j++)
+            {
+                // edge - j, (j + 1) % 3
+                minT = maxT = vertexOnScreen[triangle[i].getIndex(j)];
+                const QVector2D &v = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
+                if(v.x() < minT.x()) minT.setX(v.x());
+                if(v.y() < minT.y()) minT.setY(v.y());
+                if(v.x() > maxT.x()) maxT.setX(v.x());
+                if(v.y() > maxT.y()) maxT.setY(v.y());
+
+                if(minT.x() > max.x() || maxT.x() < min.x() || minT.y() > max.y() || maxT.y() < min.y()) continue;
+
+                //loop through coordinates: [0] ~ .x(), [1] ~ .y()
+                for(int l = 0; l < 2; l++)
                 {
-                    for(k = 0; k < 3; k++)
+                    //loop through rectangle sides (0 - lower, 1 - higher)
+                    for(k = 0; k < 2; k ++)
                     {
-                        edge = vertexOnScreen[triangle[i].getIndex((k + 1) % 3)] - vertexOnScreen[triangle[i].getIndex(k)];
-                        fromVertexToCurrent = rectanglePoints[j] - vertexOnScreen[triangle[i].getIndex(k)];
-                        if(QVector3D::crossProduct(edge, fromVertexToCurrent).z() * normal <= 0) break;
-                    }
-                    if(k == 3) triangle[i].setNewSelected(true);
-                }
-                if(triangle[i].newSelected()) continue;
+                        int recPoint = k * (2 - l);
 
-                //check if edges of triangle and rectangle intersect
-                //loop through triangle edges
-                for(j = 0; j < 3; j++)
-                {
-                    // edge - j, (j + 1) % 3
-                    minT = maxT = vertexOnScreen[triangle[i].getIndex(j)];
-                    const QVector2D &v = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
-                    if(v.x() < minT.x()) minT.setX(v.x());
-                    if(v.y() < minT.y()) minT.setY(v.y());
-                    if(v.x() > maxT.x()) maxT.setX(v.x());
-                    if(v.y() > maxT.y()) maxT.setY(v.y());
-
-                    if(minT.x() > max.x() || maxT.x() < min.x() || minT.y() > max.y() || maxT.y() < min.y()) continue;
-
-                    //loop through coordinates: [0] ~ .x(), [1] ~ .y()
-                    for(int l = 0; l < 2; l++)
-                    {
-                        //loop through rectangle sides (0 - lower, 1 - higher)
-                        for(k = 0; k < 2; k ++)
+                        if(minT[l] < rectanglePoints[recPoint][l] && maxT[l] > rectanglePoints[recPoint][l])
                         {
-                            int recPoint = k * (2 - l);
+                            QVector2D &v1 = vertexOnScreen[triangle[i].getIndex(j)];
+                            QVector2D &v2 = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
 
-                            if(minT[l] < rectanglePoints[recPoint][l] && maxT[l] > rectanglePoints[recPoint][l])
+                            bool shouldBeSelected = false;
+                            if(v1[!l] == v2[!l])
                             {
-                                QVector2D &v1 = vertexOnScreen[triangle[i].getIndex(j)];
-                                QVector2D &v2 = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
-
-                                bool shouldBeSelected = false;
-                                if(v1[!l] == v2[!l])
+                                if(v1[!l] > min[!l] && v1[!l] < max[!l]) shouldBeSelected = true;
+                            }
+                            else
+                            {
+                                double tan = (v1[l] - v2[l]) / (v1[!l] - v2[!l]);
+                                if(tan != 0)
                                 {
-                                    if(v1[!l] > min[!l] && v1[!l] < max[!l]) shouldBeSelected = true;
+                                    double b = v1[l] - tan * v1[!l];
+                                    double x = (rectanglePoints[recPoint][l] - b) / tan;
+                                    if(x > min[!l] && x < max[!l]) shouldBeSelected = true;
                                 }
-                                else
-                                {
-                                    double tan = (v1[l] - v2[l]) / (v1[!l] - v2[!l]);
-                                    if(tan != 0)
-                                    {
-                                        double b = v1[l] - tan * v1[!l];
-                                        double x = (rectanglePoints[recPoint][l] - b) / tan;
-                                        if(x > min[!l] && x < max[!l]) shouldBeSelected = true;
-                                    }
-                                }
-                                if(shouldBeSelected)
-                                {
-                                    triangle[i].setNewSelected(true);
-                                    break;
-                                }
+                            }
+                            if(shouldBeSelected)
+                            {
+                                triangle[i].setNewSelected(true);
+                                break;
                             }
                         }
                     }

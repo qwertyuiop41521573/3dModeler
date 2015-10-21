@@ -18,7 +18,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
     if(action != START && action != FINAL) return;
 
     int i;
-    vector <Vertex> &vertex = model->getVertex();
+    vector <Vertex> &vertex = model->vertex();
 
     if(action == START)
     {
@@ -58,7 +58,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
         {
             _busy = false;
             journal->newRecord(CREATE);
-            tri.push_back(model->getTriangle().push(newTriangle.data()));
+            tri.push_back(model->triangle().push(newTriangle.data()));
             journal->submit();
             for(i = 0; i < 3; i++) vertex[newTriangle[i]].setSelected(true, false);
             newTriangle.clear();

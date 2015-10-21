@@ -200,10 +200,73 @@ void MainWindow::open()
     {
         if(openFileDialog("Open"))
         {
-            if(!model->isEmpty) model->clear();
-            model->load(model->fileName.toStdString().c_str());
+            if(!model->empty()) model->clear();
+            if(model->load(model->fileName().toStdString().c_str())) setWindowTitle("3d Modeler - " + model->fileName());
         }
     }
+}
+
+bool MainWindow::saveRequest()
+{
+    if(model->empty()) return true;
+
+    QMessageBox saveRequestMessage;
+    saveRequestMessage.setText("The model has been modified.");
+    saveRequestMessage.setInformativeText("Do you want to save your changes?");
+    saveRequestMessage.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    saveRequestMessage.setDefaultButton(QMessageBox::Save);
+    int result = saveRequestMessage.exec();
+    switch(result)
+    {
+    case QMessageBox::Save:
+    {
+        return save();
+    }
+    case QMessageBox::Discard:
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::save()
+{
+    if(!model->loaded())
+    {
+        if(openFileDialog("Save"))
+        {
+            if(model->save())
+            {
+                setWindowTitle("3d Modeler - " + model->fileName());
+                return true;
+            }
+            else return false;
+        }
+        return false;
+    }
+    else return model->save();
+}
+
+bool MainWindow::openFileDialog(QString action)
+{
+    QFileDialog dialog;
+    QStringList filters;
+    filters << "3dModeller (*.mdl)" << "All Files (*)";
+    dialog.setNameFilters(filters);
+    dialog.setWindowTitle(action + " Model");
+    dialog.setLabelText(QFileDialog::Accept, action);
+    bool result = dialog.exec();
+    if(result)
+    {
+        dialog.selectedFiles();
+        model->setFileName(dialog.selectedFiles().join(""));
+    }
+    return result;
+}
+
+void MainWindow::newModel()
+{
+    if(saveRequest()) model->clear();
+    setWindowTitle("3d Modeler");
 }
 
 void MainWindow::createActionsAndMenus()
@@ -216,7 +279,7 @@ void MainWindow::createActionsAndMenus()
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
     QAction *newAction = new QAction(tr("&New"), this);
     newAction->setShortcut(tr("Ctrl+N"));
-    connect(newAction, SIGNAL(triggered()), this, SLOT(newFile()));
+    connect(newAction, SIGNAL(triggered()), this, SLOT(newModel()));
     QAction *saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcut(tr("Ctrl+S"));
     connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
@@ -281,57 +344,20 @@ void MainWindow::setActiveTool(Tool *tool)
     tool->setActive(true);
 }
 
-bool MainWindow::saveRequest()
-{
-    if(!model->isEmpty)
-    {
-        if(model->isModified)
-        {
-            QMessageBox saveRequestMessage;
-            saveRequestMessage.setText("The model has been modified.");
-            saveRequestMessage.setInformativeText("Do you want to save your changes?");
-            saveRequestMessage.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-            saveRequestMessage.setDefaultButton(QMessageBox::Save);
-            int result = saveRequestMessage.exec();
-            switch(result)
-            {
-            case QMessageBox::Save:
-            {
-                save();
-                return true;
-            }
-            case QMessageBox::Discard:
-                return true;
-            }
-            return false;
-        }
-    }
-    return true;
-}
-
-void MainWindow::save()
-{
-    if(!model->loaded)
-    {
-        if(openFileDialog("Save")) model->save();
-    }
-    else model->save();
-}
-
 void MainWindow::selectAll()
 {
     journal.newRecord(SELECT);
     bool record = false;
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++)
+    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->vertex().size(); i++)
     {
-        if(!record && !model->getVertex()[i].selected()) record = true;
-        model->getVertex()[i].setSelected(true);
+        if(!record && !model->vertex()[i].selected()) record = true;
+        model->vertex()[i].setSelected(true);
         journal.add(i);
     }
-    else for(int i = 0; i < model->getTriangle().size(); i++)
+    else for(int i = 0; i < model->triangle().size(); i++)
     {
-        if(!record && !model->getTriangle()[i].selected()) record = true;
-        model->getTriangle()[i].setSelected(true);
+        if(!record && !model->triangle()[i].selected()) record = true;
+        model->triangle()[i].setSelected(true);
         journal.add(i);
     }
     if(record) journal.submit();
@@ -341,36 +367,19 @@ void MainWindow::selectNone()
 {
     journal.newRecord(SELECT);
     bool record = false;
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->getVertex().size(); i++)
+    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->vertex().size(); i++)
     {
-        if(!record && model->getVertex()[i].selected()) record = true;
-        model->getVertex()[i].setSelected(false);
+        if(!record && model->vertex()[i].selected()) record = true;
+        model->vertex()[i].setSelected(false);
         journal.add(i);
     }
-    else for(int i = 0; i < model->getTriangle().size(); i++)
+    else for(int i = 0; i < model->triangle().size(); i++)
     {
-        if(!record && model->getTriangle()[i].selected()) record = true;
-        model->getTriangle()[i].setSelected(false);
+        if(!record && model->triangle()[i].selected()) record = true;
+        model->triangle()[i].setSelected(false);
         journal.add(i);
     }
     if(record) journal.submit();
-}
-
-bool MainWindow::openFileDialog(QString action)
-{
-    QFileDialog dialog;
-    QStringList filters;
-    filters << "3dModeller (*.mdl)" << "All Files (*)";
-    dialog.setNameFilters(filters);
-    dialog.setWindowTitle(action + " Model");
-    dialog.setLabelText(QFileDialog::Accept, action);
-    bool result = dialog.exec();
-    if(result)
-    {
-        dialog.selectedFiles();
-        model->fileName = dialog.selectedFiles().join("");
-    }
-    return result;
 }
 
 void MainWindow::quickAccessToolOrbit()
@@ -411,8 +420,8 @@ void MainWindow::snapTogether()
     int i;
     vector <int> selected;
     QVector3D min, max;
-    vector <Vertex> &vertex = model->getVertex();
-    vector <Triangle> &triangle = model->getTriangle();
+    vector <Vertex> &vertex = model->vertex();
+    vector <Triangle> &triangle = model->triangle();
     int vertexNumber = vertex.size();
     for(i = 0; i < vertexNumber; i++)
     {
@@ -425,10 +434,10 @@ void MainWindow::snapTogether()
     }
     for( ; i < vertexNumber; i++)
     {
-        if(model->getVertex()[i].selected())
+        if(model->vertex()[i].selected())
         {
             selected.push_back(i);
-            const QVector3D &vertex = model->getVertex()[i].getPosition();
+            const QVector3D &vertex = model->vertex()[i].getPosition();
 
             if(vertex.x() > max.x()) max.setX(vertex.x());
             if(vertex.y() > max.y()) max.setY(vertex.y());
@@ -447,8 +456,8 @@ void MainWindow::deleteSlot()
 {
     int i, j, k;
     vector <int> vertexList, triangleList, vertexList2;
-    ElementContainer <Vertex> &vertex = model->getVertex();
-    ElementContainer <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Vertex> &vertex = model->vertex();
+    ElementContainer <Triangle> &triangle = model->triangle();
 
     journal.newRecord(REMOVE);
 
@@ -568,18 +577,18 @@ void MainWindow::undo()
     {
         const CreateOrRemove &data = *rec.dataRO().createOrRemove;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) model->getVertex()[vertex[i].index()].remove();
+        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()].remove();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) model->getTriangle()[triangle[i].index()].remove();
+        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()].remove();
         break;
     }
     case REMOVE:
     {
         const CreateOrRemove &data = *rec.dataRO().createOrRemove;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) model->getVertex()[vertex[i].index()] = vertex[i].valRO();
+        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].valRO();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) model->getTriangle()[triangle[i].index()] = triangle[i].valRO();
+        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()] = triangle[i].valRO();
         break;
     }
     case SELECT:
@@ -588,7 +597,7 @@ void MainWindow::undo()
         for(i = 0; i < data.size(); i++)
         {
             int ind = data[i].index;
-            Element &element = data.vertices() ? (Element&)model->getVertex()[ind] : (Element&)model->getTriangle()[ind];
+            Element &element = data.vertices() ? (Element&)model->vertex()[ind] : (Element&)model->triangle()[ind];
             element.setSelected(!data[i].value);
         }
         break;
@@ -600,7 +609,7 @@ void MainWindow::undo()
         const QMatrix4x4 &transformation = data.transformation().inverted();
         for(int i = 0; i < list.size(); i++)
         {
-            Vertex &vertex = model->getVertex()[list[i]];
+            Vertex &vertex = model->vertex()[list[i]];
             vertex.setPosition(transformation * vertex.getPosition());
         }
         break;
@@ -623,18 +632,18 @@ void MainWindow::redo()
     {
         const CreateOrRemove &data = *rec.dataRO().createOrRemove;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) model->getVertex()[vertex[i].index()] = vertex[i].valRO();
+        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].valRO();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) model->getTriangle()[triangle[i].index()] = triangle[i].valRO();
+        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()] = triangle[i].valRO();
         break;
     }
     case REMOVE:
     {
         const CreateOrRemove &data = *rec.dataRO().createOrRemove;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) model->getVertex()[vertex[i].index()].remove();
+        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()].remove();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) model->getTriangle()[triangle[i].index()].remove();
+        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()].remove();
         break;
     }
     case SELECT:
@@ -643,7 +652,7 @@ void MainWindow::redo()
         for(i = 0; i < data.size(); i++)
         {
             int ind = data[i].index;
-            Element &element = data.vertices() ? (Element&)model->getVertex()[ind] : (Element&)model->getTriangle()[ind];
+            Element &element = data.vertices() ? (Element&)model->vertex()[ind] : (Element&)model->triangle()[ind];
             element.setSelected(data[i].value);
         }
         break;
@@ -655,7 +664,7 @@ void MainWindow::redo()
         const QMatrix4x4 &transformation = data.transformation();
         for(int i = 0; i < list.size(); i++)
         {
-            Vertex &vertex = model->getVertex()[list[i]];
+            Vertex &vertex = model->vertex()[list[i]];
             vertex.setPosition(transformation * vertex.getPosition());
         }
         break;

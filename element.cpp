@@ -2,7 +2,9 @@
 
 Element::Element()
 {
-
+    bool _selected = false;
+    bool _newSelected = false;
+    bool _exists = true;
 }
 
 void Element::setSelected(bool selected, bool newSelected)

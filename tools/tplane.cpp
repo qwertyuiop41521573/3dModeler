@@ -17,8 +17,8 @@ void TPlane::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->getVertex();
-    ElementContainer <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Vertex> &vertex = model->vertex();
+    ElementContainer <Triangle> &triangle = model->triangle();
     int i;
     widget->countFinalInverseMatrix();
 

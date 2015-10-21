@@ -29,7 +29,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     if(action != STOP && action != STAGE2) TEllipse::function(action, event);
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->vertex();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -116,8 +116,8 @@ void TCylinder::function(Action action, QMouseEvent *event)
 
 void TCylinder::createWallsAndSecondCap(bool final)
 {
-    ElementContainer <Vertex> &vertex = model->getVertex();
-    ElementContainer <Triangle> &triangle = model->getTriangle();
+    ElementContainer <Vertex> &vertex = model->vertex();
+    ElementContainer <Triangle> &triangle = model->triangle();
     int segments = spinBoxSegments->value();
     int i;
 

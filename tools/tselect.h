@@ -18,6 +18,7 @@ public slots:
 
 private:
     MyCheckBox *checkBox[2];
+    QCheckBox *ignoreBackfacing;
 
     void countMinAndMax(QVector2D *min, QVector2D *max, const QVector2D &currentPosition);
     void _select(const QVector2D &min, const QVector2D &max);

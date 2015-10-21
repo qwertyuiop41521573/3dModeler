@@ -28,7 +28,7 @@ void TVertex::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->getVertex();
+    ElementContainer <Vertex> &vertex = model->vertex();
     widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {

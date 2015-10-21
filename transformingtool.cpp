@@ -12,7 +12,7 @@ TransformingTool::TransformingTool(MainWindow *mainWindow) : ToolWithWidget(main
 
 void TransformingTool::transform()
 {
-    vector <Vertex> &vertex = model->getVertex();
+    vector <Vertex> &vertex = model->vertex();
     int i;
 
     if(workWithElements[0]->isChecked())
@@ -21,7 +21,7 @@ void TransformingTool::transform()
     }
     else
     {
-        vector <Triangle> &triangle = model->getTriangle();
+        vector <Triangle> &triangle = model->triangle();
         int j;
 
         int index;
@@ -57,7 +57,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
         journal->newRecord(EDIT);
 
         toTransform.clear();
-        vector <Vertex> &vertex = model->getVertex();
+        vector <Vertex> &vertex = model->vertex();
         int i;
 
         if(workWithElements[0]->isChecked())
@@ -66,7 +66,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
         }
         else
         {
-            vector <Triangle> &triangle = model->getTriangle();
+            vector <Triangle> &triangle = model->triangle();
             int j;
 
             int index;
@@ -100,7 +100,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     }
     if(action == EXECUTE)
     {
-        vector <Vertex> &vertex = model->getVertex();
+        vector <Vertex> &vertex = model->vertex();
         for(int i = 0; i < toTransform.size(); i++) vertex[toTransform[i]].setPosition(transformation * vertex[toTransform[i]].getPosition());
         journal->transform(transformation);
     }

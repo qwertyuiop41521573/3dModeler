@@ -5,114 +5,81 @@
 
 using namespace std;
 
-
-// not working
-
-
 Model::Model(Journal *journal)
 {
-    vertex = new ElementContainer <Vertex>(journal);
-    triangle = new ElementContainer <Triangle>(journal);
+    _vertex = new ElementContainer <Vertex>(journal);
+    _triangle = new ElementContainer <Triangle>(journal);
 }
 
-bool Model::load( const char *newFileName )
+bool Model::load(const char *newFileName)
 {
-    loaded = true;
-    FILE *input = fopen( newFileName, "rt" );
-    if( !input )
-    {
-        loaded = false;
-    }
+    _loaded = true;
+    FILE *input = fopen(newFileName, "rt");
+    if(!input) _loaded = false;
     else
     {
-        int i, j;
-        fscanf( input, "%i", &i );
-        if( i != 0 && i != 1 )
+        int i, j, size;
+        fscanf(input, "%i", &size);
+        _vertex->resize(size);
+        double x, y, z;
+        for(i = 0; i < _vertex->size(); i++)
         {
-            loaded = false;
+            fscanf(input, "%lf %lf %lf ", &x, &y, &z);
+            _vertex->at(i) = QVector3D(x, y, z);
         }
-        else
+        fscanf(input, "%i", &size);
+        _triangle->resize(size);
+        int temp;
+        for(i = 0; i < _triangle->size(); i++ ) for(j = 0; j < 3; j++)
         {
-            textured = i;
-            if( textured )
-            {
-                char tex[] = "";
-                fscanf( input, "%s", tex );
-                texture += tex;
-            }
-
-            //fscanf( input, "%i", &triangleNumber );
-            //triangle.resize( triangleNumber );
-            int index;
-            /*for( i = 0; i < triangleNumber; i++ )
-            {
-                for( j = 0; j < 3; j++ )
-                {
-                    fscanf( input, "%i", &index );
-                    triangle[ i ].setIndex( j, index );
-                }
-            }*/
-            //if( textured ) vertexNumber = 3 * triangleNumber;
-            //else fscanf( input, "%i", &vertexNumber );
-            //vertex.resize( vertexNumber );
-            double x, y, z;
-            /*for( i = 0; i < vertexNumber; i++ )
-            {
-                fscanf( input, "%le %le %le", &x, &y, &z );
-                vertex[ i ].setPosition( x, y, z );
-                if( textured )
-                {
-                    fscanf( input, "%le %le %le", &x, &y );
-                    vertex[ i ].setUV( x, y );
-                }
-            }*/
-
-            fclose( input );
-            isEmpty = false;
-            fileName = QString( newFileName );
+            fscanf(input, "%i", &temp);
+            _triangle->at(i).setIndex(j, temp);
         }
     }
 
-
-    return loaded;
+    return _loaded;
 }
 
 void Model::clear()
 {
-    //vertexNumber = triangleNumber = 0;
-   // vertex.clear();
-  //  triangle.clear();
-    isEmpty = true;
-    isModified = loaded = false;
+    _vertex->clear();
+    _triangle->clear();
+    _loaded = false;
 }
 
-void Model::save()
+bool Model::save()
 {
-    bool saved = true;
-    FILE *output = fopen( fileName.toStdString().c_str(), "wt" );
-    if( !output )
-    {
-        saved = false;
-    }
-    else
-    {
-        int i, j;
-        //fprintf( output, "%i ", vertexNumber );
-        /*for( i = 0; i < vertexNumber; i++ )
-            fprintf( output, "%lg %lg %lg ", vertex[ i ].getPosition().
-                     x(), vertex[ i ].getPosition().y(), vertex[ i ].
-                     getPosition().z() );*/
+    if(!(_fileName.toStdString().substr(_fileName.length() - 4, _fileName.length()) == ".mdl")) _fileName += ".mdl";
+    FILE *output = fopen(_fileName.toStdString().c_str(), "wt");
+    if(!output) return false;
 
-        //fprintf( output, "%i ", triangleNumber );
-        /*for( i = 0; i < triangleNumber; i++ )
-        {
-            for( j = 0; j < 3; j++ )
-                fprintf( output, "%i ", triangle[ i ].getIndex( j ) );
-        }*/
-
-        fclose( output );
-        isModified = false;
+    int i, j;
+    int vertices = 0;
+    for(i = 0; i < _vertex->size(); i++) if(_vertex->at(i).exists()) vertices++;
+    fprintf(output, "%i ", vertices);
+    for(i = 0; i < _vertex->size(); i++)
+    {
+        if(!_vertex->at(i).exists()) continue;
+        const QVector3D &pos = _vertex->at(i).getPosition();
+        fprintf(output, "%lg %lg %lg ", pos.x(), pos.y(), pos.z());
     }
+
+    int triangles = 0;
+    for(i = 0; i < _triangle->size(); i++) if(_triangle->at(i).exists()) triangles++;
+    fprintf(output, "%i ", triangles);
+    for(i = 0; i < _triangle->size(); i++ )
+    {
+        if(!_triangle->at(i).exists()) continue;
+        for(j = 0; j < 3; j++) fprintf(output, "%i ", _triangle->at(i).getIndex(j));
+    }
+
+    fclose(output);
+    _loaded = true;
 }
 
+bool Model::empty()
+{
+    for(int i = 0; i < _vertex->size(); i++) if(_vertex->at(i).exists()) return false;
+    return true;
+}
 

@@ -42,7 +42,6 @@ private:
     //it's more logical to create "enum { YES, NO, NEW } SelectedState" instead of this 2 bools, but then some things in TSelect won't work - vertices that enter selection rectangle become blue (newSelected), but when they leave rectangle it's unknown what color they had (red or black - selected or not) before entering rectangle
     bool _selected = false;
     bool _newSelected = false;
-
     bool _exists = true;
 };
 

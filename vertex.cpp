@@ -1,6 +1,6 @@
 #include "vertex.h"
 
-Vertex::Vertex(const QVector3D &newPosition)
+Vertex::Vertex(const QVector3D &newPosition) : Element()
 {
     position = newPosition;
     _isVertex = true;
