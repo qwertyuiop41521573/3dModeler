@@ -107,6 +107,11 @@ RESOURCES += \
 # selecting faces in textured
 
 # weld vertices
+# undo, redo for snap and weld
+# all changes to model should be done through container,  journal should take changes from it! no objects except container should write to journal
+# try to remove newRecord and submit from creatingtool
+# load, save, new - check journal
+
 # items selected label
 # plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
 # toolBox - capture mouse movement in whole window, not in widget

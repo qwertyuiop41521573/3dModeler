@@ -67,6 +67,7 @@ private slots:
     void selectAll();
     void selectNone();
     void snapTogether();
+    void weldTogether();
     void deleteSlot();
 
     void final()

@@ -306,6 +306,9 @@ void MainWindow::createActionsAndMenus()
     QAction *snapTogetherAction = new QAction(tr("&Snap Together"), this);
     snapTogetherAction->setShortcut(tr("Ctrl+T"));
     connect(snapTogetherAction, SIGNAL(triggered()), this, SLOT(snapTogether()));
+    QAction *weldTogetherAction = new QAction(tr("&Weld Together"), this);
+    weldTogetherAction->setShortcut(tr("Ctrl+W"));
+    connect(weldTogetherAction, SIGNAL(triggered()), this, SLOT(weldTogether()));
     QAction *deleteAction = new QAction(tr("&Delete"), this);
     deleteAction->setShortcut(tr("Del"));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteSlot()));
@@ -324,6 +327,7 @@ void MainWindow::createActionsAndMenus()
     editMenu->addAction(selectAllAction);
     editMenu->addAction(selectNoneAction);
     editMenu->addAction(snapTogetherAction);
+    editMenu->addAction(weldTogetherAction);
     editMenu->addAction(deleteAction);
 }
 
@@ -455,6 +459,43 @@ void MainWindow::snapTogether()
     }
     QVector3D center = (max + min) / 2;
     for(i = 0; i < selected.size(); i++) vertex[selected[i]].setPosition(center);
+}
+
+void MainWindow::weldTogether()
+{
+    int i, j, k, l;
+    ElementContainer <Vertex> &vertex = model->vertex();
+    ElementContainer <Triangle> &triangle = model->triangle();
+    vector <vector <int> > groups;
+    for(i = 0; i < vertex.size(); i++)
+    {
+        if(!vertex[i].exists() || !vertex[i].selected()) continue;
+
+        for(j = 0; j < groups.size(); j++)
+        {
+            if(vertex[i].getPosition() == vertex[groups[j][0]].getPosition())
+            {
+                groups[j].push_back(i);
+                break;
+            }
+        }
+        if(j < groups.size()) continue;
+
+        groups.resize(groups.size() + 1);
+        groups[groups.size() - 1].push_back(i);
+    }
+
+    for(i = 0; i < groups.size(); i++)
+    {
+        if(groups[i].size() == 1) continue;
+
+        for(j = 1; j < groups[i].size(); j++)
+        {
+            int index = groups[i][j];
+            vertex.remove(index);
+            for(k = 0; k < triangle.size(); k++) for(l = 0; l < 3; l++) if(triangle[k].getIndex(l) == index) triangle[k].setIndex(l, groups[i][0]);
+        }
+    }
 }
 
 void MainWindow::deleteSlot()
