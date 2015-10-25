@@ -74,46 +74,41 @@ void TSelect::function(Action action, QMouseEvent *event)
     case STOP:
     {
         _busy = false;
-        journal->newRecord(SELECT);
+        journal->newRecord(EDIT);
 
-        vector <Vertex> &vertex = model->vertex();
-        vector <Triangle> &triangle = model->triangle();
-        bool workWithVert = workWithElements[0]->isChecked();
-        int i;
+        ElementContainer <Vertex> &vertex = model->vertex();
+        ElementContainer <Triangle> &triangle = model->triangle();
 
-        vector <Element*> element;
-        element.resize(workWithVert ? vertex.size() : triangle.size());
-        for(i = 0; i < element.size(); i++)
+        if(workWithElements[0]->isChecked())
         {
-            if(workWithVert) element[i] = &vertex[i];
-            else element[i] = &triangle[i];
+            for(int i = 0; i < vertex.size(); i++)
+            {
+                if(!vertex[i].exists()) continue;
+
+                bool newSelected = vertex[i].newSelected();
+                vertex[i].setNewSelected(false);
+
+                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) vertex.setSelected(i, newSelected);
+                if(checkBox[0]->isChecked() && newSelected) vertex.setSelected(i, true);
+                if(checkBox[1]->isChecked() && newSelected) vertex.setSelected(i, false);
+            }
+        }
+        else
+        {
+            for(int i = 0; i < triangle.size(); i++)
+            {
+                if(!triangle[i].exists()) continue;
+
+                bool newSelected = triangle[i].newSelected();
+                triangle[i].setNewSelected(false);
+
+                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) triangle.setSelected(i, newSelected);
+                if(checkBox[0]->isChecked() && triangle[i].newSelected()) triangle.setSelected(i, true);
+                if(checkBox[1]->isChecked() && triangle[i].newSelected()) triangle.setSelected(i, false);
+            }
         }
 
-        bool record;
-        for(i = 0; i < element.size(); i++)
-        {
-            if(!element[i]->exists()) continue;
-            record = false;
-            if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked())
-            {
-                if(element[i]->selected() != element[i]->newSelected()) record = true;
-                element[i]->setSelected(element[i]->newSelected());
-            }
-            if(checkBox[0]->isChecked() && element[i]->newSelected())
-            {
-                if(!element[i]->selected()) record = true;
-                element[i]->setSelected(true);
-            }
-            if(checkBox[1]->isChecked() && element[i]->newSelected())
-            {
-                if(element[i]->selected()) record = true;
-                element[i]->setSelected(false);
-            }
-            element[i]->setNewSelected(false);
-            if(record) journal->add(i);
-        }
-
-        if(!journal->currentRecordIsEmpty()) journal->submit();
+        journal->submit();
         break;
     }
     }
@@ -229,32 +224,30 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
                     {
                         int recPoint = k * (2 - l);
 
-                        if(minT[l] < rectanglePoints[recPoint][l] && maxT[l] > rectanglePoints[recPoint][l])
-                        {
-                            QVector2D &v1 = vertexOnScreen[triangle[i].getIndex(j)];
-                            QVector2D &v2 = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
+                        if(minT[l] >= rectanglePoints[recPoint][l] || maxT[l] <= rectanglePoints[recPoint][l]) continue;
 
-                            bool shouldBeSelected = false;
-                            if(v1[!l] == v2[!l])
+                        QVector2D &v1 = vertexOnScreen[triangle[i].getIndex(j)];
+                        QVector2D &v2 = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
+
+                        bool shouldBeSelected = false;
+                        if(v1[!l] == v2[!l])
+                        {
+                            if(v1[!l] > min[!l] && v1[!l] < max[!l]) shouldBeSelected = true;
+                        }
+                        else
+                        {
+                            double tan = (v1[l] - v2[l]) / (v1[!l] - v2[!l]);
+                            if(tan != 0)
                             {
-                                if(v1[!l] > min[!l] && v1[!l] < max[!l]) shouldBeSelected = true;
-                            }
-                            else
-                            {
-                                double tan = (v1[l] - v2[l]) / (v1[!l] - v2[!l]);
-                                if(tan != 0)
-                                {
-                                    double b = v1[l] - tan * v1[!l];
-                                    double x = (rectanglePoints[recPoint][l] - b) / tan;
-                                    if(x > min[!l] && x < max[!l]) shouldBeSelected = true;
-                                }
-                            }
-                            if(shouldBeSelected)
-                            {
-                                triangle[i].setNewSelected(true);
-                                break;
+                                double b = v1[l] - tan * v1[!l];
+                                double x = (rectanglePoints[recPoint][l] - b) / tan;
+                                if(x > min[!l] && x < max[!l]) shouldBeSelected = true;
                             }
                         }
+                        if(!shouldBeSelected) continue;
+
+                        triangle[i].setNewSelected(true);
+                        break;
                     }
                 }
             }

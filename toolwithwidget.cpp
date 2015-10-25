@@ -14,9 +14,9 @@ ToolWithWidget::ToolWithWidget(MainWindow *mainWindow) : Tool(mainWindow)
 void ToolWithWidget::setActive(bool value)
 {
     Tool::setActive(value);
-    if( _widget )
+    if(_widget)
     {
-        if( value ) _widget->show();
+        if(value) _widget->show();
         else _widget->hide();
     }
 }

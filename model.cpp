@@ -60,6 +60,7 @@ bool Model::save()
     for(i = 0; i < _vertex->size(); i++)
     {
         if(!_vertex->at(i).exists()) continue;
+
         const QVector3D &pos = _vertex->at(i).getPosition();
         fprintf(output, "%lg %lg %lg ", pos.x(), pos.y(), pos.z());
     }
@@ -70,6 +71,7 @@ bool Model::save()
     for(i = 0; i < _triangle->size(); i++ )
     {
         if(!_triangle->at(i).exists()) continue;
+
         for(j = 0; j < 3; j++) fprintf(output, "%i ", _triangle->at(i).getIndex(j));
     }
 

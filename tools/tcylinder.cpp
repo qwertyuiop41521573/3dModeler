@@ -54,32 +54,28 @@ void TCylinder::function(Action action, QMouseEvent *event)
     //if(!_stage2) is done in TEllipse::function(action, event);
     case EXECUTE:
     {
-        if(_stage2)
+        if(!_stage2) break;
+        Projection projection = widget->getProjection();
+        double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
+
+        for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].addToPosition(normal * dy);
+
+        //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
+        QVector3D v1 = vertex[ver[0]].getPosition() - vertex[ver[segments]].getPosition();
+        QVector3D v2 = vertex[ver[1]].getPosition() - vertex[ver[segments]].getPosition();
+        QVector3D h = vertex[ver[segments]].getPosition() - vertex[ver[2 * segments + 1]].getPosition();
+
+        //flip if needed
+        if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) <= 0) break;
+        QVector3D temp;
+        for(i = 0; i < segments / 2; i++)
         {
-            Projection projection = widget->getProjection();
-            double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
-
-            for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].addToPosition(normal * dy);
-
-            //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
-            QVector3D v1 = vertex[ver[0]].getPosition() - vertex[ver[segments]].getPosition();
-            QVector3D v2 = vertex[ver[1]].getPosition() - vertex[ver[segments]].getPosition();
-            QVector3D h = vertex[ver[segments]].getPosition() - vertex[ver[2 * segments + 1]].getPosition();
-
-            //flip if needed
-            if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) > 0)
-            {
-                QVector3D temp;
-                for(i = 0; i < segments / 2; i++)
-                {
-                    temp = vertex[ver[segments + 1 + i]].getPosition();
-                    vertex[ver[segments + 1 + i]] = vertex[ver[2 * segments - i]];
-                    vertex[ver[2 * segments - i]].setPosition(temp);
-                    temp = vertex[ver[i]].getPosition();
-                    vertex[ver[i]] = vertex[ver[segments - 1 - i]];
-                    vertex[ver[segments - 1 - i]].setPosition(temp);
-                }
-            }
+            temp = vertex[ver[segments + 1 + i]].getPosition();
+            vertex[ver[segments + 1 + i]] = vertex[ver[2 * segments - i]];
+            vertex[ver[2 * segments - i]].setPosition(temp);
+            temp = vertex[ver[i]].getPosition();
+            vertex[ver[i]] = vertex[ver[segments - 1 - i]];
+            vertex[ver[segments - 1 - i]].setPosition(temp);
         }
         break;
     }

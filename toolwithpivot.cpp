@@ -20,21 +20,19 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     {
         for(i = 0; i < vertex.size(); i++)
         {
-            if(vertex[i].exists() && vertex[i].selected())
-            {
-                min = max = vertex[i].getPosition();
-                break;
-            }
+            if(!vertex[i].exists() || !vertex[i].selected()) continue;
+
+            min = max = vertex[i].getPosition();
+            break;
         }
         for(i++; i < vertex.size(); i++)
         {
-            if(vertex[i].exists() && vertex[i].selected())
+            if(!vertex[i].exists() || !vertex[i].selected()) continue;
+
+            for(j = 0; j < 3; j++)
             {
-                for(j = 0; j < 3; j++)
-                {
-                    if(vertex[i].getPosition()[j] > max[j]) max[j] = vertex[i].getPosition()[ j ];
-                    if(vertex[i].getPosition()[j] < min[j]) min[j] = vertex[i].getPosition()[j];
-                }
+                if(vertex[i].getPosition()[j] > max[j]) max[j] = vertex[i].getPosition()[ j ];
+                if(vertex[i].getPosition()[j] < min[j]) min[j] = vertex[i].getPosition()[j];
             }
         }
     }
@@ -43,31 +41,28 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         int index;
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].exists() && triangle[i].selected())
-            {
-                min = max = vertex[triangle[i].getIndex(0)].getPosition();
-                break;
-            }
+            if(!triangle[i].exists() || !triangle[i].selected()) continue;
+
+            min = max = vertex[triangle[i].getIndex(0)].getPosition();
+            break;
         }
 
         checked.resize(vertex.size());
         for(i = 0; i < vertex.size(); i++) checked[i] = false;
         for( ; i < triangle.size(); i++)
         {
-            if(triangle[i].exists() && triangle[i].selected())
+            if(!triangle[i].exists() || !triangle[i].selected()) continue;
+
+            for(j = 0; j < 3; j++)
             {
-                for(j = 0; j < 3; j++)
+                index = triangle[i].getIndex(j);
+                if(checked[index]) continue;
+
+                for(k = 0; k < 3; k++)
                 {
-                    index = triangle[i].getIndex(j);
-                    if(!checked[index])
-                    {
-                        for(k = 0; k < 3; k++)
-                        {
-                            checked[index] = true;
-                            if(vertex[index].getPosition()[k] > max[k]) max[k] = vertex[index].getPosition()[k];
-                            if(vertex[index].getPosition()[k] < min[k]) min[k] = vertex[index].getPosition()[k];
-                        }
-                    }
+                    checked[index] = true;
+                    if(vertex[index].getPosition()[k] > max[k]) max[k] = vertex[index].getPosition()[k];
+                    if(vertex[index].getPosition()[k] < min[k]) min[k] = vertex[index].getPosition()[k];
                 }
             }
         }

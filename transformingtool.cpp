@@ -30,17 +30,15 @@ void TransformingTool::transform()
 
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].exists() && triangle[i].selected())
+            if(!triangle[i].exists() || !triangle[i].selected()) continue;
+
+            for(j = 0; j < 3; j++)
             {
-                for(j = 0; j < 3; j++)
-                {
-                    index = triangle[i].getIndex(j);
-                    if(!checked[index])
-                    {
-                        checked[index] = true;
-                        toTransform.push_back(index);
-                    }
-                }
+                index = triangle[i].getIndex(j);
+                if(checked[index]) continue;
+
+                checked[index] = true;
+                toTransform.push_back(index);
             }
         }
         checked.clear();
@@ -75,33 +73,37 @@ void TransformingTool::function(Action action, QMouseEvent *event)
 
             for(i = 0; i < triangle.size(); i++)
             {
-                if(triangle[i].exists() && triangle[i].selected())
+                if(!triangle[i].exists() || !triangle[i].selected()) continue;
+
+                for(j = 0; j < 3; j++)
                 {
-                    for(j = 0; j < 3; j++)
-                    {
-                        index = triangle[i].getIndex(j);
-                        if(!checked[index])
-                        {
-                            checked[index] = true;
-                            toTransform.push_back(index);
-                        }
-                    }
+                    index = triangle[i].getIndex(j);
+                    if(checked[index]) continue;
+
+                    checked[index] = true;
+                    toTransform.push_back(index);
                 }
             }
             checked.clear();
         }
-        journal->addList(toTransform);
+
+        for(int i = 0; i < toTransform.size(); i++) journal->addBefore(true, toTransform[i]);
+
         if(action == FINAL) action = EXECUTE;
     }
     if(action == STOP)
     {
         _busy = false;
+
+        vector <TwoElementsWithIndex <Vertex> > &vertex = journal->current().data().edit->vertex();
+        for(int i = 0; i < vertex.size(); i++) vertex[i].setAfter(model->vertex()[vertex[i].index()]);
+
         journal->submit();
     }
     if(action == EXECUTE)
     {
         vector <Vertex> &vertex = model->vertex();
         for(int i = 0; i < toTransform.size(); i++) vertex[toTransform[i]].setPosition(transformation * vertex[toTransform[i]].getPosition());
-        journal->transform(transformation);
+        //journal->transform(transformation);
     }
 }

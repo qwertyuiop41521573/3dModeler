@@ -47,11 +47,10 @@ void TTriangle::function(Action action, QMouseEvent *event)
                     break;
                 }
             }
-            if(!selectedBefore && widget->isSelected(vertex[i].getPosition(), min, max))
-            {
-                newTriangle.push_back(i);
-                vertex[i].setNewSelected(true);
-            }
+            if(selectedBefore || !widget->isSelected(vertex[i].getPosition(), min, max)) continue;
+            
+            newTriangle.push_back(i);
+            vertex[i].setNewSelected(true);
         }
         if(newTriangle.size() == 1) _busy = true;
         if(newTriangle.size() == 3)

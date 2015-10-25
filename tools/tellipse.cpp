@@ -138,56 +138,54 @@ void TEllipse::function(Action action, QMouseEvent *event)
     //    (false) or cylinder (true)
     case EXECUTE:
     {
-        if(_hasStage2 ? _stage2 == false : true)
+        if(_hasStage2 ? _stage2 == true : false) break;
+        Projection projection = widget->getProjection();
+        bool circle = checkBoxCircle->isChecked();
+        widget->countFinalInverseMatrix();
+        if(projection == PERSPECTIVE)
         {
-            Projection projection = widget->getProjection();
-            bool circle = checkBoxCircle->isChecked();
-            widget->countFinalInverseMatrix();
-            if(projection == PERSPECTIVE)
-            {
-                double height = startPosition3D.z();
-                QVector3D worldCoordinates;
-                widget->fromScreenToWorld(&worldCoordinates, event, true, height);
-                QVector2D radius = QVector2D(worldCoordinates - startPosition3D) / double(2);
-                QVector3D center = startPosition3D + radius;
-                vertex[ver[segments]].setPosition(center);
-                QMatrix4x4 scaleAndTranslate;
-                scaleAndTranslate.setToIdentity();
-                scaleAndTranslate.translate(center);
-                if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), 1);
-                else scaleAndTranslate.scale(radius.x(), radius.y(), 1);
+            double height = startPosition3D.z();
+            QVector3D worldCoordinates;
+            widget->fromScreenToWorld(&worldCoordinates, event, true, height);
+            QVector2D radius = QVector2D(worldCoordinates - startPosition3D) / double(2);
+            QVector3D center = startPosition3D + radius;
+            vertex[ver[segments]].setPosition(center);
+            QMatrix4x4 scaleAndTranslate;
+            scaleAndTranslate.setToIdentity();
+            scaleAndTranslate.translate(center);
+            if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), 1);
+            else scaleAndTranslate.scale(radius.x(), radius.y(), 1);
 
-                double angle = 360 / double(segments);
-                if(!circle) angle *= sign(radius.x() * radius.y());
-                normal = { 0, 0, 1 };
-                createCap({ 1.f, 0.f, 0.f, 1.f }, angle, scaleAndTranslate);
-            }
+            double angle = 360 / double(segments);
+            if(!circle) angle *= sign(radius.x() * radius.y());
+            normal = { 0, 0, 1 };
+            createCap({ 1.f, 0.f, 0.f, 1.f }, angle, scaleAndTranslate);
+        }
+        else
+        {
+            QVector2D currentPosition = QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
+            QVector3D worldCoordinates;
+
+            widget->_fromScreenToWorld(&worldCoordinates, QVector4D(currentPosition, 0, 1));
+            QVector3D radius = (worldCoordinates - startPosition3D) / double(2);
+            QVector3D center = startPosition3D + radius;
+            vertex[ver[segments]].setPosition(center);
+
+            const QVector3D &camRot = widget->getCamera().rotation();
+            normal = QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
+            QMatrix4x4 scaleAndTranslate;
+            scaleAndTranslate.setToIdentity();
+            scaleAndTranslate.translate(center);
+            if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), radius.length());
             else
             {
-                QVector2D currentPosition = QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
-                QVector3D worldCoordinates;
-
-                widget->_fromScreenToWorld(&worldCoordinates, QVector4D(currentPosition, 0, 1));
-                QVector3D radius = (worldCoordinates - startPosition3D) / double(2);
-                QVector3D center = startPosition3D + radius;
-                vertex[ver[segments]].setPosition(center);
-
-                const QVector3D &camRot = widget->getCamera().rotation();
-                normal = QVector3D(cosR(camRot.x()) * cosR(camRot.z()), cosR(camRot.x()) * sinR(camRot.z()), sinR(camRot.x()));
-                QMatrix4x4 scaleAndTranslate;
-                scaleAndTranslate.setToIdentity();
-                scaleAndTranslate.translate(center);
-                if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), radius.length());
-                else
-                {
-                    for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] = sign(radius[i]);
-                    scaleAndTranslate.scale(radius.x(), radius.y(), radius.z());
-                }
-                double angle = 360 / double(segments) * sign(radius.x() * radius.y() * radius.z());
-                if(projection == TOP || projection == BOTTOM) angle *= -1;
-                bool front = projection == FRONT || projection == BACK;
-                createCap({ !front, front, 0.f, 1.f }, angle, scaleAndTranslate);
+                for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] = sign(radius[i]);
+                scaleAndTranslate.scale(radius.x(), radius.y(), radius.z());
             }
+            double angle = 360 / double(segments) * sign(radius.x() * radius.y() * radius.z());
+            if(projection == TOP || projection == BOTTOM) angle *= -1;
+            bool front = projection == FRONT || projection == BACK;
+            createCap({ !front, front, 0.f, 1.f }, angle, scaleAndTranslate);
         }
         break;
     }
@@ -206,11 +204,10 @@ void TEllipse::function(Action action, QMouseEvent *event)
         }
 
         for(i = 0; i <= segments; i++) vertex[ver[i]].setSelected(true, false);
-        if(!_hasStage2)
-        {
-            _busy = false;
-            journal->submit();
-        }
+
+        if(_hasStage2) break;
+        _busy = false;
+        journal->submit();
     }
     }
 }

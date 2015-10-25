@@ -106,12 +106,15 @@ RESOURCES += \
 # light
 # selecting faces in textured
 
-# weld vertices
-# undo, redo for snap and weld
-# all changes to model should be done through container,  journal should take changes from it! no objects except container should write to journal
-# try to remove newRecord and submit from creatingtool
 # load, save, new - check journal
+# replace vertexNu,ber with vertex.size()
+# rename functions like addToPosition -> move, setPosition -> moveTo
+# check TBox - action == STOP - should not submit if failed
+# fix selecting triangles
+# replace [size() - 1] with .last()
+# trabsformingTool - move tranform() to function(EXECUTE)
 
+# now:
 # items selected label
 # plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
 # toolBox - capture mouse movement in whole window, not in widget
@@ -132,7 +135,15 @@ RESOURCES += \
 # journal - create, remove for vertex, triangle - make some abstraction
 # move add(int index) to Element ?
 
-
+# commit:
+# fix TTriangle!
+# rewrite ifs - add continue and break - done, check if everything works
+# rewrote journal, Type is now enum { CREATE, EDIT }
+#    transforming tool
+#    selectAll, None
+# weld vertices
+# undo, redo for snap and weld
+# added exists() where it should be
 
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget

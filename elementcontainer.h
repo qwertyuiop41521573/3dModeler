@@ -16,6 +16,8 @@ public:
     ElementContainer(Journal *journal);
     int push(const T &t);
     void remove(int index);
+    void setSelected(int index, bool value);
+   // void
 
     using vector <T>::size;
     using vector <T>::at;

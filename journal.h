@@ -15,14 +15,20 @@ public:
     void setVariables(Model *model, QRadioButton **workWithElements);
 
     void newRecord(Type type);
+
     void addVertex(int index);
     void addTriangle(int index);
-    void add(int index);
-    void addList(const vector <int> &list);
+
+    void addBefore(bool isVertex, int index);
+    void addAfter(bool isVertex);
+
     void transform(const QMatrix4x4 &matrix);
     void submit();
 
-    const Record &current()
+    const Record &currentRO()
+    { return at(_current); };
+
+    Record &current()
     { return at(_current); };
 
     const Record &next()
@@ -40,9 +46,6 @@ public:
     bool isFull()
     { return _current == size() - 1; };
 
-    bool currentRecordIsEmpty()
-    { return list.size() == 0; };
-
 signals:
 
 public slots:
@@ -52,7 +55,7 @@ private:
     Model *_model;
     QRadioButton **_workWithElements;
 
-    vector <int> vertexList, triangleList, list;
+    vector <int> vertexList, triangleList;
     Type currentType;
 
     void push();

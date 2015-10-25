@@ -9,8 +9,7 @@ TRotateCamera::TRotateCamera(MainWindow *mainWindow) : Tool(mainWindow)
 void TRotateCamera::function(Action action, QMouseEvent *event)
 {
     GLWidget *widget = *_activeWidget;
-    if(action != EXECUTE || widget->getProjection() != PERSPECTIVE)
-        return;
+    if(action != EXECUTE || widget->getProjection() != PERSPECTIVE) return;
     Camera &camera = widget->getCamera();
     camera.addToRotation(Z, (-event->x() + widget->getHalfWidth() + widget->getLastPosition().x()) / double(3));
     double newRotationX = camera.rotation().x() + (widget->getLastPosition().y() - widget->getHalfHeight() + event->y()) / double(3);

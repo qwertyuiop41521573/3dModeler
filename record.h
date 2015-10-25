@@ -6,7 +6,7 @@
 
 using namespace std;
 
-typedef enum { CREATE, REMOVE, SELECT, EDIT } Type;
+typedef enum { CREATE, EDIT } Type;
 
 template <class T> class ElementWithIndex
 {
@@ -31,16 +31,43 @@ private:
     int _index;
 };
 
-class CreateOrRemove
+template <class T> class TwoElementsWithIndex
 {
 public:
-    CreateOrRemove()
+    TwoElementsWithIndex(int index, const T &before)
+    {
+        _index = index;
+        _before = before;
+    }
+
+    void setAfter(const T &after)
+    { _after = after; };
+
+    const T &before() const
+    { return _before; };
+
+    const T &after() const
+    { return _after; };
+
+    int index() const
+    { return _index; };
+
+private:
+    T _before, _after;
+    int _index;
+};
+
+
+class Create
+{
+public:
+    Create()
     {
         _vertex = new vector <ElementWithIndex <Vertex> >;
         _triangle = new vector <ElementWithIndex <Triangle> >;
     }
 
-    ~CreateOrRemove()
+    ~Create()
     {
         delete _vertex;
         delete _triangle;
@@ -63,66 +90,41 @@ private:
     vector <ElementWithIndex <Triangle> > *_triangle;
 };
 
-struct ValueAndIndex
-{
-    bool value;
-    int index;
-};
-
-class Select : public vector <ValueAndIndex>
-{
-public:
-    bool vertices()
-    { return _vertices; };
-
-    void setVertices(bool value)
-    { _vertices = value; };
-
-private:
-    bool _vertices;
-};
-
 class Edit
 {
 public:
     Edit()
     {
-        _transformation = new QMatrix4x4;
-        _transformation->setToIdentity();
+        _vertex = new vector <TwoElementsWithIndex <Vertex> >;
+        _triangle = new vector <TwoElementsWithIndex <Triangle> >;
     }
 
     ~Edit()
     {
-        delete _list;
-        delete _transformation;
+        delete _vertex;
+        delete _triangle;
     }
 
-    void setList(const vector <int> &list)
-    {
-        _list = new vector <int>(list.size());
-        for(int i = 0;i < list.size(); i++) _list->at(i) = list[i];
-    }
+    vector <TwoElementsWithIndex <Vertex> > &vertex()
+    { return *_vertex; };
 
-    void transform(const QMatrix4x4 &matrix)
-    {
-        *_transformation = matrix * *_transformation;
-    }
+    const vector <TwoElementsWithIndex <Vertex> > &verRO() const
+    { return *_vertex; };
 
-    const vector <int> &list() const
-    { return *_list; };
+    vector <TwoElementsWithIndex <Triangle> > &triangle()
+    { return *_triangle; };
 
-    const QMatrix4x4 &transformation() const
-    { return *_transformation; };
+    const vector <TwoElementsWithIndex <Triangle> > &triRO() const
+    { return *_triangle; };
 
 private:
-    vector <int> *_list;
-    QMatrix4x4 *_transformation;
+    vector <TwoElementsWithIndex <Vertex> > *_vertex;
+    vector <TwoElementsWithIndex <Triangle> > *_triangle;
 };
 
 union Data
 {
-    CreateOrRemove *createOrRemove;
-    Select *select;
+    Create *create;
     Edit *edit;
 };
 

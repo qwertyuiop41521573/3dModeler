@@ -17,12 +17,11 @@ template <class T> int ElementContainer <T>::push(const T &t)
     int i;
     for(i = 0; i < size(); i++)
     {
-        if(!at(i).exists())
-        {
-            at(i) = t;
-            index = i;
-            break;
-        }
+        if(at(i).exists()) continue;
+        
+        at(i) = t;
+        index = i;
+        break;
     }
 
     if(i == size())
@@ -39,8 +38,16 @@ template <class T> int ElementContainer <T>::push(const T &t)
 
 template <class T> void ElementContainer <T>::remove(int index)
 {
-    if(at(0).isVertex()) _journal->addVertex(index);
-    else _journal->addTriangle(index);
+    _journal->addBefore(at(0).isVertex(), index);
     at(index).remove();
+    _journal->addAfter(at(0).isVertex());
 }
 
+template <class T> void ElementContainer <T>::setSelected(int index, bool value)
+{
+    if(at(index).selected() == value) return;
+
+    _journal->addBefore(at(0).isVertex(), index);
+    at(index).setSelected(value);
+    _journal->addAfter(at(0).isVertex());
+}

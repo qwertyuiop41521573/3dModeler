@@ -223,11 +223,10 @@ void GLWidget::draw(bool wireframe)
         vertices_tex.clear();
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].exists())
-            {
-                if(workWithElements[1]->isChecked() && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-                else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
-            }
+            if(!triangle[i].exists()) continue;
+
+            if(workWithElements[1]->isChecked() && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
+            else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
         }
         structSize = vertexData_TextureSize;
         fragment = "a_texcoord";
@@ -241,11 +240,10 @@ void GLWidget::draw(bool wireframe)
         vertices_col.clear();
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].exists())
-            {
-                if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-                else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), color });
-            }
+            if(!triangle[i].exists()) continue;
+
+            if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
+            else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), color });
         }
         structSize = vertexData_ColorSize;
         fragment = "a_color";
@@ -359,32 +357,31 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     if(!_isActive) _mainWindow->setActiveWidget(this);
 
     if(!toolIsOn) startPosition = lastPosition = QVector2D(event->x() - halfWidth, halfHeight - event->y());
-    if(!quickAccess)
-    {
-        switch(event->buttons())
-        {
-        case Qt::LeftButton:
-        {
-            Tool *aT = *activeTool;
-            //  ! stage2     hasStage2 == true && stage2 == false
-            //               hasStage2 == false
-            //  hasStage2 ? !stage2 : true
-            if(aT->hasStage2() ? !aT->stage2() : true) aT->function(START, event);
+    if(quickAccess) return;
 
-            break;
-        }
-        case Qt::RightButton:
-        {
-            _mainWindow->quickAccessToolOrbit();
-            quickAccess = true;
-            break;
-        }
-        case Qt::MiddleButton:
-        {
-            _mainWindow->quickAccessToolPan();
-            quickAccess = true;
-        }
-        }
+    switch(event->buttons())
+    {
+    case Qt::LeftButton:
+    {
+        Tool *aT = *activeTool;
+        //  ! stage2     hasStage2 == true && stage2 == false
+        //               hasStage2 == false
+        //  hasStage2 ? !stage2 : true
+        if(aT->hasStage2() ? !aT->stage2() : true) aT->function(START, event);
+
+        break;
+    }
+    case Qt::RightButton:
+    {
+        _mainWindow->quickAccessToolOrbit();
+        quickAccess = true;
+        break;
+    }
+    case Qt::MiddleButton:
+    {
+        _mainWindow->quickAccessToolPan();
+        quickAccess = true;
+    }
     }
 }
 

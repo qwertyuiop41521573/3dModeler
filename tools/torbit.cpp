@@ -24,9 +24,8 @@ void TOrbit::function(Action action, QMouseEvent *event)
     rotation.rotate(-rotX, 1, 0, 0);
     rotation.rotate(90 - camera.rotation().z(), 0, 0, 1);
     double newRotationX = camera.rotation().x() + rotX;
-    if(newRotationX < 90 && newRotationX >-90)
-    {
-        camera.setPosition(rotation * QVector4D(camera.position()));
-        camera.setRotation(X, newRotationX);
-    }
+
+    if(newRotationX >= 90 || newRotationX <= -90) return;
+    camera.setPosition(rotation * QVector4D(camera.position()));
+    camera.setRotation(X, newRotationX);
 }

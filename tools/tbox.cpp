@@ -106,36 +106,32 @@ void TBox::function(Action action, QMouseEvent *event)
     //if we drag pressed mouse in viewport
     case EXECUTE:
     {
-        if(_stage2)
+        if(!_stage2) break;
+        Projection projection = widget->getProjection();
+        double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
+        Camera &camera = widget->getCamera();
+        const QVector3D &rotation = camera.rotation();
+        QVector3D normal = (projection == PERSPECTIVE) ? QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
+
+        //if cube
+        if(checkBoxCube->isChecked() && dy != 0)
         {
-            Projection projection = widget->getProjection();
-            double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
-            Camera &camera = widget->getCamera();
-            const QVector3D &rotation = camera.rotation();
-            QVector3D normal = (projection == PERSPECTIVE) ? QVector3D(0, 0, 1) : QVector3D(cosR(rotation.x()) * cosR(rotation.z()), cosR(rotation.x()) * sinR(rotation.z()), sinR(rotation.x()));
-
-            //if cube
-            if(checkBoxCube->isChecked() && dy != 0)
-            {
-                QVector3D dh = normal * sign(dy) * (vertex[ver[6]].getPosition() - vertex[ver[4]].getPosition()).length() / qSqrt(2);
-                for(i = 0; i < 4; i++) vertex[ver[4 + i]].setPosition(vertex[ver[i]].getPosition() + dh);
-            }
-            else for(i = 0; i < 4; i++) vertex[ver[4 + i]].addToPosition(normal * dy);
-
-            QVector3D diagonal = vertex[ver[6]].getPosition() - vertex[ver[4]].getPosition();
-            QVector3D e_x = vertex[ver[7]].getPosition() - vertex[ver[4]].getPosition();
-
-            //flip the box if needed
-            if(QVector3D::dotProduct(normal, vertex[ver[0]].getPosition() - vertex[ver[4]].getPosition()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) > 0)
-            {
-                    QVector3D temp = vertex[ver[1]].getPosition();
-                    vertex[ver[1]] = vertex[ver[3]];
-                    vertex[ver[3]].setPosition(temp);
-                    temp = vertex[ver[5]].getPosition();
-                    vertex[ver[5]] = vertex[ver[7]];
-                    vertex[ver[7]].setPosition(temp);
-            }
+            QVector3D dh = normal * sign(dy) * (vertex[ver[6]].getPosition() - vertex[ver[4]].getPosition()).length() / qSqrt(2);
+            for(i = 0; i < 4; i++) vertex[ver[4 + i]].setPosition(vertex[ver[i]].getPosition() + dh);
         }
+        else for(i = 0; i < 4; i++) vertex[ver[4 + i]].addToPosition(normal * dy);
+
+        QVector3D diagonal = vertex[ver[6]].getPosition() - vertex[ver[4]].getPosition();
+        QVector3D e_x = vertex[ver[7]].getPosition() - vertex[ver[4]].getPosition();
+
+        //flip the box if needed
+        if(QVector3D::dotProduct(normal, vertex[ver[0]].getPosition() - vertex[ver[4]].getPosition()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
+        QVector3D temp = vertex[ver[1]].getPosition();
+        vertex[ver[1]] = vertex[ver[3]];
+        vertex[ver[3]].setPosition(temp);
+        temp = vertex[ver[5]].getPosition();
+        vertex[ver[5]] = vertex[ver[7]];
+        vertex[ver[7]].setPosition(temp);
         break;
     }
     //last click in viewport for this tool
@@ -154,6 +150,8 @@ void TBox::function(Action action, QMouseEvent *event)
         setStage2(false);
         widget->setMouseTracking(false);
         _busy = false;
+
+        //????
         journal->submit();
         break;
     }
@@ -167,7 +165,6 @@ void TBox::function(Action action, QMouseEvent *event)
         planeFailed = false;
         TPlane::function(STOP, event);
         if(planeFailed) return;
-
 
         widget->setToolIsOn(true);
         setStage2(true);
@@ -191,7 +188,6 @@ void TBox::function(Action action, QMouseEvent *event)
         tri.push_back(triangle.push({ver[3], ver[7], ver[4]}));
         tri.push_back(triangle.push({ver[4], ver[6], ver[5]}));
         tri.push_back(triangle.push({ver[4], ver[7], ver[6]}));
-
 
         widget->setMouseTracking(true);
     }

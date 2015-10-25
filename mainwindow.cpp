@@ -196,14 +196,11 @@ MainWindow::MainWindow()
 
 void MainWindow::open()
 {
-    if(saveRequest())
-    {
-        if(openFileDialog("Open"))
-        {
-            if(!model->empty()) model->clear();
-            if(model->load(model->fileName().toStdString().c_str())) setWindowTitle("3d Modeler - " + model->fileName());
-        }
-    }
+    if(!saveRequest()) return;
+    if(!openFileDialog("Open")) return;
+
+    if(!model->empty()) model->clear();
+    if(model->load(model->fileName().toStdString().c_str())) setWindowTitle("3d Modeler - " + model->fileName());
 }
 
 bool MainWindow::saveRequest()
@@ -230,20 +227,12 @@ bool MainWindow::saveRequest()
 
 bool MainWindow::save()
 {
-    if(!model->loaded())
-    {
-        if(openFileDialog("Save"))
-        {
-            if(model->save())
-            {
-                setWindowTitle("3d Modeler - " + model->fileName());
-                return true;
-            }
-            else return false;
-        }
-        return false;
-    }
-    else return model->save();
+    if(model->loaded()) return model->save();
+    if(!openFileDialog("Save")) return false;
+    if(!model->save()) return false;
+
+    setWindowTitle("3d Modeler - " + model->fileName());
+    return true;
 }
 
 bool MainWindow::openFileDialog(QString action)
@@ -254,13 +243,10 @@ bool MainWindow::openFileDialog(QString action)
     dialog.setNameFilters(filters);
     dialog.setWindowTitle(action + " Model");
     dialog.setLabelText(QFileDialog::Accept, action);
-    bool result = dialog.exec();
-    if(result)
-    {
-        dialog.selectedFiles();
-        model->setFileName(dialog.selectedFiles().join(""));
-    }
-    return result;
+    if(!dialog.exec()) return false;
+
+    dialog.selectedFiles();
+    model->setFileName(dialog.selectedFiles().join(""));
 }
 
 void MainWindow::newModel()
@@ -355,40 +341,34 @@ void MainWindow::setActiveTool(Tool *tool)
 
 void MainWindow::selectAll()
 {
-    journal.newRecord(SELECT);
-    bool record = false;
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->vertex().size(); i++)
+    journal.newRecord(EDIT);
+    if(workWithElements[0]->isChecked())
     {
-        if(!record && !model->vertex()[i].selected()) record = true;
-        model->vertex()[i].setSelected(true);
-        journal.add(i);
+        ElementContainer <Vertex> &vertex = model.vertex();
+        for(int i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertex.setSelected(i, true);
     }
-    else for(int i = 0; i < model->triangle().size(); i++)
+    else
     {
-        if(!record && !model->triangle()[i].selected()) record = true;
-        model->triangle()[i].setSelected(true);
-        journal.add(i);
+        ElementContainer <Triangle> &triangle = model.triangle();
+        for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) triangle.setSelected(i, true);
     }
-    if(record) journal.submit();
+    journal.submit();
 }
 
 void MainWindow::selectNone()
 {
-    journal.newRecord(SELECT);
-    bool record = false;
-    if(workWithElements[0]->isChecked()) for(int i = 0; i < model->vertex().size(); i++)
+    journal.newRecord(EDIT);
+    if(workWithElements[0]->isChecked())
     {
-        if(!record && model->vertex()[i].selected()) record = true;
-        model->vertex()[i].setSelected(false);
-        journal.add(i);
+        ElementContainer <Vertex> &vertex = model.vertex();
+        for(int i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertex.setSelected(i, false);
     }
-    else for(int i = 0; i < model->triangle().size(); i++)
+    else
     {
-        if(!record && model->triangle()[i].selected()) record = true;
-        model->triangle()[i].setSelected(false);
-        journal.add(i);
-    }
-    if(record) journal.submit();
+        ElementContainer <Triangle> &triangle = model.triangle();
+        for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) triangle.setSelected(i, false);
+    }   
+    journal.submit();
 }
 
 void MainWindow::quickAccessToolOrbit()
@@ -426,39 +406,46 @@ void MainWindow::maximize(bool value)
 
 void MainWindow::snapTogether()
 {
+    if(workWithElements[1]->isChecked()) return;
+
     int i;
     vector <int> selected;
     QVector3D min, max;
     vector <Vertex> &vertex = model->vertex();
-    vector <Triangle> &triangle = model->triangle();
     int vertexNumber = vertex.size();
+
     for(i = 0; i < vertexNumber; i++)
     {
-        if(vertex[i].selected())
-        {
-            min = max = vertex[i].getPosition();
-            selected.push_back(i);
-            break;
-        }
+        if(!vertex[i].exists() || !vertex[i].selected()) continue;
+
+        min = max = vertex[i].getPosition();
+        selected.push_back(i);
+        break;
     }
-    for( ; i < vertexNumber; i++)
+    if(i == vertex.size()) return;
+    for(i++; i < vertexNumber; i++)
     {
-        if(model->vertex()[i].selected())
-        {
-            selected.push_back(i);
-            const QVector3D &vertex = model->vertex()[i].getPosition();
+        if(!vertex[i].exists() || !vertex[i].selected()) continue;
 
-            if(vertex.x() > max.x()) max.setX(vertex.x());
-            if(vertex.y() > max.y()) max.setY(vertex.y());
-            if(vertex.z() > max.z()) max.setZ(vertex.z());
+        selected.push_back(i);
+        const QVector3D &pos = vertex[i].getPosition();
 
-            if(vertex.x() < min.x()) min.setX(vertex.x());
-            if(vertex.y() < min.y()) min.setY(vertex.y());
-            if(vertex.z() < min.z()) min.setZ(vertex.z());
-        }
+        if(pos.x() > max.x()) max.setX(pos.x());
+        if(pos.y() > max.y()) max.setY(pos.y());
+        if(pos.z() > max.z()) max.setZ(pos.z());
+
+        if(pos.x() < min.x()) min.setX(pos.x());
+        if(pos.y() < min.y()) min.setY(pos.y());
+        if(pos.z() < min.z()) min.setZ(pos.z());
     }
     QVector3D center = (max + min) / 2;
-    for(i = 0; i < selected.size(); i++) vertex[selected[i]].setPosition(center);
+    journal.newRecord(EDIT);
+    for(i = 0; i < selected.size(); i++)
+    {
+        journal.addBefore(true, selected[i]);
+        vertex[selected[i]].setPosition(center);
+        journal.addAfter(true);
+    }
 }
 
 void MainWindow::weldTogether()
@@ -473,11 +460,10 @@ void MainWindow::weldTogether()
 
         for(j = 0; j < groups.size(); j++)
         {
-            if(vertex[i].getPosition() == vertex[groups[j][0]].getPosition())
-            {
-                groups[j].push_back(i);
-                break;
-            }
+            if(vertex[i].getPosition() != vertex[groups[j][0]].getPosition()) continue;
+
+            groups[j].push_back(i);
+            break;
         }
         if(j < groups.size()) continue;
 
@@ -489,11 +475,35 @@ void MainWindow::weldTogether()
     {
         if(groups[i].size() == 1) continue;
 
+        journal.newRecord(EDIT);
+        break;
+    }
+
+    for( ; i < groups.size(); i++)
+    {
+        if(groups[i].size() == 1) continue;
+
         for(j = 1; j < groups[i].size(); j++)
         {
             int index = groups[i][j];
+            journal.addBefore(true, index);
             vertex.remove(index);
-            for(k = 0; k < triangle.size(); k++) for(l = 0; l < 3; l++) if(triangle[k].getIndex(l) == index) triangle[k].setIndex(l, groups[i][0]);
+            journal.addAfter(true);
+            for(k = 0; k < triangle.size(); k++)
+            {
+                if(!triangle[k].exists()) continue;
+
+                for(l = 0; l < 3; l++)
+                {
+                    if(triangle[k].getIndex(l) == index)
+                    {
+                        journal.addBefore(false, k);
+                        triangle[k].setIndex(l, groups[i][0]);
+                        journal.addAfter(false);
+                        break;
+                    }
+                }
+            }
         }
     }
 }
@@ -505,14 +515,16 @@ void MainWindow::deleteSlot()
     ElementContainer <Vertex> &vertex = model->vertex();
     ElementContainer <Triangle> &triangle = model->triangle();
 
-    journal.newRecord(REMOVE);
+    journal.newRecord(EDIT);
 
     bool chain;
     int end;
     if(workWithElements[0]->isChecked())
     {
-        for(i = 0; i < vertex.size(); i++) if(vertex[i].exists() && vertex[i].selected())
+        for(i = 0; i < vertex.size(); i++)
         {
+            if(!vertex[i].exists() || !vertex[i].selected()) continue;
+
             vertexList.push_back(i);
             vertex.remove(i);
         }
@@ -521,30 +533,30 @@ void MainWindow::deleteSlot()
         int l;
         for(i = 0; i < triangle.size(); i++)
         {
-            if(triangle[i].exists())
+            if(!triangle[i].exists()) continue;
+
+            selected = false;
+            for(j = 0; j < 3; j++)
             {
-                selected = false;
-                for(j = 0; j < 3; j++)
+                for(k = 0; k < vertexList.size(); k++)
                 {
-                    for(k = 0; k < vertexList.size(); k++)
-                    {
-                        if(vertexList[k] == triangle[i].getIndex(j))
-                        {
-                            triangleList.push_back(i);
-                            selected = true;
-                            for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(l));
-                            break;
-                        }
-                    }
-                    if(selected) break;
+                    if(vertexList[k] != triangle[i].getIndex(j)) continue;
+
+                    triangleList.push_back(i);
+                    selected = true;
+                    for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(l));
+                    break;
                 }
+                if(selected) break;
             }
         }        
     }
     else
     {
-        for(i = 0; i < triangle.size(); i++) if(triangle[i].exists() && triangle[i].selected())
+        for(i = 0; i < triangle.size(); i++) 
         {
+            if(!triangle[i].exists() || !triangle[i].selected()) continue;
+
             triangleList.push_back(i);
             for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(j));
         }
@@ -553,33 +565,8 @@ void MainWindow::deleteSlot()
 
     for(i = 0; i < triangleList.size(); i++) triangle.remove(triangleList[i]);
 
-
-    /*
-    chain = false;
-    for(i = triangleList.size() - 1; i > 0; i--)
-    {
-        if(triangleList[i] == triangleList[i - 1] - 1)
-        {
-            if(!chain) end = i;
-            chain = true;
-        }
-        else
-        {
-            if(chain) triangle.erase(triangle.begin() + triangleList[i + 1], triangle.begin() + triangleList[end] + 1);
-            else triangle.erase(triangle.begin() + triangleList[i]);
-            chain = false;
-        }
-    }
-    if(triangleList.size())
-    {
-        if(chain) triangle.erase(triangle.begin() + triangleList[0], triangle.begin() + triangleList[end] + 1);
-        else triangle.erase(triangle.begin() + triangleList[0]);
-    }
-    */
-
-    bool noTriangles;
     for(i = 0; i < triangle.size(); i++) if(triangle[i].exists()) break;
-    noTriangles = i == triangle.size();
+    bool noTriangles = i == triangle.size();
     for(i = 0; i < vertexList2.size(); i++)
     {
         if(noTriangles)
@@ -589,16 +576,15 @@ void MainWindow::deleteSlot()
         }
         for(j = 0; j < triangle.size(); j++)
         {
-            if(triangle[i].exists())
-            {
-                for(k = 0; k < 3; k++) if(triangle[j].getIndex(k) == vertexList2[i]) break;
-                if(k < 3) break;
-            }
+            if(!triangle[i].exists()) continue;
+
+            for(k = 0; k < 3; k++) if(triangle[j].getIndex(k) == vertexList2[i]) break;
+            if(k < 3) break;
         }
         if(j == triangle.size()) vertex.remove(vertexList2[i]);
     }
 
-    journal.submit();
+   //journal.submit();
 }
 
 Model *MainWindow::getModel()
@@ -614,50 +600,28 @@ void MainWindow::stopQuickAccess()
 void MainWindow::undo()
 {
     if(toolActive->busy() || journal.isEmpty()) return;
-    const Record &rec = journal.current();
+    const Record &rec = journal.currentRO();
     int i;
 
     switch(rec.type())
     {
     case CREATE:
     {
-        const CreateOrRemove &data = *rec.dataRO().createOrRemove;
+        const Create &data = *rec.dataRO().create;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
         for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()].remove();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
         for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()].remove();
         break;
     }
-    case REMOVE:
-    {
-        const CreateOrRemove &data = *rec.dataRO().createOrRemove;
-        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].valRO();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()] = triangle[i].valRO();
-        break;
-    }
-    case SELECT:
-    {
-        Select &data = *rec.dataRO().select;
-        for(i = 0; i < data.size(); i++)
-        {
-            int ind = data[i].index;
-            Element &element = data.vertices() ? (Element&)model->vertex()[ind] : (Element&)model->triangle()[ind];
-            element.setSelected(!data[i].value);
-        }
-        break;
-    }
     case EDIT:
     {
         const Edit &data = *rec.dataRO().edit;
-        const vector <int> &list = data.list();
-        const QMatrix4x4 &transformation = data.transformation().inverted();
-        for(int i = 0; i < list.size(); i++)
-        {
-            Vertex &vertex = model->vertex()[list[i]];
-            vertex.setPosition(transformation * vertex.getPosition());
-        }
+        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
+        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].before();
+        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
+        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()] = triangle[i].before();
+
         break;
     }
     }
@@ -676,43 +640,21 @@ void MainWindow::redo()
     {
     case CREATE:
     {
-        const CreateOrRemove &data = *rec.dataRO().createOrRemove;
+        const Create &data = *rec.dataRO().create;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
         for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].valRO();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
         for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()] = triangle[i].valRO();
         break;
     }
-    case REMOVE:
-    {
-        const CreateOrRemove &data = *rec.dataRO().createOrRemove;
-        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()].remove();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()].remove();
-        break;
-    }
-    case SELECT:
-    {
-        Select &data = *rec.dataRO().select;
-        for(i = 0; i < data.size(); i++)
-        {
-            int ind = data[i].index;
-            Element &element = data.vertices() ? (Element&)model->vertex()[ind] : (Element&)model->triangle()[ind];
-            element.setSelected(data[i].value);
-        }
-        break;
-    }
     case EDIT:
     {
         const Edit &data = *rec.dataRO().edit;
-        const vector <int> &list = data.list();
-        const QMatrix4x4 &transformation = data.transformation();
-        for(int i = 0; i < list.size(); i++)
-        {
-            Vertex &vertex = model->vertex()[list[i]];
-            vertex.setPosition(transformation * vertex.getPosition());
-        }
+        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
+        for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].after();
+        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
+        for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()] = triangle[i].after();
+
         break;
     }
     }
