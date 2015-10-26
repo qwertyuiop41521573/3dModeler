@@ -31,8 +31,7 @@ MainWindow::MainWindow()
     tBox = new TBox(this);
     tEllipse = new TEllipse(this);
     tCylinder = new TCylinder(this);
-   // tSphere = new TSphere(this);
-    //////////////////////////////////////
+    tSphere = new TSphere(this);
 
     QWidget *workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;
@@ -52,7 +51,7 @@ MainWindow::MainWindow()
     //layouts and gui elements
     QGridLayout *centralLayout = new QGridLayout;
 
-        //scrollarea
+    //scrollarea
     QScrollArea *scrollArea = new QScrollArea;
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -130,7 +129,7 @@ MainWindow::MainWindow()
     scrollAreaLayout->addWidget(tBox->getButton(), 16, 2, 1, 2);
     scrollAreaLayout->addWidget(tEllipse->getButton(), 17, 0, 1, 2);
     scrollAreaLayout->addWidget(tCylinder->getButton(), 17, 2, 1, 2);
-    //scrollAreaLayout->addWidget(tSphere->getButton(), 18, 0, 1, 2);
+    scrollAreaLayout->addWidget(tSphere->getButton(), 18, 0, 1, 2);
     scrollAreaLayout->addWidget(line[3], 19, 0, 1, 4);
     scrollAreaLayout->addWidget(workWithWidget, 20, 0, 1, 4);
     scrollAreaLayout->addWidget(line[4], 21, 0, 1, 4);
@@ -142,9 +141,9 @@ MainWindow::MainWindow()
     scrollAreaLayout->addWidget(tTriangle->getWidget(), 27, 0, 1, 4);
     scrollAreaLayout->addWidget(tPlane->getWidget(), 28, 0, 1, 4);
     scrollAreaLayout->addWidget(tBox->getWidget(), 29, 0, 1, 4);
-    scrollAreaLayout->addWidget(tEllipse->getWidget(), 23, 0, 1, 4);
-    scrollAreaLayout->addWidget(tCylinder->getWidget(), 24, 0, 1, 4);
-   // scrollAreaLayout->addWidget(tSphere->getWidget(), 25, 0, 1, 4);
+    scrollAreaLayout->addWidget(tEllipse->getWidget(), 30, 0, 1, 4);
+    scrollAreaLayout->addWidget(tCylinder->getWidget(), 31, 0, 1, 4);
+    scrollAreaLayout->addWidget(tSphere->getWidget(), 32, 0, 1, 4);
 
 
 
@@ -201,7 +200,7 @@ MainWindow::MainWindow()
 void MainWindow::open()
 {
     if(!saveRequest()) return;
-    if(!openFileDialog("Open")) return;
+    if(openFileDialog("Open")) return;
 
     if(!model->empty()) model->clear();
     if(model->load(model->fileName().toStdString().c_str())) setWindowTitle("3d Modeler - " + model->fileName());
@@ -670,4 +669,48 @@ void MainWindow::addToVertexList2(vector <int> *vertexList, vector <int> *vertex
     for(int i = 0; i < vertexList->size(); i++) if((*vertexList)[i] == index) return;
     for(int i = 0; i < vertexList2->size(); i++) if((*vertexList2)[i] == index) return;
     vertexList2->push_back(index);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Shift:
+    {
+        if(toolActive->shift()) toolActive->shift()->setChecked(true);
+        break;
+    }
+    case Qt::Key_Control:
+    {
+        if(toolActive->ctrl()) toolActive->ctrl()->setChecked(true);
+        break;
+    }
+    case Qt::Key_1:
+    {
+        workWithElements[0]->setChecked(true);
+        break;
+    }
+    case Qt::Key_2:
+    {
+        workWithElements[1]->setChecked(true);
+        break;
+    }
+    }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Shift:
+    {
+        if(toolActive->shift()) toolActive->shift()->setChecked(false);
+        break;
+    }
+    case Qt::Key_Control:
+    {
+        if(toolActive->ctrl()) toolActive->ctrl()->setChecked(false);
+        break;
+    }
+    }
 }

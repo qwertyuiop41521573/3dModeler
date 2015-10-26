@@ -42,6 +42,7 @@ private:
     bool _loaded = false;
 
 private:
+    Journal *_journal;
     ElementContainer <Vertex> *_vertex;
     ElementContainer <Triangle> *_triangle;
 };

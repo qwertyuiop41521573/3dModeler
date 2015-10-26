@@ -21,6 +21,9 @@ TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
     layout->addWidget(ignoreBackfacing, 1, 0, 1, 3);
 
     _widget->hide();
+
+    _shift = checkBox[0];
+    _ctrl = checkBox[1];
 }
 
 void TSelect::function(Action action, QMouseEvent *event)
@@ -103,8 +106,8 @@ void TSelect::function(Action action, QMouseEvent *event)
                 triangle[i].setNewSelected(false);
 
                 if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) triangle.setSelected(i, newSelected);
-                if(checkBox[0]->isChecked() && triangle[i].newSelected()) triangle.setSelected(i, true);
-                if(checkBox[1]->isChecked() && triangle[i].newSelected()) triangle.setSelected(i, false);
+                if(checkBox[0]->isChecked() && newSelected) triangle.setSelected(i, true);
+                if(checkBox[1]->isChecked() && newSelected) triangle.setSelected(i, false);
             }
         }
 

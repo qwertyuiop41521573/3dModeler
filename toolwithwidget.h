@@ -23,6 +23,8 @@ public:
     bool stage2()
     { return _stage2; };
 
+
+
 signals:
 
 public slots:
@@ -35,6 +37,8 @@ protected:
     Journal *journal;
     bool _stage2 = false;
     QRadioButton **workWithElements;
+
+
 };
 
 #endif // TOOLWITHWIDGET_H

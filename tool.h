@@ -30,6 +30,12 @@ public:
     bool busy()
     { return _busy; };
 
+    QCheckBox *shift()
+    { return _shift; };
+
+    QCheckBox *ctrl()
+    { return _ctrl; };
+
 protected:
     MainWindow *_mainWindow;
     bool _hasStage2 = false;
@@ -38,11 +44,16 @@ protected:
 
     bool _busy = false;
 
+    QCheckBox *_shift = 0;
+    QCheckBox *_ctrl = 0;
+
 private slots:
     void handleClick(bool pressed);
 
 private:
     bool _isActive = false;
+
+
 };
 
 #endif // TOOL_H

@@ -53,6 +53,8 @@ TEllipse::TEllipse(MainWindow *mainWindow) : CreatingTool(mainWindow)
     layout->addWidget(finalButton, 7, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
     _widget->hide();
+
+    _shift = checkBoxCircle;
 }
 
 void TEllipse::function(Action action, QMouseEvent *event)

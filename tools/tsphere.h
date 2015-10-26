@@ -21,6 +21,9 @@ private:
 
     QVector3D startPosition3D;
     QVector3D normal;
+
+    void triangulate();
+    void setVertices(const QVector3D &center, double radius);
 };
 
 #endif // RSPHERE_H

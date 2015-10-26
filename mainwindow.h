@@ -122,6 +122,9 @@ private:
     bool saveRequest();
     bool openFileDialog(QString title);
     void addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index);
+
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_H

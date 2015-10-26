@@ -1,4 +1,5 @@
 #include "model.h"
+#include "journal.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -7,12 +8,14 @@ using namespace std;
 
 Model::Model(Journal *journal)
 {
+    _journal = journal;
     _vertex = new ElementContainer <Vertex>(journal);
     _triangle = new ElementContainer <Triangle>(journal);
 }
 
 bool Model::load(const char *newFileName)
 {
+    _journal->cleanAll();
     _loaded = true;
     FILE *input = fopen(newFileName, "rt");
     if(!input) _loaded = false;
@@ -30,10 +33,15 @@ bool Model::load(const char *newFileName)
         fscanf(input, "%i", &size);
         _triangle->resize(size);
         int temp;
-        for(i = 0; i < _triangle->size(); i++ ) for(j = 0; j < 3; j++)
+        for(i = 0; i < _triangle->size(); i++ )
         {
-            fscanf(input, "%i", &temp);
-            _triangle->at(i).setIndex(j, temp);
+            for(j = 0; j < 3; j++)
+            {
+                fscanf(input, "%i", &temp);
+                _triangle->at(i).setIndex(j, temp);
+            }
+            _triangle->at(i).setSelected(false, false);
+            _triangle->at(i).undoRemove();
         }
     }
 
@@ -42,6 +50,7 @@ bool Model::load(const char *newFileName)
 
 void Model::clear()
 {
+    _journal->cleanAll();
     _vertex->clear();
     _triangle->clear();
     _loaded = false;

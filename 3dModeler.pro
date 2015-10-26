@@ -107,34 +107,11 @@ RESOURCES += \
 # light
 # selecting faces in textured
 
-# load, save, new - check journal
-# check STAGE2 in TBox
-# plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift) , same for select
-# move some events from GLWidget to MainWindow
-# toolBox - capture mouse movement in whole window, not in widget
-# toolElipse - create from center
-# box and plane - segments
-# cylinder - no cap option
-# option - flip triangles
-# check all matrices in glwidget
-# draw points over wireframe overlay
-# ortho for 3d
-# ellipse and cylinder - radial segments, replace creating second cap in createWallsAndSecondCap with TEllipse::createCap ?
-# axis lines should be like wireframe overlay
-# hotkeys for WorkWithElements - 1 and 2 for vertices and triangles
-
-# now: TSphere
-# basic tools: create sphere, extrude, bendm cut ...
-# check TEllipse::TEllipse - segments minimum
-# make step=2 in segmentsZ
-# make FINAL use TRotate and TMove
-# move Constructor -> connect to base class
-# mainWindow - tool widgets have strange y coordinates
+# basic tools: extrude, bend, cut ...
 
 # in GLWidget::draw vertices should not repeat! - fix after "textures"
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
-# journal - create, remove for vertex, triangle - make some abstraction
-# move add(int index) to Element ?
+# check STAGE2 in TBox - should not work but works
 
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget

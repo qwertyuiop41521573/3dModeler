@@ -46,6 +46,8 @@ public:
     bool isFull()
     { return _current == size() - 1; };
 
+    void cleanAll();
+
 signals:
 
 public slots:

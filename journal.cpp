@@ -14,6 +14,13 @@ void Journal::push()
     _current++;
 }
 
+void Journal::cleanAll()
+{
+    for(int i = 0; i < size(); i++) at(i).clean();
+    clear();
+    _current = -1;
+}
+
 void Journal::setVariables(Model *model, QRadioButton **workWithElements)
 {
     _model = model;

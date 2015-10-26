@@ -38,9 +38,11 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
     layout->addWidget(finalButton, 6, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
     _hasStage2 = true;
-    connect(checkBoxCube, SIGNAL(clicked(bool)), this, SLOT(handleCubeClick(bool)));
+    connect(checkBoxCube, SIGNAL(toggled(bool)), this, SLOT(handleCubeClick(bool)));
 
     _widget->hide();
+
+    _ctrl = checkBoxCube;
 }
 
 void TBox::function(Action action, QMouseEvent *event)
@@ -184,6 +186,7 @@ void TBox::function(Action action, QMouseEvent *event)
         tri.push_back(triangle.push({ver[3], ver[7], ver[4]}));
         tri.push_back(triangle.push({ver[4], ver[6], ver[5]}));
         tri.push_back(triangle.push({ver[4], ver[7], ver[6]}));
+
 
         widget->setMouseTracking(true);
     }

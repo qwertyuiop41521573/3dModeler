@@ -10,6 +10,8 @@ TPlane::TPlane(MainWindow *mainWindow) : CreatingTool(mainWindow)
     checkBoxSquare->setText("Square");
     layout->addWidget(checkBoxSquare, 0, 0, 1, 4);
     _widget->hide();
+
+    _shift = checkBoxSquare;
 }
 
 void TPlane::function(Action action, QMouseEvent *event)
