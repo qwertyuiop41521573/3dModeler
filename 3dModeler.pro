@@ -17,6 +17,7 @@ SOURCES += \
     tools/tvertex.cpp \
     tools/tzoom.cpp \
     tools/tellipse.cpp \
+    tools/tsphere.cpp \
                         \
     gui/mycheckbox.cpp \
     gui/mycombobox.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     tools/tvertex.h \
     tools/tzoom.h \
     tools/tellipse.h \
+    tools/tsphere.h \
                         \
     gui/mycheckbox.h \
     gui/mycombobox.h \
@@ -69,7 +71,6 @@ HEADERS += \
     gui/mycheckboxmw.h \
     gui/mylabel.h \
     gui/mypushbuttonmw.h \
-    gui/myhframe.h \
     gui/myframe.h \
                     \
     mainwindow.h \
@@ -107,16 +108,9 @@ RESOURCES += \
 # selecting faces in textured
 
 # load, save, new - check journal
-# replace vertexNu,ber with vertex.size()
-# rename functions like addToPosition -> move, setPosition -> moveTo
-# check TBox - action == STOP - should not submit if failed
-# fix selecting triangles
-# replace [size() - 1] with .last()
-# trabsformingTool - move tranform() to function(EXECUTE)
-
-# now:
-# items selected label
-# plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift)
+# check STAGE2 in TBox
+# plane - option for sqauare ( hold shift ), toolBox - option for cube (hold shift) , same for select
+# move some events from GLWidget to MainWindow
 # toolBox - capture mouse movement in whole window, not in widget
 # toolElipse - create from center
 # box and plane - segments
@@ -128,24 +122,19 @@ RESOURCES += \
 # ellipse and cylinder - radial segments, replace creating second cap in createWallsAndSecondCap with TEllipse::createCap ?
 # axis lines should be like wireframe overlay
 # hotkeys for WorkWithElements - 1 and 2 for vertices and triangles
-# basic tools: create sphere, extrude, bend ...
+
+# now: TSphere
+# basic tools: create sphere, extrude, bendm cut ...
+# check TEllipse::TEllipse - segments minimum
+# make step=2 in segmentsZ
+# make FINAL use TRotate and TMove
+# move Constructor -> connect to base class
+# mainWindow - tool widgets have strange y coordinates
 
 # in GLWidget::draw vertices should not repeat! - fix after "textures"
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
 # journal - create, remove for vertex, triangle - make some abstraction
 # move add(int index) to Element ?
 
-# commit:
-# fix TTriangle!
-# rewrite ifs - add continue and break - done, check if everything works
-# rewrote journal, Type is now enum { CREATE, EDIT }
-#    transforming tool
-#    selectAll, None
-# weld vertices
-# undo, redo for snap and weld
-# added exists() where it should be
-
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget
-
-

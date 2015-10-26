@@ -61,7 +61,7 @@ bool Model::save()
     {
         if(!_vertex->at(i).exists()) continue;
 
-        const QVector3D &pos = _vertex->at(i).getPosition();
+        const QVector3D &pos = _vertex->at(i).positionRO();
         fprintf(output, "%lg %lg %lg ", pos.x(), pos.y(), pos.z());
     }
 

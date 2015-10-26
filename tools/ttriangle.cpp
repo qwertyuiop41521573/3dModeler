@@ -47,7 +47,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
                     break;
                 }
             }
-            if(selectedBefore || !widget->isSelected(vertex[i].getPosition(), min, max)) continue;
+            if(selectedBefore || !widget->isSelected(vertex[i].positionRO(), min, max)) continue;
             
             newTriangle.push_back(i);
             vertex[i].setNewSelected(true);

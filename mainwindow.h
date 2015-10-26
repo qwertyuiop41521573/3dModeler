@@ -21,6 +21,7 @@
 #include "tools/tbox.h"
 #include "tools/tellipse.h"
 #include "tools/tcylinder.h"
+#include "tools/tsphere.h"
 
 class MainWindow : public QMainWindow
 {
@@ -111,6 +112,7 @@ private:
     TBox *tBox;
     TEllipse *tEllipse;
     TCylinder *tCylinder;
+    TSphere *tSphere;
 
     QRadioButton *workWithElements[2];
 

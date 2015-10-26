@@ -33,14 +33,14 @@ void Journal::newRecord(Type type)
 
 void Journal::addBefore(bool isVertex, int index)
 {
-    Edit &data = *at(size() - 1).data().edit;
+    Edit &data = *current().data().edit;
     if(isVertex) data.vertex().push_back({index, _model->vertex()[index]});
     else data.triangle().push_back({index, _model->triangle()[index]});
 }
 
 void Journal::addAfter(bool isVertex)
 {
-    Edit &data = *at(size() - 1).data().edit;
+    Edit &data = *current().data().edit;
     if(isVertex)
     {
         vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
@@ -53,18 +53,6 @@ void Journal::addAfter(bool isVertex)
     }
 }
 
-/*
-void Journal::addTriangleBefore(int index)
-{
-    at(size() - 1).data().edit->triangle().push_back({index, _model->triangle()[index]});
-}
-
-void Journal::addTriangleAfter()
-{
-    vector <TwoElementsWithIndex <Triangle> > &triangle = at(size() - 1).data().edit->triangle();
-    triangle[triangle.size() - 1].setAfter(_model->triangle()[triangle[triangle.size() - 1].index()]);
-}*/
-
 void Journal::submit()
 {
     int i;
@@ -72,18 +60,18 @@ void Journal::submit()
     {
     case CREATE:
     {
-        push();
-        Create &data = *at(size() - 1).data().create;
+        push();        
+        Create &data = *current().data().create;
         for(i = 0; i < vertexList.size(); i++) data.ver().push_back({_model->vertex()[vertexList[i]], vertexList[i]});
         for(i = 0; i < triangleList.size(); i++) data.tri().push_back({_model->triangle()[triangleList[i]], triangleList[i]});
         break;
     }
     case EDIT:
     {
-        Edit &data = *at(size() - 1).data().edit;
+        Edit &data = *current().data().edit;
         if(data.verRO().size() || data.triRO().size()) break;
 
-        at(size() - 1).clean();
+        current().clean();
         erase(end());
         _current--;
         break;

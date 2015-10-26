@@ -172,7 +172,7 @@ void GLWidget::draw(bool wireframe)
             prepareProgramColor(projectionMatrix);
 
             vertices_col.clear();
-            for(i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertices_col.push_back({vertex[i].getPosition(), vertex[i].newSelected() ? BLUE : vertex[i].selected() ? RED : BLACK});
+            for(i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertices_col.push_back({vertex[i].positionRO(), vertex[i].newSelected() ? BLUE : vertex[i].selected() ? RED : BLACK});
             int vertSize = vertices_col.size();
             indices.resize(vertSize);
             for(i = 0; i < vertSize; i++) indices[i] = i;
@@ -226,7 +226,7 @@ void GLWidget::draw(bool wireframe)
             if(!triangle[i].exists()) continue;
 
             if(workWithElements[1]->isChecked() && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-            else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
+            else for(j = 0; j < 3; j++) vertices_tex.push_back({ vertex[triangle[i].getIndex(j)].positionRO(), { (rand() % 10) / double(10), (rand() % 10) / double(10) } });
         }
         structSize = vertexData_TextureSize;
         fragment = "a_texcoord";
@@ -243,7 +243,7 @@ void GLWidget::draw(bool wireframe)
             if(!triangle[i].exists()) continue;
 
             if(workWithElements[1]->isChecked() && !wireframe && (triangle[i].newSelected() || triangle[i].selected())) addSelectedFace(i);
-            else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].getPosition(), color });
+            else for(j = 0; j < 3; j++) vertices_col.push_back({ vertex[triangle[i].getIndex(j)].positionRO(), color });
         }
         structSize = vertexData_ColorSize;
         fragment = "a_color";
@@ -440,7 +440,7 @@ void GLWidget::addSelectedFace(int num)
 {
     vector <Triangle> &triangle = model->triangle();
     QVector3D selectedColor(triangle[num].newSelected() ? BLUE : RED);
-    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(model->vertex()[triangle[num].getIndex(j)].getPosition(), selectedColor));
+    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(model->vertex()[triangle[num].getIndex(j)].positionRO(), selectedColor));
 }
 
 void GLWidget::countRotationMatrices()

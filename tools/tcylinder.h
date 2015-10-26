@@ -20,6 +20,7 @@ private:
     MySpinBox *spinBoxHeight;
 
     void createWallsAndSecondCap(bool final);
+    void leave();
 };
 
 #endif // TCYLINDER_H

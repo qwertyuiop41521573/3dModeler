@@ -31,6 +31,8 @@ MainWindow::MainWindow()
     tBox = new TBox(this);
     tEllipse = new TEllipse(this);
     tCylinder = new TCylinder(this);
+   // tSphere = new TSphere(this);
+    //////////////////////////////////////
 
     QWidget *workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;
@@ -128,19 +130,21 @@ MainWindow::MainWindow()
     scrollAreaLayout->addWidget(tBox->getButton(), 16, 2, 1, 2);
     scrollAreaLayout->addWidget(tEllipse->getButton(), 17, 0, 1, 2);
     scrollAreaLayout->addWidget(tCylinder->getButton(), 17, 2, 1, 2);
-    scrollAreaLayout->addWidget(line[3], 18, 0, 1, 4);
-    scrollAreaLayout->addWidget(workWithWidget, 19, 0, 1, 4);
-    scrollAreaLayout->addWidget(line[4], 20, 0, 1, 4);
-    scrollAreaLayout->addWidget(tSelect->getWidget(), 21, 0, 1, 4);
-    scrollAreaLayout->addWidget(tMove->getWidget(), 22, 0, 1, 4);
-    scrollAreaLayout->addWidget(tScale->getWidget(), 23, 0, 1, 4);
-    scrollAreaLayout->addWidget(tRotate->getWidget(), 24, 0, 1, 4);
-    scrollAreaLayout->addWidget(tVertex->getWidget(), 25, 0, 1, 4);
-    scrollAreaLayout->addWidget(tTriangle->getWidget(), 26, 0, 1, 4);
-    scrollAreaLayout->addWidget(tPlane->getWidget(), 27, 0, 1, 4);
-    scrollAreaLayout->addWidget(tBox->getWidget(), 28, 0, 1, 4);
+    //scrollAreaLayout->addWidget(tSphere->getButton(), 18, 0, 1, 2);
+    scrollAreaLayout->addWidget(line[3], 19, 0, 1, 4);
+    scrollAreaLayout->addWidget(workWithWidget, 20, 0, 1, 4);
+    scrollAreaLayout->addWidget(line[4], 21, 0, 1, 4);
+    scrollAreaLayout->addWidget(tSelect->getWidget(), 22, 0, 1, 4);
+    scrollAreaLayout->addWidget(tMove->getWidget(), 23, 0, 1, 4);
+    scrollAreaLayout->addWidget(tScale->getWidget(), 24, 0, 1, 4);
+    scrollAreaLayout->addWidget(tRotate->getWidget(), 25, 0, 1, 4);
+    scrollAreaLayout->addWidget(tVertex->getWidget(), 26, 0, 1, 4);
+    scrollAreaLayout->addWidget(tTriangle->getWidget(), 27, 0, 1, 4);
+    scrollAreaLayout->addWidget(tPlane->getWidget(), 28, 0, 1, 4);
+    scrollAreaLayout->addWidget(tBox->getWidget(), 29, 0, 1, 4);
     scrollAreaLayout->addWidget(tEllipse->getWidget(), 23, 0, 1, 4);
     scrollAreaLayout->addWidget(tCylinder->getWidget(), 24, 0, 1, 4);
+   // scrollAreaLayout->addWidget(tSphere->getWidget(), 25, 0, 1, 4);
 
 
 
@@ -344,12 +348,12 @@ void MainWindow::selectAll()
     journal.newRecord(EDIT);
     if(workWithElements[0]->isChecked())
     {
-        ElementContainer <Vertex> &vertex = model.vertex();
+        ElementContainer <Vertex> &vertex = model->vertex();
         for(int i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertex.setSelected(i, true);
     }
     else
     {
-        ElementContainer <Triangle> &triangle = model.triangle();
+        ElementContainer <Triangle> &triangle = model->triangle();
         for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) triangle.setSelected(i, true);
     }
     journal.submit();
@@ -360,12 +364,12 @@ void MainWindow::selectNone()
     journal.newRecord(EDIT);
     if(workWithElements[0]->isChecked())
     {
-        ElementContainer <Vertex> &vertex = model.vertex();
+        ElementContainer <Vertex> &vertex = model->vertex();
         for(int i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertex.setSelected(i, false);
     }
     else
     {
-        ElementContainer <Triangle> &triangle = model.triangle();
+        ElementContainer <Triangle> &triangle = model->triangle();
         for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) triangle.setSelected(i, false);
     }   
     journal.submit();
@@ -412,23 +416,22 @@ void MainWindow::snapTogether()
     vector <int> selected;
     QVector3D min, max;
     vector <Vertex> &vertex = model->vertex();
-    int vertexNumber = vertex.size();
 
-    for(i = 0; i < vertexNumber; i++)
+    for(i = 0; i < vertex.size(); i++)
     {
         if(!vertex[i].exists() || !vertex[i].selected()) continue;
 
-        min = max = vertex[i].getPosition();
+        min = max = vertex[i].positionRO();
         selected.push_back(i);
         break;
     }
     if(i == vertex.size()) return;
-    for(i++; i < vertexNumber; i++)
+    for(i++; i < vertex.size(); i++)
     {
         if(!vertex[i].exists() || !vertex[i].selected()) continue;
 
         selected.push_back(i);
-        const QVector3D &pos = vertex[i].getPosition();
+        const QVector3D &pos = vertex[i].positionRO();
 
         if(pos.x() > max.x()) max.setX(pos.x());
         if(pos.y() > max.y()) max.setY(pos.y());
@@ -460,7 +463,7 @@ void MainWindow::weldTogether()
 
         for(j = 0; j < groups.size(); j++)
         {
-            if(vertex[i].getPosition() != vertex[groups[j][0]].getPosition()) continue;
+            if(vertex[i].positionRO() != vertex[groups[j][0]].positionRO()) continue;
 
             groups[j].push_back(i);
             break;

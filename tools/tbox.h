@@ -21,6 +21,8 @@ private:
     QCheckBox *checkBoxCube;
     MySpinBox *spinBox[6];
 
+    void leave();
+
 private slots:
     void handleCubeClick(bool value);
 };

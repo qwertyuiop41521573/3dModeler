@@ -116,20 +116,20 @@ void TBox::function(Action action, QMouseEvent *event)
         //if cube
         if(checkBoxCube->isChecked() && dy != 0)
         {
-            QVector3D dh = normal * sign(dy) * (vertex[ver[6]].getPosition() - vertex[ver[4]].getPosition()).length() / qSqrt(2);
-            for(i = 0; i < 4; i++) vertex[ver[4 + i]].setPosition(vertex[ver[i]].getPosition() + dh);
+            QVector3D dh = normal * sign(dy) * (vertex[ver[6]].positionRO() - vertex[ver[4]].positionRO()).length() / qSqrt(2);
+            for(i = 0; i < 4; i++) vertex[ver[4 + i]].setPosition(vertex[ver[i]].positionRO() + dh);
         }
-        else for(i = 0; i < 4; i++) vertex[ver[4 + i]].addToPosition(normal * dy);
+        else for(i = 0; i < 4; i++) vertex[ver[4 + i]].move(normal * dy);
 
-        QVector3D diagonal = vertex[ver[6]].getPosition() - vertex[ver[4]].getPosition();
-        QVector3D e_x = vertex[ver[7]].getPosition() - vertex[ver[4]].getPosition();
+        QVector3D diagonal = vertex[ver[6]].positionRO() - vertex[ver[4]].positionRO();
+        QVector3D e_x = vertex[ver[7]].positionRO() - vertex[ver[4]].positionRO();
 
         //flip the box if needed
-        if(QVector3D::dotProduct(normal, vertex[ver[0]].getPosition() - vertex[ver[4]].getPosition()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
-        QVector3D temp = vertex[ver[1]].getPosition();
+        if(QVector3D::dotProduct(normal, vertex[ver[0]].positionRO() - vertex[ver[4]].positionRO()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
+        QVector3D temp = vertex[ver[1]].positionRO();
         vertex[ver[1]] = vertex[ver[3]];
         vertex[ver[3]].setPosition(temp);
-        temp = vertex[ver[5]].getPosition();
+        temp = vertex[ver[5]].positionRO();
         vertex[ver[5]] = vertex[ver[7]];
         vertex[ver[7]].setPosition(temp);
         break;
@@ -142,16 +142,12 @@ void TBox::function(Action action, QMouseEvent *event)
         {
             //remove box - last 8 vertices and 12 triangles
             removeAll();
+            leave();
+            break;
         }
         //deselect with "blue", select with "red"
-        else for(i = 0; i < 8; i++) vertex[ver[i]].setSelected(true, false);
-
-        widget->setToolIsOn(false);
-        setStage2(false);
-        widget->setMouseTracking(false);
-        _busy = false;
-
-        //????
+        for(i = 0; i < 8; i++) vertex[ver[i]].setSelected(true, false);
+        leave();
         journal->submit();
         break;
     }
@@ -174,7 +170,7 @@ void TBox::function(Action action, QMouseEvent *event)
         for(i = 0; i < 4; i++)
         {
             //the second cap is the same as first
-            ver.push_back(vertex.push(vertex[ver[i]].getPosition()));
+            ver.push_back(vertex.push(vertex[ver[i]].positionRO()));
             vertex[ver[4 + i]].setNewSelected(true);
         }
 
@@ -198,4 +194,13 @@ void TBox::handleCubeClick(bool value)
 {
     checkBoxSquare->setChecked(value);
     checkBoxSquare->setEnabled(!value);
+}
+
+void TBox::leave()
+{
+    GLWidget *widget = *_activeWidget;
+    widget->setToolIsOn(false);
+    setStage2(false);
+    widget->setMouseTracking(false);
+    _busy = false;
 }

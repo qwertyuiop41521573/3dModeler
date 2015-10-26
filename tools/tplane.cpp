@@ -62,22 +62,22 @@ void TPlane::function(Action action, QMouseEvent *event)
             //height can be 0 or 1 (which point will be returned by
             //    fromScreenToWorld(event, widget) at action == START,
             //    depends on camera angle
-            double height = vertex[ver[0]].getPosition().z();
+            double height = vertex[ver[0]].positionRO().z();
             QVector3D worldCoordinates;
             widget->fromScreenToWorld(&worldCoordinates, event, true, height);
             vertex[ver[2]].setPosition(worldCoordinates);
-            diagonal = QVector2D(vertex[ver[2]].getPosition() - vertex[ver[0]].getPosition());
+            diagonal = QVector2D(vertex[ver[2]].positionRO() - vertex[ver[0]].positionRO());
             if(square)
             {
                 countDiagonalForSquare(&diagonal);
-                vertex[ver[2]].setPosition(vertex[ver[0]].getPosition() + QVector3D(diagonal, 0));
+                vertex[ver[2]].setPosition(vertex[ver[0]].positionRO() + QVector3D(diagonal, 0));
             }
-            posB = QVector3D(vertex[ver[0]].getPosition().x(), vertex[ver[2]].getPosition().y(), height);
-            posA = QVector3D(vertex[ver[2]].getPosition().x(), vertex[ver[0]].getPosition().y(), height);
+            posB = QVector3D(vertex[ver[0]].positionRO().x(), vertex[ver[2]].positionRO().y(), height);
+            posA = QVector3D(vertex[ver[2]].positionRO().x(), vertex[ver[0]].positionRO().y(), height);
         }
         else
         {
-            QVector2D startPosition = QVector2D(widget->getFinalMatrix() * QVector4D(vertex[ver[0]].getPosition(), 1));
+            QVector2D startPosition = QVector2D(widget->getFinalMatrix() * QVector4D(vertex[ver[0]].positionRO(), 1));
             QVector2D currentPosition = QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
             diagonal = currentPosition - startPosition;
             if(square)
@@ -85,7 +85,7 @@ void TPlane::function(Action action, QMouseEvent *event)
                 countDiagonalForSquare(&diagonal);
                 currentPosition = startPosition + diagonal;
             }
-            widget->_fromScreenToWorld(&vertex[ver[2]].getEditablePosition(), QVector4D(currentPosition, 0, 1));
+            widget->_fromScreenToWorld(&vertex[ver[2]].position(), QVector4D(currentPosition, 0, 1));
             widget->_fromScreenToWorld(&posB, QVector4D(startPosition.x(), currentPosition.y(), 0, 1));
             widget->_fromScreenToWorld(&posA, QVector4D(currentPosition.x(), startPosition.y(), 0, 1));
         }

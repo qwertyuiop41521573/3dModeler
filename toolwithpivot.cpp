@@ -22,7 +22,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         {
             if(!vertex[i].exists() || !vertex[i].selected()) continue;
 
-            min = max = vertex[i].getPosition();
+            min = max = vertex[i].positionRO();
             break;
         }
         for(i++; i < vertex.size(); i++)
@@ -31,8 +31,8 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
 
             for(j = 0; j < 3; j++)
             {
-                if(vertex[i].getPosition()[j] > max[j]) max[j] = vertex[i].getPosition()[ j ];
-                if(vertex[i].getPosition()[j] < min[j]) min[j] = vertex[i].getPosition()[j];
+                if(vertex[i].positionRO()[j] > max[j]) max[j] = vertex[i].positionRO()[ j ];
+                if(vertex[i].positionRO()[j] < min[j]) min[j] = vertex[i].positionRO()[j];
             }
         }
     }
@@ -43,7 +43,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         {
             if(!triangle[i].exists() || !triangle[i].selected()) continue;
 
-            min = max = vertex[triangle[i].getIndex(0)].getPosition();
+            min = max = vertex[triangle[i].getIndex(0)].positionRO();
             break;
         }
 
@@ -61,8 +61,8 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
                 for(k = 0; k < 3; k++)
                 {
                     checked[index] = true;
-                    if(vertex[index].getPosition()[k] > max[k]) max[k] = vertex[index].getPosition()[k];
-                    if(vertex[index].getPosition()[k] < min[k]) min[k] = vertex[index].getPosition()[k];
+                    if(vertex[index].positionRO()[k] > max[k]) max[k] = vertex[index].positionRO()[k];
+                    if(vertex[index].positionRO()[k] < min[k]) min[k] = vertex[index].positionRO()[k];
                 }
             }
         }

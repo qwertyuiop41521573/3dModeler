@@ -18,6 +18,7 @@ public slots:
 
 private:
     MyPushButtonMW *pushButton[3];
+
 };
 
 #endif // TSCALE_H

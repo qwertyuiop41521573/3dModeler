@@ -17,8 +17,6 @@ TEllipse::TEllipse(MainWindow *mainWindow) : CreatingTool(mainWindow)
     int i;
     spinBoxSegments = new QSpinBox;
     spinBoxSegments->setMaximumWidth(55);
-    spinBoxSegments->setMaximum(1000);
-    spinBoxSegments->setMinimum(-1000);
     for(i = 0; i < 6; i++) spinBox[i] = new MySpinBox;
     spinBoxRadius = new MySpinBox;
 
@@ -52,7 +50,7 @@ TEllipse::TEllipse(MainWindow *mainWindow) : CreatingTool(mainWindow)
     }
     layout->addWidget(radius, 6, 0, 1, 2);
     layout->addWidget(spinBoxRadius, 6, 2, 1, 2);
-    layout->addWidget(finalButton, 8, 0, 1, 4);
+    layout->addWidget(finalButton, 7, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
     _widget->hide();
 }
@@ -192,8 +190,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if ellipse is a line
-        QVector3D v1 = vertex[ver[segments - 1]].getPosition() - vertex[ver[segments]].getPosition();
-        QVector3D v2 = vertex[ver[segments - 2]].getPosition() - vertex[ver[segments]].getPosition();
+        QVector3D v1 = vertex[ver[segments - 1]].positionRO() - vertex[ver[segments]].positionRO();
+        QVector3D v2 = vertex[ver[segments - 2]].positionRO() - vertex[ver[segments]].positionRO();
         if(QVector3D::crossProduct(v1, v2).length() == 0)
         {
             //remove cap

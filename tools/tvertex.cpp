@@ -46,7 +46,7 @@ void TVertex::function(Action action, QMouseEvent *event)
         vertex[ver[0]].setNewSelected(true);
         if(action == FINAL) action = STOP;
     }
-    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ver[0]].getEditablePosition(), event);
+    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ver[0]].position(), event);
     if(action == STOP)
     {
         _busy = false;
