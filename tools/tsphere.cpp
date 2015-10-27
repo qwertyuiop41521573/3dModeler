@@ -193,7 +193,7 @@ void TSphere::setVertices(const QVector3D &center, double radius)
     int segmentsZ = spinBoxSegmentsZ->value();
     int i, j;
 
-    QVector3D e_x = abs(normal.x()) == 1 ? QVector3D(0, 0, 1) : QVector3D::crossProduct(normal, QVector3D::crossProduct(QVector3D(1, 0, 0), normal)).normalized();
+    QVector3D e_x = qAbs(normal.x()) == 1 ? QVector3D(0, 0, 1) : QVector3D::crossProduct(normal, QVector3D::crossProduct(QVector3D(1, 0, 0), normal)).normalized();
 
     QVector4D rotatingVertex = QVector4D(normal, 1);
     double angle = 360 / double(segmentsZ);

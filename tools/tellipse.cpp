@@ -110,7 +110,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         //    scaleAndTranslate"
 
         //if normal is parallel to X axis, than e_y; else [e_x, normal]
-        QVector4D rotatingVertex = (abs(normal.x()) == 1) ? QVector4D(0, 1, 0, 1) : QVector4D(QVector3D::crossProduct(QVector3D(1, 0, 0), normal).normalized(), 1);
+        QVector4D rotatingVertex = (qAbs(normal.x()) == 1) ? QVector4D(0, 1, 0, 1) : QVector4D(QVector3D::crossProduct(QVector3D(1, 0, 0), normal).normalized(), 1);
         double angle = 360 / double(segments);
         QMatrix4x4 scaleAndTranslate;
         scaleAndTranslate.setToIdentity();
