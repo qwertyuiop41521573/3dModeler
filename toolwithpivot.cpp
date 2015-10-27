@@ -18,6 +18,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     QVector3D min, max;
     if(workWithElements[0]->isChecked())
     {
+        //find first vertex
         for(i = 0; i < vertex.size(); i++)
         {
             if(!vertex[i].exists() || !vertex[i].selected()) continue;
@@ -25,6 +26,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
             min = max = vertex[i].positionRO();
             break;
         }
+        //expand bounding box to contain all other selected vertices
         for(i++; i < vertex.size(); i++)
         {
             if(!vertex[i].exists() || !vertex[i].selected()) continue;
@@ -38,6 +40,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     }
     else
     {
+        //similar with triangles
         int index;
         for(i = 0; i < triangle.size(); i++)
         {
@@ -68,7 +71,10 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
         }
         checked.clear();
     }
+    //center of bounding box
     pivot = (min + max) / 2;
+
+    //get on-viewport projection for this point
     widget->countFinalMatrix();
     widget->fromWorldToScreen(&pivotOnScreen, pivot);
 }

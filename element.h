@@ -1,7 +1,7 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
-
+//Vertex and Triangle are inherited from it
 class Element
 {
 public:

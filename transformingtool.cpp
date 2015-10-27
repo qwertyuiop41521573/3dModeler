@@ -21,6 +21,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
         vector <Vertex> &vertex = model->vertex();
         int i;
 
+        //fill list of selected vertices or vertices that belong to selected triangles
         if(workWithElements[0]->isChecked())
         {
             for(i = 0; i < vertex.size(); i++) if(vertex[i].exists() && vertex[i].selected()) toTransform.push_back(i);
@@ -31,6 +32,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
             int j;
 
             int index;
+            //we nee "checked" no to repeat vertices that belong to more than 1 triangle
             checked.resize(vertex.size());
             for(i = 0; i < vertex.size(); i++) checked[i] = false;
 
@@ -63,6 +65,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
 
         journal->submit();
     }
+    //actual transformation
     if(action == EXECUTE)
     {
         vector <Vertex> &vertex = model->vertex();

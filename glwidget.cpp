@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "mathfunctions.h"
 
+//colors
 #define GRAY       QVector3D(0.5, 0.5, 0.5)
 #define BLACK      QVector3D(0, 0, 0)
 #define RED        QVector3D(1, 0, 0)
@@ -28,6 +29,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(pare
     programTexture =new QGLShaderProgram;
 
     int i;
+    //setup proejections
     camera[TOP].setRotation(90, 0, 0);
     camera[BOTTOM].setRotation(-90, 0, 0);
     camera[BACK].setRotation(0, 0, 180);
@@ -36,6 +38,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(pare
     camera[PERSPECTIVE].setPosition(5 * sinR(30), 5 * cosR(30), 5 * tanR(15));
     camera[PERSPECTIVE].setRotation(15, 0,-120);
 
+    //setup grid for PERSPECTIVE
     for(i = 0; i < 10; i++)
     {
         line(&grid, {i - 10, -10, 0}, {i - 10, 10, 0}, DARK_GRAY);
@@ -53,6 +56,7 @@ GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(pare
         line(&grid, {-10, i + 1, 0}, {10, i + 1, 0}, DARK_GRAY);
     }
 
+    //setup axis
     line(&axis, {0, 0, 0}, {1, 0, 0}, RED);
     line(&axis, {0, 0, 0}, {0, 1, 0}, GREEN);
     line(&axis, {0, 0, 0}, {0, 0, 1}, BLUE);
@@ -93,6 +97,7 @@ void GLWidget::resizeGL(int newWidth, int newHeight)
     aspect = qreal(width) / qreal(height ? height : 1);
     glViewport(0, 0, width, height);
 
+    //setup frame
     vector <VertexData_Color> &verticesF = frame.vertices;
     for(int i = 0; i < 4; i++)
     {
@@ -120,6 +125,7 @@ void GLWidget::paintGL()
         glPolygonMode(GL_FRONT, GL_LINE);
         draw(true);
     }
+    //transforming tools and TSelect draw guiding lines
     if(_isActive && toolIsOn) drawToolLines();
 }
 
@@ -151,20 +157,12 @@ void GLWidget::draw(bool wireframe)
     int i;
     vector <Vertex> &vertex = model->vertex();
     vector <Triangle> &triangle = model->triangle();
-  /*  int a = 0;
-     for(int i = 0; i < triangle.size(); i++) if(triangle[i].exists()) a++;
-             cerr << a << '\n';*/
-
-  /*  if(_isActive)
-    {
-        for(i = 0; i < vertexNumber; i++) cerr << vertex[i].exists() << ' ';
-        cerr << '\n';
-    }*/
 
     if(wireframe)
     {
         glDisable(GL_CULL_FACE);
         color = BLACK;
+        //draw vertices
         if(workWithElements[0]->isChecked())
         {
             glPointSize(4);
@@ -186,9 +184,9 @@ void GLWidget::draw(bool wireframe)
         glLineWidth(1);
     }
 
+    //draw triangles
     switch(renderingModeCurrent)
     {
-        //draw triangles
     case FLAT_SHADED:
     {
         glEnable(GL_CULL_FACE);
@@ -476,9 +474,8 @@ void GLWidget::_fromScreenToWorld(QVector3D *answer, const QVector4D &screenCoor
     QVector4D worldCoordinates;
     if(projection == PERSPECTIVE)
     {
-        double a[4][4];
-        int i, j;
-        for(i = 0; i < 4; i++) for(j = 0; j < 4; j++) a[i][j] = finalMatrixInverse.data()[4 * j + i];
+        TwoDimArray a(finalMatrixInverse.data());
+
         QVector4D screenCoordPersp;
         screenCoordinatesPerspective(&screenCoordPersp, a, height, screenCoordinates);
         if(!forcedHeight && screenCoordPersp.z() < 0)
@@ -493,12 +490,11 @@ void GLWidget::_fromScreenToWorld(QVector3D *answer, const QVector4D &screenCoor
     *answer = QVector3D(worldCoordinates);
 }
 
-void GLWidget::screenCoordinatesPerspective(QVector4D *answer, double a[4][4], double h, const QVector4D &screenCoordinates)
+void GLWidget::screenCoordinatesPerspective(QVector4D *answer, const TwoDimArray &a, double h, const QVector4D &screenCoordinates)
 {
-
     double x = screenCoordinates.x(), y = screenCoordinates.y();
-    double w = (a[2][2] - a[3][2] * h) / ((a[3][0] * a[2][2] - a[3][2] * a[2][0]) * x + (a[3][1] * a[2][2] - a[3][2] * a[2][1]) * y + a[3][3] * a[2][2] - a[3][2] * a[2][3]);
-    *answer = QVector4D(screenCoordinates.x(), screenCoordinates.y(), (h - (a[2][0] * x + a[2][1] * y + a[2][3]) * w) / a[2][2], w);
+    double w = (a(2, 2) - a(3, 2) * h) / ((a(3, 0) * a(2, 2) - a(3, 2) * a(2, 0)) * x + (a(3, 1) * a(2, 2) - a(3, 2) * a(2, 1)) * y + a(3, 3) * a(2, 2) - a(3, 2) * a(2, 3));
+    *answer = QVector4D(screenCoordinates.x(), screenCoordinates.y(), (h - (a(2, 0) * x + a(2, 1) * y + a(2, 3)) * w) / a(2, 2), w);
     for(int i = 0; i < 2; i++) (*answer)[i] *= w;
 }
 
@@ -506,6 +502,7 @@ bool GLWidget::isSelected(const QVector3D &vertex, const QVector2D &min, const Q
 {
     QVector2D result;
     fromWorldToScreen(&result, vertex);
+    //if point on screen is inside rectangle, it's selected
     return result.x() > min.x() && result.x() < max.x() && result.y() > min.y() && result.y() < max.y();
 }
 

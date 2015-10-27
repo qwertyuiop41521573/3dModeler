@@ -145,14 +145,13 @@ MainWindow::MainWindow()
     scrollAreaLayout->addWidget(tCylinder->getWidget(), 31, 0, 1, 4);
     scrollAreaLayout->addWidget(tSphere->getWidget(), 32, 0, 1, 4);
 
-
-
     scrollAreaLayout->addItem(spacer, 40, 0, 1, 4);
 
     scrollAreaWidget->setLayout(scrollAreaLayout);
     scrollArea->setWidget(scrollAreaWidget);
-        //scrollarea end
+    //scrollarea end
 
+    //tCylinder->widget() is not hidden as it is the biggest widget
     tCylinder->getWidget()->hide();
 /*    tMove->getWidget()->hide();
     tScale->getWidget()->hide();
@@ -164,7 +163,7 @@ MainWindow::MainWindow()
     tEllipse->getWidget()->hide();
     tCylinder->getWidget()->hide();*/
 
-        //viewports
+    //viewports
     QWidget *viewportWidget = new QWidget;
     QGridLayout *viewportLayout = new QGridLayout;
 
@@ -182,7 +181,7 @@ MainWindow::MainWindow()
 
     for(i = 0; i < 4; i++) viewportLayout->addWidget(widget[i], i / 2, i % 2);
     viewportWidget->setLayout(viewportLayout);
-        //viewports end
+    //viewports end
 
     //add viewports and scrollarea to window
     centralLayout->addWidget(viewportWidget, 0, 0);
@@ -322,9 +321,13 @@ void MainWindow::createActionsAndMenus()
 
 void MainWindow::setActiveWidget(GLWidget *widget)
 {
+    //deactivate current active widget
     widgetActive->setActive(false);
+    //copy new widget pointer to widgetActive
     widgetActive = widget;
+    //activate new active widget
     widgetActive->setActive(true);
+    //load some parameters from new active widget
     renderingMode->setCurrentIndex(widgetActive->getRenderingMode());
     wireframeOverlay->setChecked(widgetActive->getWireframeOverlay());
     projection->setCurrentIndex(widgetActive->getProjection());
@@ -337,19 +340,24 @@ void MainWindow::setActiveTool(Tool *tool)
         tool->getButton()->setChecked(false);
         return;
     }
+    //deactivate current
     toolActive->setActive(false);
+    //copy pointer to toolActive
     toolActive = tool;
+    //activate new
     tool->setActive(true);
 }
 
 void MainWindow::selectAll()
 {
     journal.newRecord(EDIT);
+    //if we work with vertices
     if(workWithElements[0]->isChecked())
     {
         ElementContainer <Vertex> &vertex = model->vertex();
         for(int i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertex.setSelected(i, true);
     }
+    //or triangles
     else
     {
         ElementContainer <Triangle> &triangle = model->triangle();
@@ -376,7 +384,9 @@ void MainWindow::selectNone()
 
 void MainWindow::quickAccessToolOrbit()
 {
+    //backup current active too
     lastTool = toolActive;
+    //and switch to tOrbit
     setActiveTool(tOrbit);
 }
 
@@ -389,6 +399,7 @@ void MainWindow::quickAccessToolPan()
 void MainWindow::hideViewport(int index)
 {
     widget[index]->setHidden(!widget[index]->isHidden());
+    //if three viewports are hidden, it's equal to maximizing one viewport
     bool threeViewportsHidden = true;
     for(int i = 0; i < 4; i++) if(widget[i] != widgetActive) threeViewportsHidden *= hideViewportButtons[i]->isChecked();
     maximizeButton->setChecked(threeViewportsHidden && !widgetActive->isHidden());
@@ -409,6 +420,7 @@ void MainWindow::maximize(bool value)
 
 void MainWindow::snapTogether()
 {
+    //only for vertices
     if(workWithElements[1]->isChecked()) return;
 
     int i;
@@ -416,6 +428,7 @@ void MainWindow::snapTogether()
     QVector3D min, max;
     vector <Vertex> &vertex = model->vertex();
 
+    //find first vertex in list and set min and max to it's coordinates
     for(i = 0; i < vertex.size(); i++)
     {
         if(!vertex[i].exists() || !vertex[i].selected()) continue;
@@ -424,7 +437,9 @@ void MainWindow::snapTogether()
         selected.push_back(i);
         break;
     }
+    //if no vertices selected
     if(i == vertex.size()) return;
+    //expand bounding box with corners in min and max to fit all selected vertices
     for(i++; i < vertex.size(); i++)
     {
         if(!vertex[i].exists() || !vertex[i].selected()) continue;
@@ -440,11 +455,13 @@ void MainWindow::snapTogether()
         if(pos.y() < min.y()) min.setY(pos.y());
         if(pos.z() < min.z()) min.setZ(pos.z());
     }
+    //center of bounding box
     QVector3D center = (max + min) / 2;
     journal.newRecord(EDIT);
     for(i = 0; i < selected.size(); i++)
     {
         journal.addBefore(true, selected[i]);
+        //move to center
         vertex[selected[i]].setPosition(center);
         journal.addAfter(true);
     }
@@ -452,45 +469,62 @@ void MainWindow::snapTogether()
 
 void MainWindow::weldTogether()
 {
+    if(workWithElements[1]->isChecked()) return;
+
     int i, j, k, l;
     ElementContainer <Vertex> &vertex = model->vertex();
     ElementContainer <Triangle> &triangle = model->triangle();
+
+    // GROUP is vector <int>, that contains indices of vertices, that have the same coordinates
+    //we need vector <GROUP> groups if there are more than 1 groups of vertices that were snapped together
     vector <vector <int> > groups;
+
+    //spread all vertices to groups with same coordinates
     for(i = 0; i < vertex.size(); i++)
     {
         if(!vertex[i].exists() || !vertex[i].selected()) continue;
 
+        //search for previous vertex with same coordinates (in groups, not vertex)
         for(j = 0; j < groups.size(); j++)
         {
             if(vertex[i].positionRO() != vertex[groups[j][0]].positionRO()) continue;
-
+            //if found, add current vertex to appropriate group
             groups[j].push_back(i);
             break;
         }
+        //if found
         if(j < groups.size()) continue;
 
+        //if this is first vertex with such coordinates, create GROUP with 1 element - this vertex
         groups.resize(groups.size() + 1);
         groups[groups.size() - 1].push_back(i);
     }
 
+    //search for first group that has more than 1 vertex
+    //we don't need those that have 1 vertex - there's nothing to weld
     for(i = 0; i < groups.size(); i++)
     {
         if(groups[i].size() == 1) continue;
 
+        //if found, create journal record;
         journal.newRecord(EDIT);
         break;
     }
 
+    //if found, weld vertices in all such groups
     for( ; i < groups.size(); i++)
     {
         if(groups[i].size() == 1) continue;
 
+        //loop through all vertices, except first one ( [0] )
         for(j = 1; j < groups[i].size(); j++)
         {
             int index = groups[i][j];
             journal.addBefore(true, index);
+            //remove vertex
             vertex.remove(index);
             journal.addAfter(true);
+            //replace this vertex with first from group in all triangles
             for(k = 0; k < triangle.size(); k++)
             {
                 if(!triangle[k].exists()) continue;
@@ -523,6 +557,7 @@ void MainWindow::deleteSlot()
     int end;
     if(workWithElements[0]->isChecked())
     {
+        //add to vertexList all selected vertices, remove them
         for(i = 0; i < vertex.size(); i++)
         {
             if(!vertex[i].exists() || !vertex[i].selected()) continue;
@@ -533,6 +568,7 @@ void MainWindow::deleteSlot()
 
         bool selected;
         int l;
+        //loop though all triangles
         for(i = 0; i < triangle.size(); i++)
         {
             if(!triangle[i].exists()) continue;
@@ -540,12 +576,16 @@ void MainWindow::deleteSlot()
             selected = false;
             for(j = 0; j < 3; j++)
             {
+                //check if this triangle's vertices were removed
                 for(k = 0; k < vertexList.size(); k++)
                 {
                     if(vertexList[k] != triangle[i].getIndex(j)) continue;
+                    //if there is one vertex removed
 
+                    //add this triangle to list
                     triangleList.push_back(i);
                     selected = true;
+                    //and other 2 vertices to vertexList2
                     for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(l));
                     break;
                 }
@@ -555,27 +595,35 @@ void MainWindow::deleteSlot()
     }
     else
     {
+        //add to triangleList all selected triangles
         for(i = 0; i < triangle.size(); i++) 
         {
             if(!triangle[i].exists() || !triangle[i].selected()) continue;
 
             triangleList.push_back(i);
+            //and all vertices of this triangle
             for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, triangle[i].getIndex(j));
         }
 
     }
 
+    //remove triangles from list
     for(i = 0; i < triangleList.size(); i++) triangle.remove(triangleList[i]);
 
+    //check if there are some existing triangles (when deleting, they are just marked as not existing)
     for(i = 0; i < triangle.size(); i++) if(triangle[i].exists()) break;
     bool noTriangles = i == triangle.size();
+
     for(i = 0; i < vertexList2.size(); i++)
     {
+        //vertex should be removed if it does not belong to any triangle
+        //if there are no triangles
         if(noTriangles)
         {
             vertex.remove(vertexList2[i]);
             continue;
         }
+        //if there are some, we should check if one of them is built on this vertex
         for(j = 0; j < triangle.size(); j++)
         {
             if(!triangle[i].exists()) continue;
@@ -583,10 +631,11 @@ void MainWindow::deleteSlot()
             for(k = 0; k < 3; k++) if(triangle[j].getIndex(k) == vertexList2[i]) break;
             if(k < 3) break;
         }
+        //if no such triangle found, remove vertex
         if(j == triangle.size()) vertex.remove(vertexList2[i]);
     }
 
-   //journal.submit();
+   journal.submit();
 }
 
 Model *MainWindow::getModel()
@@ -602,6 +651,7 @@ void MainWindow::stopQuickAccess()
 void MainWindow::undo()
 {
     if(toolActive->busy() || journal.isEmpty()) return;
+
     const Record &rec = journal.currentRO();
     int i;
 
@@ -611,6 +661,7 @@ void MainWindow::undo()
     {
         const Create &data = *rec.dataRO().create;
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
+        //remove what was created
         for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()].remove();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
         for(i = 0; i < triangle.size(); i++) model->triangle()[triangle[i].index()].remove();
@@ -619,6 +670,7 @@ void MainWindow::undo()
     case EDIT:
     {
         const Edit &data = *rec.dataRO().edit;
+        //replace edited elements with their "before" value
         const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
         for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].before();
         const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
@@ -643,6 +695,7 @@ void MainWindow::redo()
     case CREATE:
     {
         const Create &data = *rec.dataRO().create;
+        //recreate elements
         const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
         for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].valRO();
         const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
@@ -652,6 +705,7 @@ void MainWindow::redo()
     case EDIT:
     {
         const Edit &data = *rec.dataRO().edit;
+        //replace edited elements with their "after" value
         const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
         for(i = 0; i < vertex.size(); i++) model->vertex()[vertex[i].index()] = vertex[i].after();
         const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
@@ -666,6 +720,7 @@ void MainWindow::redo()
 
 void MainWindow::addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index)
 {
+    //check if this vertex already is in vertexList 1 or 2
     for(int i = 0; i < vertexList->size(); i++) if((*vertexList)[i] == index) return;
     for(int i = 0; i < vertexList2->size(); i++) if((*vertexList2)[i] == index) return;
     vertexList2->push_back(index);

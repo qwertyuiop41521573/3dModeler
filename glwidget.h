@@ -38,6 +38,19 @@ struct VertexAndIndexData
     vector <GLuint> indices;
 };
 
+class TwoDimArray
+{
+public:
+    TwoDimArray(float *data)
+    { _data = data; };
+
+    float operator()(int ind1, int ind2) const
+    { return _data[4 * ind2 + ind1]; };
+
+    private:
+    float *_data;
+};
+
 class MainWindow;
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
@@ -127,7 +140,7 @@ public:
     void fromWorldToScreen(QVector2D *answer, const QVector3D &vector, bool point = true);
     void fromScreenToWorld(QVector3D *answer, QMouseEvent *event, bool forcedHeight = false, double height = 0);
     void _fromScreenToWorld(QVector3D *answer, const QVector4D &screenCoordinates, bool forcedHeight = false, double height = 0);
-    void screenCoordinatesPerspective(QVector4D *answer, double a[4][4], double h, const QVector4D &screenCoordinates);
+    void screenCoordinatesPerspective(QVector4D *answer, const TwoDimArray &a, double h, const QVector4D &screenCoordinates);
     bool isSelected(const QVector3D &vertex, const QVector2D &min, const QVector2D &max);
 
 protected:
@@ -149,6 +162,8 @@ public slots:
 private:
     MainWindow *_mainWindow;
     Model *model;
+    //pointer to pointer to active tool, it can be accesed as (*activeTool)
+    //class Tool has the same pointer to active widget
     Tool **activeTool;
     QRadioButton **workWithElements;
 

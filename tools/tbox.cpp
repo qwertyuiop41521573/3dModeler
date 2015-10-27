@@ -176,6 +176,7 @@ void TBox::function(Action action, QMouseEvent *event)
             vertex[ver[4 + i]].setNewSelected(true);
         }
 
+        //triangles for walls and second cap
         tri.push_back(triangle.push({ver[0], ver[5], ver[1]}));
         tri.push_back(triangle.push({ver[0], ver[4], ver[5]}));
         tri.push_back(triangle.push({ver[1], ver[6], ver[2]}));
@@ -186,7 +187,6 @@ void TBox::function(Action action, QMouseEvent *event)
         tri.push_back(triangle.push({ver[3], ver[7], ver[4]}));
         tri.push_back(triangle.push({ver[4], ver[6], ver[5]}));
         tri.push_back(triangle.push({ver[4], ver[7], ver[6]}));
-
 
         widget->setMouseTracking(true);
     }

@@ -5,6 +5,7 @@
 
 #include "gui/myspinbox.h"
 
+//transforms with multiplying vertex coordinates by transformation matrix (matrix * vertex)
 class TransformingTool : public ToolWithWidget
 {
 public:
@@ -18,6 +19,7 @@ protected:
     MySpinBox *spinBox[3];
 
     vector <bool> checked;
+    //list of selected vertices
     vector <int> toTransform;
     QMatrix4x4 transformation;
 

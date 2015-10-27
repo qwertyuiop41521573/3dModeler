@@ -87,7 +87,11 @@ private slots:
 
 private:
     Model *model;
+    //pointers to other tools
+    //toolActive is used like widgetActive
     Tool *toolActive, *lastTool;
+    //viewports
+    //there are only 4 vieports, widgetActive is a pointer to one of them
     GLWidget *widget[4], *widgetActive;
 
     MyComboBox *renderingMode;
@@ -97,15 +101,22 @@ private:
     MyPushButton *hideViewportButtons[4];
     QPushButton *maximizeButton;
 
+    //tools
+    //without widget
     TPan *tPan;
     TZoom *tZoom;
     TRotateCamera *tRotateCamera;
     TOrbit *tOrbit;
 
+    //with widget (displayed under all tool buttons)
     TSelect *tSelect;
+
+    //transforming tools
     TMove *tMove;
     TScale *tScale;
     TRotate *tRotate;
+
+    //creating tools
     TVertex *tVertex;
     TTriangle *tTriangle;
     TPlane *tPlane;
@@ -114,8 +125,10 @@ private:
     TCylinder *tCylinder;
     TSphere *tSphere;
 
+    //vertices or triangles
     QRadioButton *workWithElements[2];
 
+    //for undo / redo
     Journal journal;
 
     void createActionsAndMenus();

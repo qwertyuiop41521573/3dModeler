@@ -14,16 +14,11 @@ public:
     QWidget *getWidget()
     { return _widget; };
 
-    QPushButton *getFinalButton()
-    { return finalButton; };
-
     void setStage2(bool value)
     { _stage2 = value; };
 
     bool stage2()
     { return _stage2; };
-
-
 
 signals:
 
@@ -37,8 +32,6 @@ protected:
     Journal *journal;
     bool _stage2 = false;
     QRadioButton **workWithElements;
-
-
 };
 
 #endif // TOOLWITHWIDGET_H

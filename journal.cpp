@@ -8,8 +8,10 @@ Journal::Journal()
 
 void Journal::push()
 {
+    //if we did some undos and from that point do something, we should clean the journal records starting from current point
     for(int i = _current + 1; i < size(); i++) at(i).clean();
     erase(begin() + _current + 1, end());
+    //and only then push
     push_back(currentType);
     _current++;
 }
@@ -32,6 +34,7 @@ void Journal::newRecord(Type type)
     currentType = type;
     if(type == CREATE)
     {
+        //in CREATE we first record indices of new elements
         vertexList.clear();
         triangleList.clear();
     }
@@ -40,6 +43,7 @@ void Journal::newRecord(Type type)
 
 void Journal::addBefore(bool isVertex, int index)
 {
+    //before tool was used
     Edit &data = *current().data().edit;
     if(isVertex) data.vertex().push_back({index, _model->vertex()[index]});
     else data.triangle().push_back({index, _model->triangle()[index]});
@@ -47,6 +51,7 @@ void Journal::addBefore(bool isVertex, int index)
 
 void Journal::addAfter(bool isVertex)
 {
+    //after
     Edit &data = *current().data().edit;
     if(isVertex)
     {
@@ -67,6 +72,7 @@ void Journal::submit()
     {
     case CREATE:
     {
+        //values of new elements are recorded after submit() is called (because vertices are being moved during creation)
         push();        
         Create &data = *current().data().create;
         for(i = 0; i < vertexList.size(); i++) data.ver().push_back({_model->vertex()[vertexList[i]], vertexList[i]});
@@ -78,6 +84,7 @@ void Journal::submit()
         Edit &data = *current().data().edit;
         if(data.verRO().size() || data.triRO().size()) break;
 
+        //if nothing was selected before using tool
         current().clean();
         erase(end());
         _current--;

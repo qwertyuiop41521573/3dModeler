@@ -10,6 +10,7 @@ using namespace std;
 
 class Journal;
 
+//extended vector <T>
 template <class T> class ElementContainer : public vector <T>
 {
 public:
@@ -17,7 +18,6 @@ public:
     int push(const T &t);
     void remove(int index);
     void setSelected(int index, bool value);
-   // void
 
     using vector <T>::size;
     using vector <T>::at;

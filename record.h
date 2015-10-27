@@ -6,6 +6,9 @@
 
 using namespace std;
 
+//record types
+//CREATE - new elements
+//EDIT   - changing elements (transform, remove, select / deselect)
 typedef enum { CREATE, EDIT } Type;
 
 template <class T> class ElementWithIndex

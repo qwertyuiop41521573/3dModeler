@@ -3,6 +3,7 @@
 
 #include "transformingtool.h"
 
+//for scale and rotate - they record center of bounding box that contains all selected elements
 class ToolWithPivot : public TransformingTool
 {
 public:

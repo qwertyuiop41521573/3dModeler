@@ -87,8 +87,13 @@ void TSphere::function(Action action, QMouseEvent *event)
 
         ver.clear();
         tri.clear();
+        //shpere has 2 vertices on it's top and bottom (poles)
+        //if normal (vector from bottom pole to top) is {0, 0, 1}, on side projection it has segmentsZ sides
+        //this means that it has (segmentsZ / 2 - 1) rings, each consists of segmentsXY vertices
+        //overall amount of vertices is "segmentsXY * (segmentsZ / 2 - 1) + 2"
         for(i = 0; i < segmentsXY * (segmentsZ / 2 - 1) + 2; i++)
         {
+            //push all vertices to mouse pointer position
             ver.push_back(vertex.push(startPosition3D));
             vertex[ver[i]].setNewSelected(true);
         }
@@ -146,6 +151,7 @@ void TSphere::function(Action action, QMouseEvent *event)
     }
     case STOP:
     {
+        //if mouse was not moved and all sphere points match
         if(vertex[ver[0]].positionRO() == vertex[ver[1]].positionRO())
         {
             removeAll();
@@ -169,11 +175,13 @@ void TSphere::triangulate()
 
     int i, j;
 
+    //create top and bottom caps
     for(i = 0; i < segmentsXY; i++)
     {
         tri.push_back(triangle.push({ver[0], ver[1 + i], ver[1 + (1 + i) % segmentsXY]}));
         tri.push_back(triangle.push({ver[ver.size() - 1], ver[ver.size() - 2 - i], ver[ver.size() - 2 - (1 + i) % segmentsXY]}));
     }
+    //create walls (triangles on neighbour vertex rings)
     for(i = 0; i < segmentsZ / 2 - 2; i++)
     {
         for(j = 0; j < segmentsXY; j++)
@@ -193,10 +201,16 @@ void TSphere::setVertices(const QVector3D &center, double radius)
     int segmentsZ = spinBoxSegmentsZ->value();
     int i, j;
 
+    //if normal == {1, 0, 0}, e_x = {0, 0, 1}
+    //else e_x = [normal, [{1, 0, 0}, normal]], [] for cross product
     QVector3D e_x = qAbs(normal.x()) == 1 ? QVector3D(0, 0, 1) : QVector3D::crossProduct(normal, QVector3D::crossProduct(QVector3D(1, 0, 0), normal)).normalized();
 
+    //similar to setting vertices in TEllipse, but now with 2 rotations - around normal and around e_x (ellipse had only first rotation)
+
+    //this rotates around e_x
     QVector4D rotatingVertex = QVector4D(normal, 1);
     double angle = 360 / double(segmentsZ);
+    //and this around normal
     QVector4D rotatingVertexNormal;
     double angleNormal =  360 / double(segmentsXY);
 
@@ -213,16 +227,20 @@ void TSphere::setVertices(const QVector3D &center, double radius)
     rotationNormal.setToIdentity();
     rotationNormal.rotate(angleNormal, normal);
 
+    //top pole
     vertex[ver[0]].setPosition(scaleAndTranslate * QVector4D(normal, 1));
     for(i = 0; i < segmentsZ / 2 - 1; i++)
     {
+        //switch to next ring
         rotatingVertex = rotation * rotatingVertex;
         rotatingVertexNormal = rotatingVertex;
+        //create ring
         for(j = 0; j < segmentsXY; j++)
         {
             rotatingVertexNormal = rotationNormal * rotatingVertexNormal;
             vertex[ver[1 + segmentsXY * i + j]].setPosition(scaleAndTranslate * rotatingVertexNormal);
         }
     }
+    //bottom pole
     vertex[ver[ver.size() - 1]].setPosition(scaleAndTranslate * QVector4D(-normal, 1));
 }

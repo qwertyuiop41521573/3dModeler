@@ -7,6 +7,7 @@
 
 class Model;
 
+//journal is extended "vector <Record>"
 class Journal : public vector <Record>
 {
 public:

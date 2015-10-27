@@ -13,6 +13,7 @@ signals:
 public slots:
 
 protected:
+    //indices of created vertices and triangles
     vector <int> ver;
     vector <int> tri;
 
