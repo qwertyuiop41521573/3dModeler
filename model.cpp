@@ -9,8 +9,8 @@ using namespace std;
 Model::Model(Journal *journal)
 {
     _journal = journal;
-    _vertex = new ElementContainer <Vertex>(journal);
-    _triangle = new ElementContainer <Triangle>(journal);
+    _vertex = new ElementContainer <Vertex>(journal, this);
+    _triangle = new ElementContainer <Triangle>(journal, this);
 }
 
 bool Model::load(const char *newFileName)
@@ -44,6 +44,7 @@ bool Model::load(const char *newFileName)
             _triangle->at(i).undoRemove();
         }
     }
+    _modified = false;
 
     return _loaded;
 }
@@ -77,7 +78,7 @@ bool Model::save()
     int triangles = 0;
     for(i = 0; i < _triangle->size(); i++) if(_triangle->at(i).exists()) triangles++;
     fprintf(output, "%i ", triangles);
-    for(i = 0; i < _triangle->size(); i++ )
+    for(i = 0; i < _triangle->size(); i++)
     {
         if(!_triangle->at(i).exists()) continue;
 
@@ -86,6 +87,9 @@ bool Model::save()
 
     fclose(output);
     _loaded = true;
+    _modified = false;
+
+    return true;
 }
 
 bool Model::empty()

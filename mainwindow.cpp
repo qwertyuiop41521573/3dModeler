@@ -198,7 +198,10 @@ MainWindow::MainWindow()
 
 void MainWindow::open()
 {
-    if(!saveRequest()) return;
+    if(model->modified())
+    {
+         if(!saveRequest()) return;
+    }
     if(openFileDialog("Open")) return;
 
     if(!model->empty()) model->clear();
@@ -230,11 +233,17 @@ bool MainWindow::saveRequest()
 bool MainWindow::save()
 {
     if(model->loaded()) return model->save();
-    if(!openFileDialog("Save")) return false;
+    if(openFileDialog("Save")) return false;
     if(!model->save()) return false;
 
     setWindowTitle("3d Modeler - " + model->fileName());
     return true;
+}
+
+void MainWindow::saveAs()
+{
+    if(!openFileDialog("Save")) model->save();
+    setWindowTitle("3d Modeler - " + model->fileName());
 }
 
 bool MainWindow::openFileDialog(QString action)
@@ -253,13 +262,13 @@ bool MainWindow::openFileDialog(QString action)
 
 void MainWindow::newModel()
 {
-    if(saveRequest()) model->clear();
+    if(model->modified() ? saveRequest() : true) model->clear();
     setWindowTitle("3d Modeler");
 }
 
 void MainWindow::handleClose()
 {
-    if(saveRequest()) close();
+    if(model->modified() ? saveRequest() : true) close();
 }
 
 void MainWindow::createActionsAndMenus()

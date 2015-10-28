@@ -50,7 +50,8 @@ TEllipse::TEllipse(MainWindow *mainWindow) : CreatingTool(mainWindow)
     }
     layout->addWidget(radius, 6, 0, 1, 2);
     layout->addWidget(spinBoxRadius, 6, 2, 1, 2);
-    layout->addWidget(finalButton, 7, 0, 1, 4);
+    //final button y coordinate is 8, not 7 because we leave space for cyllinder's spinBox
+    layout->addWidget(finalButton, 8, 0, 1, 4);
     connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
     _widget->hide();
 

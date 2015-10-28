@@ -1,18 +1,20 @@
 #include "elementcontainer.h"
 #include "journal.h"
+#include "model.h"
 
 #include <iostream>
 
 using namespace std;
 
-template <class T> ElementContainer <T>::ElementContainer(Journal *journal)
+template <class T> ElementContainer <T>::ElementContainer(Journal *journal, Model *model)
 {
     _journal = journal;
+    _model = model;
 }
 
 template <class T> int ElementContainer <T>::push(const T &t)
 {
-
+    _model->modify();
     int index;
     int i;
 
@@ -42,6 +44,7 @@ template <class T> int ElementContainer <T>::push(const T &t)
 
 template <class T> void ElementContainer <T>::remove(int index)
 {
+    _model->modify();
     //"element.remove(i)" is the same as "element[i].remove()", but records to journal
     _journal->addBefore(at(0).isVertex(), index);
     at(index).remove();

@@ -115,3 +115,4 @@ RESOURCES += \
 
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget
+

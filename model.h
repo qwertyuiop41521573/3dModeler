@@ -35,11 +35,18 @@ public:
     bool loaded()
     { return _loaded; };
 
+    bool modified()
+    { return _modified; };
+
+    void modify()
+    { _modified = true; };
+
 private:
     bool _textured;
 
     QString _fileName;
     bool _loaded = false;
+    bool _modified = false;
 
 private:
     Journal *_journal;

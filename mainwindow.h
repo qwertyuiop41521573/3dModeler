@@ -58,8 +58,7 @@ private slots:
     void newModel();
 
     bool save();
-    void saveAs()
-    { if(openFileDialog("Save") ) model->save(); };
+    void saveAs();
 
     void handleClose();
 
