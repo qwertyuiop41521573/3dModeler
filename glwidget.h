@@ -161,7 +161,6 @@ public slots:
 
 private:
     MainWindow *_mainWindow;
-    Model *model;
     //pointer to pointer to active tool, it can be accesed as (*activeTool)
     //class Tool has the same pointer to active widget
     Tool **activeTool;

@@ -25,10 +25,10 @@ TVertex::TVertex(MainWindow *mainWindow) : CreatingTool(mainWindow)
 
 void TVertex::function(Action action, QMouseEvent *event)
 {
+    using namespace Model;
     if(action == DRAW) return;
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->vertex();
     widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {
@@ -42,15 +42,15 @@ void TVertex::function(Action action, QMouseEvent *event)
         }
         else for(int i = 0; i < 3; i++) newVertex[i] = spinBox[i]->value();
         ver.clear();
-        ver.push_back(vertex.push(newVertex));
-        vertex[ver[0]].setNewSelected(true);
+        ver.push_back(vertex().push(newVertex));
+        vertex()[ver[0]].setNewSelected(true);
         if(action == FINAL) action = STOP;
     }
-    if(action == EXECUTE) widget->fromScreenToWorld(&vertex[ver[0]].position(), event);
+    if(action == EXECUTE) widget->fromScreenToWorld(&vertex()[ver[0]].position(), event);
     if(action == STOP)
     {
         _busy = false;
-        vertex[ver[0]].setSelected(true, false);
+        vertex()[ver[0]].setSelected(true, false);
         journal->submit();
     }
 }

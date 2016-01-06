@@ -1,6 +1,8 @@
 #include "toolwithpivot.h"
 #include "glwidget.h"
 
+using namespace Model;
+
 ToolWithPivot::ToolWithPivot(MainWindow *mainWindow) : TransformingTool(mainWindow)
 {
 
@@ -11,30 +13,28 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     if(action != START && action != FINAL) return;
 
     GLWidget *widget = *_activeWidget;
-    vector <Vertex> &vertex = model->vertex();
-    vector <Triangle> &triangle = model->triangle();
     int i, j, k;
 
     QVector3D min, max;
     if(workWithElements[0]->isChecked())
     {
         //find first vertex
-        for(i = 0; i < vertex.size(); i++)
+        for(i = 0; i < vertex().size(); i++)
         {
-            if(!vertex[i].exists() || !vertex[i].selected()) continue;
+            if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
 
-            min = max = vertex[i].positionRO();
+            min = max = vertex()[i].positionRO();
             break;
         }
         //expand bounding box to contain all other selected vertices
-        for(i++; i < vertex.size(); i++)
+        for(i++; i < vertex().size(); i++)
         {
-            if(!vertex[i].exists() || !vertex[i].selected()) continue;
+            if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
 
             for(j = 0; j < 3; j++)
             {
-                if(vertex[i].positionRO()[j] > max[j]) max[j] = vertex[i].positionRO()[ j ];
-                if(vertex[i].positionRO()[j] < min[j]) min[j] = vertex[i].positionRO()[j];
+                if(vertex()[i].positionRO()[j] > max[j]) max[j] = vertex()[i].positionRO()[ j ];
+                if(vertex()[i].positionRO()[j] < min[j]) min[j] = vertex()[i].positionRO()[j];
             }
         }
     }
@@ -42,30 +42,30 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     {
         //similar with triangles
         int index;
-        for(i = 0; i < triangle.size(); i++)
+        for(i = 0; i < triangle().size(); i++)
         {
-            if(!triangle[i].exists() || !triangle[i].selected()) continue;
+            if(!triangle()[i].exists() || !triangle()[i].selected()) continue;
 
-            min = max = vertex[triangle[i].getIndex(0)].positionRO();
+            min = max = vertex()[triangle()[i].getIndex(0)].positionRO();
             break;
         }
 
-        checked.resize(vertex.size());
-        for(i = 0; i < vertex.size(); i++) checked[i] = false;
-        for( ; i < triangle.size(); i++)
+        checked.resize(vertex().size());
+        for(i = 0; i < vertex().size(); i++) checked[i] = false;
+        for( ; i < triangle().size(); i++)
         {
-            if(!triangle[i].exists() || !triangle[i].selected()) continue;
+            if(!triangle()[i].exists() || !triangle()[i].selected()) continue;
 
             for(j = 0; j < 3; j++)
             {
-                index = triangle[i].getIndex(j);
+                index = triangle()[i].getIndex(j);
                 if(checked[index]) continue;
 
                 for(k = 0; k < 3; k++)
                 {
                     checked[index] = true;
-                    if(vertex[index].positionRO()[k] > max[k]) max[k] = vertex[index].positionRO()[k];
-                    if(vertex[index].positionRO()[k] < min[k]) min[k] = vertex[index].positionRO()[k];
+                    if(vertex()[index].positionRO()[k] > max[k]) max[k] = vertex()[index].positionRO()[k];
+                    if(vertex()[index].positionRO()[k] < min[k]) min[k] = vertex()[index].positionRO()[k];
                 }
             }
         }

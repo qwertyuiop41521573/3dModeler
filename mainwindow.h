@@ -29,7 +29,6 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
-    Model *getModel();
 
     Tool **getActiveTool()
     { return &toolActive; }
@@ -85,7 +84,6 @@ private slots:
     void maximize(bool value);
 
 private:
-    Model *model;
     //pointers to other tools
     //toolActive is used like widgetActive
     Tool *toolActive, *lastTool;

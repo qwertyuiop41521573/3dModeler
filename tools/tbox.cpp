@@ -5,6 +5,8 @@
 
 #include "gui/mylabel.h"
 
+using namespace Model;
+
 TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
 {
     button->setText("Box");
@@ -54,8 +56,6 @@ void TBox::function(Action action, QMouseEvent *event)
     if(action != STOP && action != STAGE2) TPlane::function(action, event);
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->vertex();
-    ElementContainer <Triangle> &triangle = model->triangle();
     int i;
 
     switch(action)
@@ -84,23 +84,23 @@ void TBox::function(Action action, QMouseEvent *event)
             //move it's center where needed
             v += center;
             //record to model
-            ver.push_back(vertex.push(v));
-            vertex[ver[i]].setSelected(true);
+            ver.push_back(vertex().push(v));
+            vertex()[ver[i]].setSelected(true);
         }
 
         //triangles of the box:
-        tri.push_back(triangle.push({ver[0], ver[1], ver[2]}));
-        tri.push_back(triangle.push({ver[0], ver[2], ver[3]}));
-        tri.push_back(triangle.push({ver[0], ver[5], ver[1]}));
-        tri.push_back(triangle.push({ver[0], ver[4], ver[5]}));
-        tri.push_back(triangle.push({ver[1], ver[6], ver[2]}));
-        tri.push_back(triangle.push({ver[1], ver[5], ver[6]}));
-        tri.push_back(triangle.push({ver[2], ver[7], ver[3]}));
-        tri.push_back(triangle.push({ver[2], ver[6], ver[7]}));
-        tri.push_back(triangle.push({ver[3], ver[4], ver[0]}));
-        tri.push_back(triangle.push({ver[3], ver[7], ver[4]}));
-        tri.push_back(triangle.push({ver[4], ver[6], ver[5]}));
-        tri.push_back(triangle.push({ver[4], ver[7], ver[6]}));
+        tri.push_back(triangle().push({ver[0], ver[1], ver[2]}));
+        tri.push_back(triangle().push({ver[0], ver[2], ver[3]}));
+        tri.push_back(triangle().push({ver[0], ver[5], ver[1]}));
+        tri.push_back(triangle().push({ver[0], ver[4], ver[5]}));
+        tri.push_back(triangle().push({ver[1], ver[6], ver[2]}));
+        tri.push_back(triangle().push({ver[1], ver[5], ver[6]}));
+        tri.push_back(triangle().push({ver[2], ver[7], ver[3]}));
+        tri.push_back(triangle().push({ver[2], ver[6], ver[7]}));
+        tri.push_back(triangle().push({ver[3], ver[4], ver[0]}));
+        tri.push_back(triangle().push({ver[3], ver[7], ver[4]}));
+        tri.push_back(triangle().push({ver[4], ver[6], ver[5]}));
+        tri.push_back(triangle().push({ver[4], ver[7], ver[6]}));
 
         journal->submit();
         break;
@@ -118,22 +118,22 @@ void TBox::function(Action action, QMouseEvent *event)
         //if cube
         if(checkBoxCube->isChecked() && dy != 0)
         {
-            QVector3D dh = normal * sign(dy) * (vertex[ver[6]].positionRO() - vertex[ver[4]].positionRO()).length() / qSqrt(2);
-            for(i = 0; i < 4; i++) vertex[ver[4 + i]].setPosition(vertex[ver[i]].positionRO() + dh);
+            QVector3D dh = normal * sign(dy) * (vertex()[ver[6]].positionRO() - vertex()[ver[4]].positionRO()).length() / qSqrt(2);
+            for(i = 0; i < 4; i++) vertex()[ver[4 + i]].setPosition(vertex()[ver[i]].positionRO() + dh);
         }
-        else for(i = 0; i < 4; i++) vertex[ver[4 + i]].move(normal * dy);
+        else for(i = 0; i < 4; i++) vertex()[ver[4 + i]].move(normal * dy);
 
-        QVector3D diagonal = vertex[ver[6]].positionRO() - vertex[ver[4]].positionRO();
-        QVector3D e_x = vertex[ver[7]].positionRO() - vertex[ver[4]].positionRO();
+        QVector3D diagonal = vertex()[ver[6]].positionRO() - vertex()[ver[4]].positionRO();
+        QVector3D e_x = vertex()[ver[7]].positionRO() - vertex()[ver[4]].positionRO();
 
         //flip the box if needed
-        if(QVector3D::dotProduct(normal, vertex[ver[0]].positionRO() - vertex[ver[4]].positionRO()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
-        QVector3D temp = vertex[ver[1]].positionRO();
-        vertex[ver[1]] = vertex[ver[3]];
-        vertex[ver[3]].setPosition(temp);
-        temp = vertex[ver[5]].positionRO();
-        vertex[ver[5]] = vertex[ver[7]];
-        vertex[ver[7]].setPosition(temp);
+        if(QVector3D::dotProduct(normal, vertex()[ver[0]].positionRO() - vertex()[ver[4]].positionRO()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
+        QVector3D temp = vertex()[ver[1]].positionRO();
+        vertex()[ver[1]] = vertex()[ver[3]];
+        vertex()[ver[3]].setPosition(temp);
+        temp = vertex()[ver[5]].positionRO();
+        vertex()[ver[5]] = vertex()[ver[7]];
+        vertex()[ver[7]].setPosition(temp);
         break;
     }
     //last click in viewport for this tool
@@ -148,7 +148,7 @@ void TBox::function(Action action, QMouseEvent *event)
             break;
         }
         //deselect with "blue", select with "red"
-        for(i = 0; i < 8; i++) vertex[ver[i]].setSelected(true, false);
+        for(i = 0; i < 8; i++) vertex()[ver[i]].setSelected(true, false);
         leave();
         journal->submit();
         break;
@@ -172,21 +172,21 @@ void TBox::function(Action action, QMouseEvent *event)
         for(i = 0; i < 4; i++)
         {
             //the second cap is the same as first
-            ver.push_back(vertex.push(vertex[ver[i]].positionRO()));
-            vertex[ver[4 + i]].setNewSelected(true);
+            ver.push_back(vertex().push(vertex()[ver[i]].positionRO()));
+            vertex()[ver[4 + i]].setNewSelected(true);
         }
 
         //triangles for walls and second cap
-        tri.push_back(triangle.push({ver[0], ver[5], ver[1]}));
-        tri.push_back(triangle.push({ver[0], ver[4], ver[5]}));
-        tri.push_back(triangle.push({ver[1], ver[6], ver[2]}));
-        tri.push_back(triangle.push({ver[1], ver[5], ver[6]}));
-        tri.push_back(triangle.push({ver[2], ver[7], ver[3]}));
-        tri.push_back(triangle.push({ver[2], ver[6], ver[7]}));
-        tri.push_back(triangle.push({ver[3], ver[4], ver[0]}));
-        tri.push_back(triangle.push({ver[3], ver[7], ver[4]}));
-        tri.push_back(triangle.push({ver[4], ver[6], ver[5]}));
-        tri.push_back(triangle.push({ver[4], ver[7], ver[6]}));
+        tri.push_back(triangle().push({ver[0], ver[5], ver[1]}));
+        tri.push_back(triangle().push({ver[0], ver[4], ver[5]}));
+        tri.push_back(triangle().push({ver[1], ver[6], ver[2]}));
+        tri.push_back(triangle().push({ver[1], ver[5], ver[6]}));
+        tri.push_back(triangle().push({ver[2], ver[7], ver[3]}));
+        tri.push_back(triangle().push({ver[2], ver[6], ver[7]}));
+        tri.push_back(triangle().push({ver[3], ver[4], ver[0]}));
+        tri.push_back(triangle().push({ver[3], ver[7], ver[4]}));
+        tri.push_back(triangle().push({ver[4], ver[6], ver[5]}));
+        tri.push_back(triangle().push({ver[4], ver[7], ver[6]}));
 
         widget->setMouseTracking(true);
     }

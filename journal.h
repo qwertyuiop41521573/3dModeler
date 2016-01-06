@@ -5,15 +5,13 @@
 #include "vertex.h"
 #include <QRadioButton>
 
-class Model;
-
 //journal is extended "vector <Record>"
 class Journal : public vector <Record>
 {
 public:
     Journal();
 
-    void setVariables(Model *model, QRadioButton **workWithElements);
+    void setVariables(QRadioButton **workWithElements);
 
     void newRecord(Type type);
 
@@ -55,7 +53,6 @@ public slots:
 
 private:
     int _current = -1;
-    Model *_model;
     QRadioButton **_workWithElements;
 
     vector <int> vertexList, triangleList;

@@ -2,6 +2,8 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
+using namespace Model;
+
 TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 {
     button->setText("Select");
@@ -79,35 +81,32 @@ void TSelect::function(Action action, QMouseEvent *event)
         _busy = false;
         journal->newRecord(EDIT);
 
-        ElementContainer <Vertex> &vertex = model->vertex();
-        ElementContainer <Triangle> &triangle = model->triangle();
-
         if(workWithElements[0]->isChecked())
         {
-            for(int i = 0; i < vertex.size(); i++)
+            for(int i = 0; i < vertex().size(); i++)
             {
-                if(!vertex[i].exists()) continue;
+                if(!vertex()[i].exists()) continue;
 
-                bool newSelected = vertex[i].newSelected();
-                vertex[i].setNewSelected(false);
+                bool newSelected = vertex()[i].newSelected();
+                vertex()[i].setNewSelected(false);
 
-                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) vertex.setSelected(i, newSelected);
-                if(checkBox[0]->isChecked() && newSelected) vertex.setSelected(i, true);
-                if(checkBox[1]->isChecked() && newSelected) vertex.setSelected(i, false);
+                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) vertex().setSelected(i, newSelected);
+                if(checkBox[0]->isChecked() && newSelected) vertex().setSelected(i, true);
+                if(checkBox[1]->isChecked() && newSelected) vertex().setSelected(i, false);
             }
         }
         else
         {
-            for(int i = 0; i < triangle.size(); i++)
+            for(int i = 0; i < triangle().size(); i++)
             {
-                if(!triangle[i].exists()) continue;
+                if(!triangle()[i].exists()) continue;
 
-                bool newSelected = triangle[i].newSelected();
-                triangle[i].setNewSelected(false);
+                bool newSelected = triangle()[i].newSelected();
+                triangle()[i].setNewSelected(false);
 
-                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) triangle.setSelected(i, newSelected);
-                if(checkBox[0]->isChecked() && newSelected) triangle.setSelected(i, true);
-                if(checkBox[1]->isChecked() && newSelected) triangle.setSelected(i, false);
+                if(!checkBox[0]->isChecked() && !checkBox[1]->isChecked()) triangle().setSelected(i, newSelected);
+                if(checkBox[0]->isChecked() && newSelected) triangle().setSelected(i, true);
+                if(checkBox[1]->isChecked() && newSelected) triangle().setSelected(i, false);
             }
         }
 
@@ -133,24 +132,22 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
     GLWidget *widget = *_activeWidget;
     //work with vertices
     bool workWithVert = workWithElements[0]->isChecked();
-    vector <Vertex> &vertex = model->vertex();
-    vector <Triangle> &triangle = model->triangle();
     int i;
 
     widget->countFinalMatrix();
     int j;
     if(workWithVert)
     {
-        for(i = 0; i < vertex.size(); i++) if(vertex[i].exists()) vertex[i].setNewSelected(widget->isSelected(vertex[i].positionRO(), min, max));
+        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex()[i].setNewSelected(widget->isSelected(vertex()[i].positionRO(), min, max));
     }
     else
     {
-        vector <QVector2D> vertexOnScreen(vertex.size());
-        for(i = 0; i < vertex.size(); i++) if(vertex[i].exists()) widget->fromWorldToScreen(&vertexOnScreen[i], vertex[i].positionRO());
+        vector <QVector2D> vertexOnScreen(vertex().size());
+        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) widget->fromWorldToScreen(&vertexOnScreen[i], vertex()[i].positionRO());
 
 
-        bool selected[vertex.size()];
-        for(i = 0; i < vertex.size(); i++) if(vertex[i].exists()) selected[i] = widget->isSelected(vertex[i].positionRO(), min, max);
+        bool selected[vertex().size()];
+        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) selected[i] = widget->isSelected(vertex()[i].positionRO(), min, max);
 
         int k;
         QVector2D rectanglePoints[4];
@@ -161,18 +158,18 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
         QVector2D minT, maxT;
 
-        for(i = 0; i < triangle.size(); i++)
+        for(i = 0; i < triangle().size(); i++)
         {
-            if(!triangle[i].exists()) continue;
-            triangle[i].setNewSelected(false);
+            if(!triangle()[i].exists()) continue;
+            triangle()[i].setNewSelected(false);
 
-            if(ignoreBackfacing->isChecked() && QVector3D::crossProduct(vertexOnScreen[triangle[i].getIndex(1)] - vertexOnScreen[triangle[i].getIndex(0)], vertexOnScreen[triangle[i].getIndex(2)] - vertexOnScreen[triangle[i].getIndex(0)]).z() < 0) continue;
+            if(ignoreBackfacing->isChecked() && QVector3D::crossProduct(vertexOnScreen[triangle()[i].getIndex(1)] - vertexOnScreen[triangle()[i].getIndex(0)], vertexOnScreen[triangle()[i].getIndex(2)] - vertexOnScreen[triangle()[i].getIndex(0)]).z() < 0) continue;
 
             //check if triangle and rectangle can have common points
-            minT = maxT = vertexOnScreen[triangle[i].getIndex(0)];
+            minT = maxT = vertexOnScreen[triangle()[i].getIndex(0)];
             for(j = 1; j < 3; j++)
             {
-                const QVector2D &v = vertexOnScreen[triangle[i].getIndex(j)];
+                const QVector2D &v = vertexOnScreen[triangle()[i].getIndex(j)];
                 if(v.x() < minT.x()) minT.setX(v.x());
                 if(v.y() < minT.y()) minT.setY(v.y());
                 if(v.x() > maxT.x()) maxT.setX(v.x());
@@ -183,35 +180,35 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
             //check if some vertex of triangle is inside rectangle
             for(j = 0; j < 3; j++)
             {
-                if(selected[triangle[i].getIndex(j)])
+                if(selected[triangle()[i].getIndex(j)])
                 {
-                    triangle[i].setNewSelected(true);
+                    triangle()[i].setNewSelected(true);
                     break;
                 }
             }
-            if(triangle[i].newSelected()) continue;
+            if(triangle()[i].newSelected()) continue;
 
             //check if some point of rectangle (like vertex) is inside triangle
-            normal = QVector3D::crossProduct(vertexOnScreen[triangle[i].getIndex(1)] - vertexOnScreen[triangle[i].getIndex(0)], vertexOnScreen[triangle[i].getIndex(2)] - vertexOnScreen[triangle[i].getIndex(0)]).z();
+            normal = QVector3D::crossProduct(vertexOnScreen[triangle()[i].getIndex(1)] - vertexOnScreen[triangle()[i].getIndex(0)], vertexOnScreen[triangle()[i].getIndex(2)] - vertexOnScreen[triangle()[i].getIndex(0)]).z();
             for(j = 0; j < 4; j++)
             {
                 for(k = 0; k < 3; k++)
                 {
-                    edge = vertexOnScreen[triangle[i].getIndex((k + 1) % 3)] - vertexOnScreen[triangle[i].getIndex(k)];
-                    fromVertexToCurrent = rectanglePoints[j] - vertexOnScreen[triangle[i].getIndex(k)];
+                    edge = vertexOnScreen[triangle()[i].getIndex((k + 1) % 3)] - vertexOnScreen[triangle()[i].getIndex(k)];
+                    fromVertexToCurrent = rectanglePoints[j] - vertexOnScreen[triangle()[i].getIndex(k)];
                     if(QVector3D::crossProduct(edge, fromVertexToCurrent).z() * normal <= 0) break;
                 }
-                if(k == 3) triangle[i].setNewSelected(true);
+                if(k == 3) triangle()[i].setNewSelected(true);
             }
-            if(triangle[i].newSelected()) continue;
+            if(triangle()[i].newSelected()) continue;
 
             //check if edges of triangle and rectangle intersect
             //loop through triangle edges
             for(j = 0; j < 3; j++)
             {
-                // edge - j, (j + 1) % 3
-                minT = maxT = vertexOnScreen[triangle[i].getIndex(j)];
-                const QVector2D &v = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
+                // edge - j, (j + 1) % 3e
+                minT = maxT = vertexOnScreen[triangle()[i].getIndex(j)];
+                const QVector2D &v = vertexOnScreen[triangle()[i].getIndex((j + 1) % 3)];
                 if(v.x() < minT.x()) minT.setX(v.x());
                 if(v.y() < minT.y()) minT.setY(v.y());
                 if(v.x() > maxT.x()) maxT.setX(v.x());
@@ -229,8 +226,8 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
                         if(minT[l] >= rectanglePoints[recPoint][l] || maxT[l] <= rectanglePoints[recPoint][l]) continue;
 
-                        QVector2D &v1 = vertexOnScreen[triangle[i].getIndex(j)];
-                        QVector2D &v2 = vertexOnScreen[triangle[i].getIndex((j + 1) % 3)];
+                        QVector2D &v1 = vertexOnScreen[triangle()[i].getIndex(j)];
+                        QVector2D &v2 = vertexOnScreen[triangle()[i].getIndex((j + 1) % 3)];
 
                         bool shouldBeSelected = false;
                         if(v1[!l] == v2[!l])
@@ -249,7 +246,7 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
                         }
                         if(!shouldBeSelected) continue;
 
-                        triangle[i].setNewSelected(true);
+                        triangle()[i].setNewSelected(true);
                         break;
                     }
                 }

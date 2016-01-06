@@ -7,51 +7,22 @@
 
 using namespace std;
 
-class Model
+namespace Model
 {
-public:
-    Model(Journal *journal);
+    void init(Journal *journal);
     bool load(const char *fileName);
     void clear();
     bool save();
 
-    bool textured()
-    { return _textured; };
-
+    bool textured();
     bool empty();
-
-    ElementContainer <Vertex> &vertex()
-    { return *_vertex; };
-
-    ElementContainer <Triangle> &triangle()
-    { return *_triangle; };
-
-    const QString &fileName()
-    { return _fileName; };
-
-    void setFileName(const QString &fileName)
-    { _fileName = fileName; };
-
-    bool loaded()
-    { return _loaded; };
-
-    bool modified()
-    { return _modified; };
-
-    void modify()
-    { _modified = true; };
-
-private:
-    bool _textured;
-
-    QString _fileName;
-    bool _loaded = false;
-    bool _modified = false;
-
-private:
-    Journal *_journal;
-    ElementContainer <Vertex> *_vertex;
-    ElementContainer <Triangle> *_triangle;
-};
+    ElementContainer <Vertex> &vertex();
+    ElementContainer <Triangle> &triangle();
+    const QString &fileName();
+    void setFileName(const QString &fileName);
+    bool loaded();
+    bool modified();
+    void modify();
+}
 
 #endif // MODEL_H

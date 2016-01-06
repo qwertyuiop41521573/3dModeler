@@ -1,8 +1,11 @@
 #include "tcylinder.h"
 #include "glwidget.h"
 #include "mainwindow.h"
+#include "model.h"
 
 #include "gui/mylabel.h"
+
+using namespace Model;
 
 TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)
 {
@@ -29,7 +32,6 @@ void TCylinder::function(Action action, QMouseEvent *event)
     if(action != STOP && action != STAGE2) TEllipse::function(action, event);
 
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->vertex();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -47,7 +49,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             return;
         }
         createWallsAndSecondCap(true);
-        for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].setSelected(true);
+        for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].setSelected(true);
         journal->submit();
         break;
     }
@@ -58,24 +60,24 @@ void TCylinder::function(Action action, QMouseEvent *event)
         Projection projection = widget->getProjection();
         double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
 
-        for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].move(normal * dy);
+        for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].move(normal * dy);
 
         //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
-        QVector3D v1 = vertex[ver[0]].positionRO() - vertex[ver[segments]].positionRO();
-        QVector3D v2 = vertex[ver[1]].positionRO() - vertex[ver[segments]].positionRO();
-        QVector3D h = vertex[ver[segments]].positionRO() - vertex[ver[2 * segments + 1]].positionRO();
+        QVector3D v1 = vertex()[ver[0]].positionRO() - vertex()[ver[segments]].positionRO();
+        QVector3D v2 = vertex()[ver[1]].positionRO() - vertex()[ver[segments]].positionRO();
+        QVector3D h = vertex()[ver[segments]].positionRO() - vertex()[ver[2 * segments + 1]].positionRO();
 
         //flip if needed
         if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) <= 0) break;
         QVector3D temp;
         for(i = 0; i < segments / 2; i++)
         {
-            temp = vertex[ver[segments + 1 + i]].positionRO();
-            vertex[ver[segments + 1 + i]] = vertex[ver[2 * segments - i]];
-            vertex[ver[2 * segments - i]].setPosition(temp);
-            temp = vertex[ver[i]].positionRO();
-            vertex[ver[i]] = vertex[ver[segments - 1 - i]];
-            vertex[ver[segments - 1 - i]].setPosition(temp);
+            temp = vertex()[ver[segments + 1 + i]].positionRO();
+            vertex()[ver[segments + 1 + i]] = vertex()[ver[2 * segments - i]];
+            vertex()[ver[2 * segments - i]].setPosition(temp);
+            temp = vertex()[ver[i]].positionRO();
+            vertex()[ver[i]] = vertex()[ver[segments - 1 - i]];
+            vertex()[ver[segments - 1 - i]].setPosition(temp);
         }
         break;
     }
@@ -89,7 +91,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             leave();
             break;
         }
-        for(i = 0; i < 2 * segments + 2; i++) vertex[ver[i]].setSelected(true, false);
+        for(i = 0; i < 2 * segments + 2; i++) vertex()[ver[i]].setSelected(true, false);
         leave();
         journal->submit();
         break;
@@ -105,7 +107,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
 
         createWallsAndSecondCap(false);
 
-        for(i = 0; i <= segments; i++) vertex[ver[segments + 1 + i]].setNewSelected(true);
+        for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].setNewSelected(true);
 
         widget->setMouseTracking(true);
     }
@@ -114,26 +116,24 @@ void TCylinder::function(Action action, QMouseEvent *event)
 
 void TCylinder::createWallsAndSecondCap(bool final)
 {
-    ElementContainer <Vertex> &vertex = model->vertex();
-    ElementContainer <Triangle> &triangle = model->triangle();
     int segments = spinBoxSegments->value();
     int i;
 
     QVector3D height = final ? normal * spinBoxHeight->value() : QVector3D(0, 0, 0);
     //add vertices for second cap
-    for(i = 0; i <= segments; i++) ver.push_back(vertex.push(vertex[ver[i]].positionRO() + height));
+    for(i = 0; i <= segments; i++) ver.push_back(vertex().push(vertex()[ver[i]].positionRO() + height));
 
     //add triangles for walls and second cap
 
     //cap
-    for(i = 0; i < segments; i++) tri.push_back(triangle.push({ver[segments + 1 + i], ver[segments + 1 + (i + 1) % segments], ver[segments + 1 + segments]}));
+    for(i = 0; i < segments; i++) tri.push_back(triangle().push({ver[segments + 1 + i], ver[segments + 1 + (i + 1) % segments], ver[segments + 1 + segments]}));
 
     //wall
     for(i = 0; i < segments; i++)
     {
         int t = (i + 1) % segments;
-        tri.push_back(triangle.push({ver[segments + 1 + t], ver[segments + 1 + i], ver[i]}));
-        tri.push_back(triangle.push({ver[i], ver[t], ver[segments + 1 + t]}));
+        tri.push_back(triangle().push({ver[segments + 1 + t], ver[segments + 1 + i], ver[i]}));
+        tri.push_back(triangle().push({ver[i], ver[t], ver[segments + 1 + t]}));
     }
 }
 

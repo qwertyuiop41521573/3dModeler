@@ -2,6 +2,8 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
+using namespace Model;
+
 TTriangle::TTriangle(MainWindow *mainWindow) : CreatingTool(mainWindow)
 {
     button->setText("Triangle");
@@ -18,13 +20,12 @@ void TTriangle::function(Action action, QMouseEvent *event)
     if(action != START && action != FINAL) return;
 
     int i;
-    vector <Vertex> &vertex = model->vertex();
 
     if(action == START)
     {
         GLWidget *widget = *_activeWidget;
 
-        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(true);
+        for(i = 0; i < newTriangle.size(); i++) vertex()[newTriangle[i]].setNewSelected(true);
 
         QVector2D min, max;
         const QVector2D &startPosition = widget->getStartPosition();
@@ -37,10 +38,10 @@ void TTriangle::function(Action action, QMouseEvent *event)
 
         widget->countFinalMatrix();
         int j;
-        for(i = 0; i < vertex.size(); i++)
+        for(i = 0; i < vertex().size(); i++)
         {
             //check if this vertex is selected
-            if(!widget->isSelected(vertex[i].positionRO(), min, max)) continue;
+            if(!widget->isSelected(vertex()[i].positionRO(), min, max)) continue;
 
             //check if it is already in newTriangle
             bool selectedBefore = false;
@@ -54,7 +55,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
             if(selectedBefore) continue;
             
             newTriangle.push_back(i);
-            vertex[i].setNewSelected(true);
+            vertex()[i].setNewSelected(true);
         }
         //if it's first vertex
         if(newTriangle.size() == 1) _busy = true;
@@ -63,9 +64,9 @@ void TTriangle::function(Action action, QMouseEvent *event)
         {
             _busy = false;
             journal->newRecord(CREATE);
-            tri.push_back(model->triangle().push(newTriangle.data()));
+            tri.push_back(triangle().push(newTriangle.data()));
             journal->submit();
-            for(i = 0; i < 3; i++) vertex[newTriangle[i]].setSelected(true, false);
+            for(i = 0; i < 3; i++) vertex()[newTriangle[i]].setSelected(true, false);
             newTriangle.clear();
         }
     }
@@ -73,7 +74,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
     else
     {
         _busy = false;
-        for(i = 0; i < newTriangle.size(); i++) vertex[newTriangle[i]].setNewSelected(false);
+        for(i = 0; i < newTriangle.size(); i++) vertex()[newTriangle[i]].setNewSelected(false);
         newTriangle.clear();
     }
 }

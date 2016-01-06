@@ -113,6 +113,18 @@ RESOURCES += \
 # select -> DRAW -> triangles - add bool checked[] not to repeat vertices (or better solution), find similar mistakes; - fix after "triangles selected by clicking or drawing rectangle inside them"
 # check STAGE2 in TBox - should not work but works
 
+
+# shaders for flat and smooth shaded
+# light ?
+# make journal namespace
+# colors in glwidget
+# remove all int i, j ...
+# replace positionRO with position() const
+
+
+
+
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget
+
 

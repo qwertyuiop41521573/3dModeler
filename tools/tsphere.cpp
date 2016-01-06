@@ -6,6 +6,8 @@
 
 //#include <QMatrix3x3>
 
+using namespace Model;
+
 TSphere::TSphere(MainWindow *mainWindow) : CreatingTool(mainWindow)
 {
     button->setText("Sphere");
@@ -70,8 +72,6 @@ void TSphere::function(Action action, QMouseEvent *event)
     if(action == DRAW) return;
  
     GLWidget *widget = *_activeWidget;
-    ElementContainer <Vertex> &vertex = model->vertex();
-    ElementContainer <Triangle> &triangle = model->triangle();
     int segmentsXY = spinBoxSegmentsXY->value();
     int segmentsZ = spinBoxSegmentsZ->value();
     int i, j;
@@ -94,8 +94,8 @@ void TSphere::function(Action action, QMouseEvent *event)
         for(i = 0; i < segmentsXY * (segmentsZ / 2 - 1) + 2; i++)
         {
             //push all vertices to mouse pointer position
-            ver.push_back(vertex.push(startPosition3D));
-            vertex[ver[i]].setNewSelected(true);
+            ver.push_back(vertex().push(startPosition3D));
+            vertex()[ver[i]].setNewSelected(true);
         }
 
         triangulate();
@@ -116,12 +116,12 @@ void TSphere::function(Action action, QMouseEvent *event)
         ver.clear();
         tri.clear();
         journal->newRecord(CREATE);
-        for(i = 0; i < segmentsXY * (segmentsZ / 2 - 1) + 2; i++) ver.push_back(vertex.push({{0, 0, 0}}));
+        for(i = 0; i < segmentsXY * (segmentsZ / 2 - 1) + 2; i++) ver.push_back(vertex().push({{0, 0, 0}}));
 
         setVertices(center, radius);
         triangulate();
 
-        for(i = 0; i < ver.size(); i++) vertex[ver[i]].setSelected(true);
+        for(i = 0; i < ver.size(); i++) vertex()[ver[i]].setSelected(true);
         journal->submit();
         break;
     }
@@ -152,13 +152,13 @@ void TSphere::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if mouse was not moved and all sphere points match
-        if(vertex[ver[0]].positionRO() == vertex[ver[1]].positionRO())
+        if(vertex()[ver[0]].positionRO() == vertex()[ver[1]].positionRO())
         {
             removeAll();
             _busy = false;
             return;
         }
-        for(i = 0; i < ver.size(); i++) vertex[ver[i]].setSelected(true, false);
+        for(i = 0; i < ver.size(); i++) vertex()[ver[i]].setSelected(true, false);
         _busy = false;
         journal->submit();
         break;
@@ -168,8 +168,6 @@ void TSphere::function(Action action, QMouseEvent *event)
 
 void TSphere::triangulate()
 {
-    ElementContainer <Vertex> &vertex = model->vertex();
-    ElementContainer <Triangle> &triangle = model->triangle();
     int segmentsXY = spinBoxSegmentsXY->value();
     int segmentsZ = spinBoxSegmentsZ->value();
 
@@ -178,8 +176,8 @@ void TSphere::triangulate()
     //create top and bottom caps
     for(i = 0; i < segmentsXY; i++)
     {
-        tri.push_back(triangle.push({ver[0], ver[1 + i], ver[1 + (1 + i) % segmentsXY]}));
-        tri.push_back(triangle.push({ver[ver.size() - 1], ver[ver.size() - 2 - i], ver[ver.size() - 2 - (1 + i) % segmentsXY]}));
+        tri.push_back(triangle().push({ver[0], ver[1 + i], ver[1 + (1 + i) % segmentsXY]}));
+        tri.push_back(triangle().push({ver[ver.size() - 1], ver[ver.size() - 2 - i], ver[ver.size() - 2 - (1 + i) % segmentsXY]}));
     }
     //create walls (triangles on neighbour vertex rings)
     for(i = 0; i < segmentsZ / 2 - 2; i++)
@@ -188,15 +186,14 @@ void TSphere::triangulate()
         {
             int st = 1 + segmentsXY * i;
             int last = (st + j) % segmentsXY;
-            tri.push_back(triangle.push({ver[st + j], ver[st + segmentsXY + j], ver[st + last]}));
-            tri.push_back(triangle.push({ver[st + last], ver[st + segmentsXY + j], ver[st + segmentsXY + last]}));
+            tri.push_back(triangle().push({ver[st + j], ver[st + segmentsXY + j], ver[st + last]}));
+            tri.push_back(triangle().push({ver[st + last], ver[st + segmentsXY + j], ver[st + segmentsXY + last]}));
         }
     }
 }
 
 void TSphere::setVertices(const QVector3D &center, double radius)
 {
-    ElementContainer <Vertex> &vertex = model->vertex();
     int segmentsXY = spinBoxSegmentsXY->value();
     int segmentsZ = spinBoxSegmentsZ->value();
     int i, j;
@@ -228,7 +225,7 @@ void TSphere::setVertices(const QVector3D &center, double radius)
     rotationNormal.rotate(angleNormal, normal);
 
     //top pole
-    vertex[ver[0]].setPosition(scaleAndTranslate * QVector4D(normal, 1));
+    vertex()[ver[0]].setPosition(scaleAndTranslate * QVector4D(normal, 1));
     for(i = 0; i < segmentsZ / 2 - 1; i++)
     {
         //switch to next ring
@@ -238,9 +235,9 @@ void TSphere::setVertices(const QVector3D &center, double radius)
         for(j = 0; j < segmentsXY; j++)
         {
             rotatingVertexNormal = rotationNormal * rotatingVertexNormal;
-            vertex[ver[1 + segmentsXY * i + j]].setPosition(scaleAndTranslate * rotatingVertexNormal);
+            vertex()[ver[1 + segmentsXY * i + j]].setPosition(scaleAndTranslate * rotatingVertexNormal);
         }
     }
     //bottom pole
-    vertex[ver[ver.size() - 1]].setPosition(scaleAndTranslate * QVector4D(-normal, 1));
+    vertex()[ver[ver.size() - 1]].setPosition(scaleAndTranslate * QVector4D(-normal, 1));
 }

@@ -6,11 +6,24 @@
 
 using namespace std;
 
-Model::Model(Journal *journal)
+namespace Model
+{
+    bool _textured;
+
+    QString _fileName;
+    bool _loaded = false;
+    bool _modified = false;
+
+    Journal *_journal;
+    ElementContainer <Vertex> *_vertex;
+    ElementContainer <Triangle> *_triangle;
+}
+
+void Model::init(Journal *journal)
 {
     _journal = journal;
-    _vertex = new ElementContainer <Vertex>(journal, this);
-    _triangle = new ElementContainer <Triangle>(journal, this);
+    _vertex = new ElementContainer <Vertex>(journal);
+    _triangle = new ElementContainer <Triangle>(journal);
 }
 
 bool Model::load(const char *newFileName)
@@ -98,3 +111,11 @@ bool Model::empty()
     return true;
 }
 
+bool Model::textured() { return _textured; }
+ElementContainer <Vertex> &Model::vertex() { return *_vertex; }
+ElementContainer <Triangle> &Model::triangle() { return *_triangle; }
+const QString &Model::fileName() { return _fileName; }
+void Model::setFileName(const QString &fileName) { _fileName = fileName; }
+bool Model::loaded() { return _loaded; }
+bool Model::modified() { return _modified; }
+void Model::modify() { _modified = true; }

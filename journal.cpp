@@ -1,6 +1,8 @@
 #include "journal.h"
 #include "model.h"
 
+using namespace Model;
+
 Journal::Journal()
 {
 
@@ -23,9 +25,8 @@ void Journal::cleanAll()
     _current = -1;
 }
 
-void Journal::setVariables(Model *model, QRadioButton **workWithElements)
+void Journal::setVariables(QRadioButton **workWithElements)
 {
-    _model = model;
     _workWithElements = workWithElements;
 }
 
@@ -45,8 +46,8 @@ void Journal::addBefore(bool isVertex, int index)
 {
     //before tool was used
     Edit &data = *current().data().edit;
-    if(isVertex) data.vertex().push_back({index, _model->vertex()[index]});
-    else data.triangle().push_back({index, _model->triangle()[index]});
+    if(isVertex) data.vertex().push_back({index, vertex()[index]});
+    else data.triangle().push_back({index, triangle()[index]});
 }
 
 void Journal::addAfter(bool isVertex)
@@ -56,12 +57,12 @@ void Journal::addAfter(bool isVertex)
     if(isVertex)
     {
         vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
-        vertex[vertex.size() - 1].setAfter(_model->vertex()[vertex[vertex.size() - 1].index()]);
+        vertex[vertex.size() - 1].setAfter(Model::vertex()[vertex[vertex.size() - 1].index()]);
     }
     else
     {
         vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
-        triangle[triangle.size() - 1].setAfter(_model->triangle()[triangle[triangle.size() - 1].index()]);
+        triangle[triangle.size() - 1].setAfter(Model::triangle()[triangle[triangle.size() - 1].index()]);
     }
 }
 
@@ -75,8 +76,8 @@ void Journal::submit()
         //values of new elements are recorded after submit() is called (because vertices are being moved during creation)
         push();        
         Create &data = *current().data().create;
-        for(i = 0; i < vertexList.size(); i++) data.ver().push_back({_model->vertex()[vertexList[i]], vertexList[i]});
-        for(i = 0; i < triangleList.size(); i++) data.tri().push_back({_model->triangle()[triangleList[i]], triangleList[i]});
+        for(i = 0; i < vertexList.size(); i++) data.ver().push_back({vertex()[vertexList[i]], vertexList[i]});
+        for(i = 0; i < triangleList.size(); i++) data.tri().push_back({triangle()[triangleList[i]], triangleList[i]});
         break;
     }
     case EDIT:

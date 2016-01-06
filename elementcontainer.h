@@ -9,13 +9,12 @@
 using namespace std;
 
 class Journal;
-class Model;
 
 //extended vector <T>
 template <class T> class ElementContainer : public vector <T>
 {
 public:
-    ElementContainer(Journal *journal, Model *model);
+    ElementContainer(Journal *journal);
     int push(const T &t);
     void remove(int index);
     void setSelected(int index, bool value);
@@ -26,7 +25,6 @@ public:
 
 private:
     Journal *_journal;
-    Model *_model;
 };
 
 template class ElementContainer <Vertex>;
