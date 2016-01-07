@@ -2,7 +2,7 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
-TMove::TMove(MainWindow *mainWindow) : TransformingTool(mainWindow)
+TMove::TMove() : TransformingTool()
 {
     button->setText("Move");
     finalButton = new QPushButton("Move");
@@ -14,7 +14,7 @@ TMove::TMove(MainWindow *mainWindow) : TransformingTool(mainWindow)
     }
 
     layout->addWidget(finalButton, 4, 0, 1, 2);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 }
 
@@ -26,7 +26,7 @@ void TMove::function(Action action, QMouseEvent *event)
         return;
     }
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int i;
 
     QVector3D drInWorld; //(not on screen)

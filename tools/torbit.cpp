@@ -1,14 +1,15 @@
 #include "torbit.h"
 #include "glwidget.h"
+#include "workspace.h"
 
-TOrbit::TOrbit(MainWindow *mainWindow) : Tool(mainWindow)
+TOrbit::TOrbit() : Tool()
 {
     button->setText("Orbit");
 }
 
 void TOrbit::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     if(action != EXECUTE || widget->getProjection() != PERSPECTIVE) return;
 
     Camera &camera = widget->getCamera();

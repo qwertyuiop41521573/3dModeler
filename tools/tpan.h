@@ -6,7 +6,7 @@
 class TPan : public Tool
 {
 public:
-    TPan(MainWindow *mainWindow);
+    TPan();
 
     void function(Action action, QMouseEvent *event);
 

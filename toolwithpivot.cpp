@@ -1,9 +1,12 @@
 #include "toolwithpivot.h"
 #include "glwidget.h"
+#include "workspace.h"
+#include "target.h"
 
 using namespace Model;
+using namespace Target;
 
-ToolWithPivot::ToolWithPivot(MainWindow *mainWindow) : TransformingTool(mainWindow)
+ToolWithPivot::ToolWithPivot() : TransformingTool()
 {
 
 }
@@ -12,7 +15,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
 {
     if(action != START && action != FINAL) return;
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int i, j, k;
 
     QVector3D min, max;

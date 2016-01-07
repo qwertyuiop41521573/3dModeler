@@ -1,8 +1,9 @@
 #include "tpan.h"
 #include "glwidget.h"
 #include "mathfunctions.h"
+#include "workspace.h"
 
-TPan::TPan(MainWindow *mainWindow) : Tool(mainWindow)
+TPan::TPan() : Tool()
 {
     button->setText("Pan");
 }
@@ -10,7 +11,7 @@ TPan::TPan(MainWindow *mainWindow) : Tool(mainWindow)
 void TPan::function(Action action, QMouseEvent *event)
 {
     if(action != EXECUTE) return;
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     double dx = widget->getLastPosition().x() - event->x() + widget->getHalfWidth();
     double dy = widget->getLastPosition().y() - widget->getHalfHeight() + event->y();
     const QVector3D &rotation = widget->getCamera().rotation();

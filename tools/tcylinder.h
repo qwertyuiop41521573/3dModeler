@@ -8,7 +8,7 @@
 class TCylinder : public TEllipse
 {
 public:
-    TCylinder(MainWindow *mainWindow);
+    TCylinder();
 
     void function(Action action, QMouseEvent *event);
 

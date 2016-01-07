@@ -9,7 +9,7 @@ class TBox : public TPlane
 {
     Q_OBJECT
 public:
-    TBox(MainWindow *mainWindow);
+    TBox();
 
     void function(Action action, QMouseEvent *event);
 

@@ -7,7 +7,7 @@
 class ToolWithPivot : public TransformingTool
 {
 public:
-    ToolWithPivot(MainWindow *mainWindow);
+    ToolWithPivot();
 
     void function(Action action, QMouseEvent *event);
 

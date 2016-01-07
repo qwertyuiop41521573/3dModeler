@@ -57,7 +57,7 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    explicit GLWidget(MainWindow *mainWindow, QWidget *parent = 0);
+    explicit GLWidget();
 
     void setActive(bool value)
     { _isActive = value; };
@@ -160,12 +160,6 @@ protected:
 public slots:
 
 private:
-    MainWindow *_mainWindow;
-    //pointer to pointer to active tool, it can be accesed as (*activeTool)
-    //class Tool has the same pointer to active widget
-    Tool **activeTool;
-    QRadioButton **workWithElements;
-
     int width, height;
     int halfWidth, halfHeight;
     RenderingMode renderingMode = WIREFRAME;

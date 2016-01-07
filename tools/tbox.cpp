@@ -2,12 +2,14 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 #include "mathfunctions.h"
+#include "journal.h"
 
 #include "gui/mylabel.h"
 
 using namespace Model;
+using namespace Journal;
 
-TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
+TBox::TBox() : TPlane()
 {
     button->setText("Box");
     finalButton = new QPushButton("Create Box");
@@ -38,7 +40,7 @@ TBox::TBox(MainWindow *mainWindow) : TPlane(mainWindow)
     }
 
     layout->addWidget(finalButton, 6, 0, 1, 4);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _hasStage2 = true;
     connect(checkBoxCube, SIGNAL(toggled(bool)), this, SLOT(handleCubeClick(bool)));
 
@@ -55,7 +57,7 @@ void TBox::function(Action action, QMouseEvent *event)
 
     if(action != STOP && action != STAGE2) TPlane::function(action, event);
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int i;
 
     switch(action)
@@ -72,7 +74,7 @@ void TBox::function(Action action, QMouseEvent *event)
             size[i] = spinBox[i + 3]->value();
         }
 
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
         for(i = 0; i < 8; i++)
         {
             //cube with center at(0.5, 0.5, 0.5) and size(1, 1, 1)
@@ -102,7 +104,7 @@ void TBox::function(Action action, QMouseEvent *event)
         tri.push_back(triangle().push({ver[4], ver[6], ver[5]}));
         tri.push_back(triangle().push({ver[4], ver[7], ver[6]}));
 
-        journal->submit();
+        Journal::submit();
         break;
     }
     //if we drag pressed mouse in viewport
@@ -150,7 +152,7 @@ void TBox::function(Action action, QMouseEvent *event)
         //deselect with "blue", select with "red"
         for(i = 0; i < 8; i++) vertex()[ver[i]].setSelected(true, false);
         leave();
-        journal->submit();
+        Journal::submit();
         break;
     }
     //"stage1" was dragging pressed mouse (and drawing the cap of box),
@@ -201,7 +203,7 @@ void TBox::handleCubeClick(bool value)
 
 void TBox::leave()
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     widget->setToolIsOn(false);
     setStage2(false);
     widget->setMouseTracking(false);

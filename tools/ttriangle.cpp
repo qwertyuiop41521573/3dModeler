@@ -1,17 +1,18 @@
 #include "ttriangle.h"
 #include "glwidget.h"
 #include "mainwindow.h"
+#include "journal.h"
 
 using namespace Model;
 
-TTriangle::TTriangle(MainWindow *mainWindow) : CreatingTool(mainWindow)
+TTriangle::TTriangle() : CreatingTool()
 {
     button->setText("Triangle");
     finalButton = new QPushButton("Cancel");
     finalButton->setMaximumWidth(150);
 
     layout->addWidget(finalButton, 0, 0, 1, 2 );
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 }
 
@@ -23,7 +24,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
 
     if(action == START)
     {
-        GLWidget *widget = *_activeWidget;
+        GLWidget *widget = Workspace::activeWidget();
 
         for(i = 0; i < newTriangle.size(); i++) vertex()[newTriangle[i]].setNewSelected(true);
 
@@ -63,9 +64,9 @@ void TTriangle::function(Action action, QMouseEvent *event)
         if(newTriangle.size() == 3)
         {
             _busy = false;
-            journal->newRecord(CREATE);
+            Journal::newRecord(CREATE);
             tri.push_back(triangle().push(newTriangle.data()));
-            journal->submit();
+            Journal::submit();
             for(i = 0; i < 3; i++) vertex()[newTriangle[i]].setSelected(true, false);
             newTriangle.clear();
         }

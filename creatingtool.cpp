@@ -1,6 +1,6 @@
 #include "creatingtool.h"
 
-CreatingTool::CreatingTool(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+CreatingTool::CreatingTool() : ToolWithWidget()
 {
 
 }

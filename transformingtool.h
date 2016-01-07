@@ -9,7 +9,7 @@
 class TransformingTool : public ToolWithWidget
 {
 public:
-    TransformingTool(MainWindow *mainWindow);
+    TransformingTool();
 
 signals:
 

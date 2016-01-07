@@ -8,7 +8,7 @@
 class TSphere : public CreatingTool
 {
 public:
-    TSphere(MainWindow *mainWindow);
+    TSphere();
 
     void function(Action action, QMouseEvent *event);
 

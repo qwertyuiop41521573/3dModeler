@@ -5,14 +5,8 @@
 #include "vertex.h"
 #include <QRadioButton>
 
-//journal is extended "vector <Record>"
-class Journal : public vector <Record>
+namespace Journal
 {
-public:
-    Journal();
-
-    void setVariables(QRadioButton **workWithElements);
-
     void newRecord(Type type);
 
     void addVertex(int index);
@@ -24,41 +18,11 @@ public:
     void transform(const QMatrix4x4 &matrix);
     void submit();
 
-    const Record &currentRO()
-    { return at(_current); };
+    const Record &currentRO();
+    Record &current();
+    void cleanAll();    
 
-    Record &current()
-    { return at(_current); };
-
-    const Record &next()
-    { return at(_current + 1); };
-
-    void undo()
-    { if(_current != -1) _current--; };
-
-    void redo()
-    { if(_current != size() - 1) _current++; };
-
-    bool isEmpty()
-    { return _current == -1; };
-
-    bool isFull()
-    { return _current == size() - 1; };
-
-    void cleanAll();
-
-signals:
-
-public slots:
-
-private:
-    int _current = -1;
-    QRadioButton **_workWithElements;
-
-    vector <int> vertexList, triangleList;
-    Type currentType;
-
-    void push();
-};
+    void connectActions(QAction *undoAction, QAction *redoAction);
+}
 
 #endif // JOURNAL_H

@@ -7,7 +7,7 @@
 class ToolWithWidget : public Tool
 {
 public:
-    ToolWithWidget(MainWindow *mainWindow);
+    ToolWithWidget();
 
     void setActive(bool value);
 
@@ -28,9 +28,7 @@ protected:
     QWidget *_widget;
     QGridLayout *layout;
     QPushButton *finalButton;
-    Journal *journal;
     bool _stage2 = false;
-    QRadioButton **workWithElements;
 };
 
 #endif // TOOLWITHWIDGET_H

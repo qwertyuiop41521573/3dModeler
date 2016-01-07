@@ -2,6 +2,7 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 #include "mathfunctions.h"
+#include "journal.h"
 
 #include "gui/mylabel.h"
 
@@ -10,8 +11,9 @@
 
 using namespace std;
 using namespace Model;
+using namespace Journal;
 
-TEllipse::TEllipse(MainWindow *mainWindow) : CreatingTool(mainWindow)
+TEllipse::TEllipse() : CreatingTool()
 {
     button->setText("Ellipse");
     finalButton = new QPushButton("Create Ellipse");
@@ -54,7 +56,7 @@ TEllipse::TEllipse(MainWindow *mainWindow) : CreatingTool(mainWindow)
     layout->addWidget(spinBoxRadius, 6, 2, 1, 2);
     //final button y coordinate is 8, not 7 because we leave space for cyllinder's spinBox
     layout->addWidget(finalButton, 8, 0, 1, 4);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 
     _shift = checkBoxCircle;
@@ -64,7 +66,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 {
     if(action == DRAW) return;
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -75,7 +77,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case START:
     {
         _busy = true;
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
         widget->countFinalInverseMatrix();
         widget->fromScreenToWorld(&startPosition3D, event);
 
@@ -120,7 +122,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         ver.clear();
         tri.clear();
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
         for(i = 0; i < segments; i++) ver.push_back(vertex().push({{0, 0, 0}}));
         createCap(rotatingVertex, angle, scaleAndTranslate);
         //center of first cap
@@ -129,7 +131,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         triangulateCap(_hasStage2);
 
         for(i = 0; i <= segments; i++) vertex()[ver[i]].setSelected(true);
-        if(!_hasStage2) journal->submit();
+        if(!_hasStage2) Journal::submit();
         break;
     }
 
@@ -208,7 +210,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         if(_hasStage2) break;
         _busy = false;
-        journal->submit();
+        Journal::submit();
     }
     }
 }

@@ -9,7 +9,7 @@ using namespace std;
 
 namespace Model
 {
-    void init(Journal *journal);
+    void init();
     bool load(const char *fileName);
     void clear();
     bool save();

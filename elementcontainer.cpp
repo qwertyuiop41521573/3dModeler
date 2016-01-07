@@ -6,9 +6,8 @@
 
 using namespace std;
 
-template <class T> ElementContainer <T>::ElementContainer(Journal *journal)
+template <class T> ElementContainer <T>::ElementContainer()
 {
-    _journal = journal;
 }
 
 template <class T> int ElementContainer <T>::push(const T &t)
@@ -35,8 +34,8 @@ template <class T> int ElementContainer <T>::push(const T &t)
     }
 
     //record to journal
-    if(t.isVertex()) _journal->addVertex(index);
-    else _journal->addTriangle(index);
+    if(t.isVertex()) Journal::addVertex(index);
+    else Journal::addTriangle(index);
     return index;
 }
 
@@ -45,9 +44,9 @@ template <class T> void ElementContainer <T>::remove(int index)
 {
     Model::modify();
     //"element.remove(i)" is the same as "element[i].remove()", but records to journal
-    _journal->addBefore(at(0).isVertex(), index);
+    Journal::addBefore(at(0).isVertex(), index);
     at(index).remove();
-    _journal->addAfter(at(0).isVertex());
+    Journal::addAfter(at(0).isVertex());
 }
 
 template <class T> void ElementContainer <T>::setSelected(int index, bool value)
@@ -55,7 +54,7 @@ template <class T> void ElementContainer <T>::setSelected(int index, bool value)
     //same as remove
     if(at(index).selected() == value) return;
 
-    _journal->addBefore(at(0).isVertex(), index);
+    Journal::addBefore(at(0).isVertex(), index);
     at(index).setSelected(value);
-    _journal->addAfter(at(0).isVertex());
+    Journal::addAfter(at(0).isVertex());
 }

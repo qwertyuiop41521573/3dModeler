@@ -1,37 +1,68 @@
 #include "mainwindow.h"
+#include "journal.h"
+#include "target.h"
 
 #include "gui/myframe.h"
 
 #include <iostream>
 
 using namespace std;
+using namespace ToolSet;
+using namespace Target;
 
 MainWindow::MainWindow()
 {
+    Model::init();
+    ToolSet::init();
+    Workspace::init();
+    initMainWindow();
+}
+
+void MainWindow::initMainWindow()
+{
+    createCentralWidget();
+    createActionsAndMenus();
+    setWindowTitle("3d Modeler");
+}
+
+void MainWindow::createCentralWidget()
+{
     QWidget *centralWidget = new QWidget;
+    centralWidget->setLayout(createCentralLayout());
+    setCentralWidget(centralWidget);
+}
 
-    Model::init(&journal);
-    journal.setVariables(workWithElements);
+QGridLayout *MainWindow::createCentralLayout()
+{
+    QGridLayout *l = new QGridLayout;
+    l->addWidget(createScrollArea(), 0, 1);
+    l->addWidget(createViewportsWidget(), 0, 0);
+    return l;
+}
 
-    //tools
-    tPan = new TPan(this);
-    tZoom = new TZoom(this);
-    tRotateCamera = new TRotateCamera(this);
-    tOrbit = new TOrbit(this);
+QScrollArea *MainWindow::createScrollArea()
+{
+    QScrollArea *s = new QScrollArea;
+    s->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    s->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    s->setFixedWidth(225);
+    s->setWidget(createScrollAreaWidget());
+    ToolSet::hideCylinderWidget();
+    return s;
+}
 
-    tSelect = new TSelect(this);
-    tMove = new TMove(this);
-    tScale = new TScale(this);
-    tRotate = new TRotate(this);
-    tVertex = new TVertex(this);
-    tTriangle = new TTriangle(this);
-    tPlane = new TPlane(this);
-    tBox = new TBox(this);
-    tEllipse = new TEllipse(this);
-    tCylinder = new TCylinder(this);
-    tSphere = new TSphere(this);
+QWidget *MainWindow::createScrollAreaWidget()
+{
+    QWidget *w = new QWidget;
+    w->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    createWorkWithWidget();
+    w->setLayout(createScrollAreaLayout());
+    return w;
+}
 
-    QWidget *workWithWidget = new QWidget;
+void MainWindow::createWorkWithWidget()
+{
+    workWithWidget = new QWidget;
     QGridLayout *workWithLayout = new QGridLayout;
     for(int i = 0; i < 2; i++) workWithElements[i] = new QRadioButton;
     workWithElements[0]->setText("Vertex");
@@ -41,157 +72,40 @@ MainWindow::MainWindow()
 
     workWithElements[0]->setChecked(true);
     workWithWidget->setLayout(workWithLayout);
+}
 
+QGridLayout *MainWindow::createScrollAreaLayout()
+{
+    QGridLayout *l = new QGridLayout;
 
-    toolActive = tSelect;
-    setActiveTool(tSelect);
+    Workspace::insertElements(l);
+    ToolSet::insertButtons(l);
+    l->addWidget(workWithWidget, 20, 0, 1, 4);
+    ToolSet::insertWidgets(l);
 
-    //layouts and gui elements
-    QGridLayout *centralLayout = new QGridLayout;
+    l->addWidget(new MyFrame, 8, 0, 1, 4);
+    l->addWidget(new MyFrame, 11, 0, 1, 4);
+    l->addWidget(new MyFrame, 14, 0, 1, 4);
+    l->addWidget(new MyFrame, 19, 0, 1, 4);
+    l->addWidget(new MyFrame, 21, 0, 1, 4);
 
-    //scrollarea
-    QScrollArea *scrollArea = new QScrollArea;
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scrollArea->setFixedWidth(225);
-    QWidget *scrollAreaWidget = new QWidget;
-    scrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    QGridLayout *scrollAreaLayout = new QGridLayout;
+    l->addItem(new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding), 40, 0, 1, 4);
 
-    renderingMode = new MyComboBox;
+    return l;
+}
 
-    renderingMode->addItem("Wireframe");
-    renderingMode->addItem("Flat Shaded");
-    renderingMode->addItem("Smooth Shaded");
-    renderingMode->addItem("Textured");
+QWidget *MainWindow::createViewportsWidget()
+{
+    QWidget *v = new QWidget;
+    v->setLayout(createViewportsLayout());
+    return v;
+}
 
-    connect(renderingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeRenderingMode(int)));
-
-    QLabel *renderingModeLabel = new QLabel("Rendering Mode:");
-
-    wireframeOverlay = new QCheckBox("Wireframe Overlay");
-
-    connect(wireframeOverlay, SIGNAL(clicked(bool)), this, SLOT(changeWireFrameOverlay()));
-
-    QLabel *projectionLabel = new QLabel("Projection:");
-    projection = new MyComboBox;
-
-    projection->addItem("Top");
-    projection->addItem("Bottom");
-    projection->addItem("Front");
-    projection->addItem("Back");
-    projection->addItem("Left");
-    projection->addItem("Right");
-    projection->addItem("Perpective");
-
-    connect(projection, SIGNAL(currentIndexChanged(int)), this, SLOT(changeProjection(int)));
-
-    QLabel *viewportsLabel = new QLabel("Viewports:");
-
-    for(int i = 0; i < 4; i++) hideViewportButtons[i] = new MyPushButton(i, this);
-
-    maximizeButton = new QPushButton("Maximize\nActive");
-    maximizeButton->setMaximumWidth(75);
-    maximizeButton->setCheckable(true);
-    connect(maximizeButton, SIGNAL(clicked(bool)), this, SLOT(maximize(bool)));
-
-    MyFrame *line[5];
-    for(int i = 0; i < 5; i++) line[i] = new MyFrame;
-
-    QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-    scrollAreaLayout->addWidget(renderingModeLabel, 0, 0, 1, 4);
-    scrollAreaLayout->addWidget(renderingMode, 1, 0, 1, 4);
-    scrollAreaLayout->addWidget(wireframeOverlay, 2, 0, 1, 4);
-    scrollAreaLayout->addWidget(projectionLabel, 3, 0, 1, 4);
-    scrollAreaLayout->addWidget(projection, 4, 0, 1, 4);
-    scrollAreaLayout->addWidget(viewportsLabel, 5, 0, 1, 4);
-
-    for(int i = 0; i < 4; i++) scrollAreaLayout->addWidget(hideViewportButtons[i], 6 + i / 2, i % 2);
-
-    scrollAreaLayout->addWidget(maximizeButton, 6, 2, 2, 2);
-    scrollAreaLayout->addWidget(line[0], 8, 0, 1, 4);
-    scrollAreaLayout->addWidget(tPan->getButton(), 9, 0, 1, 2);
-    scrollAreaLayout->addWidget(tZoom->getButton(), 9, 2, 1, 2);
-    scrollAreaLayout->addWidget(tRotateCamera->getButton(), 10, 0, 1, 2);
-    scrollAreaLayout->addWidget(tOrbit->getButton(), 10, 2, 1, 2);
-    scrollAreaLayout->addWidget(line[1], 11, 0, 1, 4);
-    scrollAreaLayout->addWidget(tSelect->getButton(), 12, 0, 1, 2);
-    scrollAreaLayout->addWidget(tMove->getButton(), 12, 2, 1, 2);
-    scrollAreaLayout->addWidget(tScale->getButton(), 13, 0, 1, 2);
-    scrollAreaLayout->addWidget(tRotate->getButton(), 13, 2, 1, 2);
-    scrollAreaLayout->addWidget(line[2], 14, 0, 1, 4);
-    scrollAreaLayout->addWidget(tVertex->getButton(), 15, 0, 1, 2);
-    scrollAreaLayout->addWidget(tTriangle->getButton(), 15, 2, 1, 2);
-    scrollAreaLayout->addWidget(tPlane->getButton(), 16, 0, 1, 2);
-    scrollAreaLayout->addWidget(tBox->getButton(), 16, 2, 1, 2);
-    scrollAreaLayout->addWidget(tEllipse->getButton(), 17, 0, 1, 2);
-    scrollAreaLayout->addWidget(tCylinder->getButton(), 17, 2, 1, 2);
-    scrollAreaLayout->addWidget(tSphere->getButton(), 18, 0, 1, 2);
-    scrollAreaLayout->addWidget(line[3], 19, 0, 1, 4);
-    scrollAreaLayout->addWidget(workWithWidget, 20, 0, 1, 4);
-    scrollAreaLayout->addWidget(line[4], 21, 0, 1, 4);
-    scrollAreaLayout->addWidget(tSelect->getWidget(), 22, 0, 1, 4);
-    scrollAreaLayout->addWidget(tMove->getWidget(), 23, 0, 1, 4);
-    scrollAreaLayout->addWidget(tScale->getWidget(), 24, 0, 1, 4);
-    scrollAreaLayout->addWidget(tRotate->getWidget(), 25, 0, 1, 4);
-    scrollAreaLayout->addWidget(tVertex->getWidget(), 26, 0, 1, 4);
-    scrollAreaLayout->addWidget(tTriangle->getWidget(), 27, 0, 1, 4);
-    scrollAreaLayout->addWidget(tPlane->getWidget(), 28, 0, 1, 4);
-    scrollAreaLayout->addWidget(tBox->getWidget(), 29, 0, 1, 4);
-    scrollAreaLayout->addWidget(tEllipse->getWidget(), 30, 0, 1, 4);
-    scrollAreaLayout->addWidget(tCylinder->getWidget(), 31, 0, 1, 4);
-    scrollAreaLayout->addWidget(tSphere->getWidget(), 32, 0, 1, 4);
-
-    scrollAreaLayout->addItem(spacer, 40, 0, 1, 4);
-
-    scrollAreaWidget->setLayout(scrollAreaLayout);
-    scrollArea->setWidget(scrollAreaWidget);
-    //scrollarea end
-
-    //tCylinder->widget() is not hidden as it is the biggest widget
-    tCylinder->getWidget()->hide();
-/*    tMove->getWidget()->hide();
-    tScale->getWidget()->hide();
-    tRotate->getWidget()->hide();
-    tVertex->getWidget()->hide();
-    tTriangle->getWidget()->hide();
-    tPlane->getWidget()->hide();
-    tBox->getWidget()->hide();
-    tEllipse->getWidget()->hide();
-    tCylinder->getWidget()->hide();*/
-
-    //viewports
-    QWidget *viewportWidget = new QWidget;
-    QGridLayout *viewportLayout = new QGridLayout;
-
-    for(int i = 0; i < 4; i++) widget[i] = new GLWidget(this);
-
-    widget[0]->setProjection(TOP);
-    widget[1]->setProjection(FRONT);
-    widget[2]->setProjection(LEFT);
-    widget[3]->setProjection(PERSPECTIVE);
-
-    widgetActive = widget[3];
-    widget[3]->setRenderingMode(FLAT_SHADED);
-    widget[3]->setWireframeOverlay(true);
-    setActiveWidget(widget[3]);
-
-    for(int i = 0; i < 4; i++) viewportLayout->addWidget(widget[i], i / 2, i % 2);
-    viewportWidget->setLayout(viewportLayout);
-    //viewports end
-
-    //add viewports and scrollarea to window
-    centralLayout->addWidget(viewportWidget, 0, 0);
-    centralLayout->addWidget(scrollArea, 0, 1);
-    centralWidget->setLayout(centralLayout);
-    setCentralWidget(centralWidget);
-
-    createActionsAndMenus();
-
-    setWindowTitle("3d Modeler");
-
- //  model->load( "/path/to/model.mdl" );
+QGridLayout *MainWindow::createViewportsLayout()
+{
+    QGridLayout *l = new QGridLayout;
+    Workspace::insertViewports(l);
+    return l;
 }
 
 void MainWindow::open()
@@ -273,51 +187,77 @@ void MainWindow::handleClose()
 
 void MainWindow::createActionsAndMenus()
 {
-    QAction *openAction = new QAction(tr("&Open"), this);
+    createActions();
+    createMenus();
+}
+
+void MainWindow::createActions()
+{
+    fileActions();
+    editActions();
+}
+
+void MainWindow::fileActions()
+{
+    openAction = new QAction(tr("&Open"), this);
     openAction->setShortcut(tr("Ctrl+O"));
     connect(openAction, SIGNAL(triggered()), this, SLOT(open()));
-    QAction *exitAction = new QAction(tr("&Exit"), this);
+    exitAction = new QAction(tr("&Exit"), this);
     exitAction->setShortcut(tr("Ctrl+Q"));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(handleClose()));
-    QAction *newAction = new QAction(tr("&New"), this);
+    newAction = new QAction(tr("&New"), this);
     newAction->setShortcut(tr("Ctrl+N"));
     connect(newAction, SIGNAL(triggered()), this, SLOT(newModel()));
-    QAction *saveAction = new QAction(tr("&Save"), this);
+    saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcut(tr("Ctrl+S"));
     connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
-    QAction *saveAsAction = new QAction(tr("&Save As"), this);
+    saveAsAction = new QAction(tr("&Save As"), this);
     connect(saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
+}
 
-    QAction *undoAction = new QAction(tr("&Undo"), this);
+void MainWindow::editActions()
+{
+    undoAction = new QAction(tr("&Undo"), this);
     undoAction->setShortcut(tr("Ctrl+Z"));
-    connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
-    QAction *redoAction = new QAction(tr("&Redo"), this);
+    redoAction = new QAction(tr("&Redo"), this);
     redoAction->setShortcut(tr("Ctrl+Shift+Z"));
-    connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
-    QAction *selectAllAction = new QAction(tr("&Select All"), this);
+    Journal::connectActions(undoAction, redoAction);
+
+    selectAllAction = new QAction(tr("&Select All"), this);
     selectAllAction->setShortcut(tr("Ctrl+A"));
     connect(selectAllAction, SIGNAL(triggered()), this, SLOT(selectAll()));
-    QAction *selectNoneAction = new QAction(tr("&Select None"), this);
+    selectNoneAction = new QAction(tr("&Select None"), this);
     selectNoneAction->setShortcut(tr("Ctrl+D"));
     connect(selectNoneAction, SIGNAL(triggered()), this, SLOT(selectNone()));
-    QAction *snapTogetherAction = new QAction(tr("&Snap Together"), this);
+    snapTogetherAction = new QAction(tr("&Snap Together"), this);
     snapTogetherAction->setShortcut(tr("Ctrl+T"));
     connect(snapTogetherAction, SIGNAL(triggered()), this, SLOT(snapTogether()));
-    QAction *weldTogetherAction = new QAction(tr("&Weld Together"), this);
+    weldTogetherAction = new QAction(tr("&Weld Together"), this);
     weldTogetherAction->setShortcut(tr("Ctrl+W"));
     connect(weldTogetherAction, SIGNAL(triggered()), this, SLOT(weldTogether()));
-    QAction *deleteAction = new QAction(tr("&Delete"), this);
+    deleteAction = new QAction(tr("&Delete"), this);
     deleteAction->setShortcut(tr("Del"));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteSlot()));
+}
 
+void MainWindow::createMenus()
+{
+    fileMenu();
+    editMenu();
+}
 
+void MainWindow::fileMenu()
+{
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newAction);
     fileMenu->addAction(openAction);
     fileMenu->addAction(saveAction);
     fileMenu->addAction(saveAsAction);
     fileMenu->addAction(exitAction);
+}
 
+void MainWindow::editMenu()
+{
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAction);
     editMenu->addAction(redoAction);
@@ -328,39 +268,10 @@ void MainWindow::createActionsAndMenus()
     editMenu->addAction(deleteAction);
 }
 
-void MainWindow::setActiveWidget(GLWidget *widget)
-{
-    //deactivate current active widget
-    widgetActive->setActive(false);
-    //copy new widget pointer to widgetActive
-    widgetActive = widget;
-    //activate new active widget
-    widgetActive->setActive(true);
-    //load some parameters from new active widget
-    renderingMode->setCurrentIndex(widgetActive->getRenderingMode());
-    wireframeOverlay->setChecked(widgetActive->getWireframeOverlay());
-    projection->setCurrentIndex(widgetActive->getProjection());
-}
-
-void MainWindow::setActiveTool(Tool *tool)
-{
-    if(toolActive->hasStage2() && toolActive->stage2())
-    {
-        tool->getButton()->setChecked(false);
-        return;
-    }
-    //deactivate current
-    toolActive->setActive(false);
-    //copy pointer to toolActive
-    toolActive = tool;
-    //activate new
-    tool->setActive(true);
-}
-
 void MainWindow::selectAll()
 {
     using namespace Model;
-    journal.newRecord(EDIT);
+    Journal::newRecord(EDIT);
     //if we work with vertices
     if(workWithElements[0]->isChecked())
     {
@@ -371,13 +282,13 @@ void MainWindow::selectAll()
     {
         for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists()) triangle().setSelected(i, true);
     }
-    journal.submit();
+    Journal::submit();
 }
 
 void MainWindow::selectNone()
 {
     using namespace Model;
-    journal.newRecord(EDIT);
+    Journal::newRecord(EDIT);
     if(workWithElements[0]->isChecked())
     {
         for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex().setSelected(i, false);
@@ -386,43 +297,7 @@ void MainWindow::selectNone()
     {
         for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists()) triangle().setSelected(i, false);
     }   
-    journal.submit();
-}
-
-void MainWindow::quickAccessToolOrbit()
-{
-    //backup current active too
-    lastTool = toolActive;
-    //and switch to tOrbit
-    setActiveTool(tOrbit);
-}
-
-void MainWindow::quickAccessToolPan()
-{
-    lastTool = toolActive;
-    setActiveTool(tPan);
-}
-
-void MainWindow::hideViewport(int index)
-{
-    widget[index]->setHidden(!widget[index]->isHidden());
-    //if three viewports are hidden, it's equal to maximizing one viewport
-    bool threeViewportsHidden = true;
-    for(int i = 0; i < 4; i++) if(widget[i] != widgetActive) threeViewportsHidden *= hideViewportButtons[i]->isChecked();
-    maximizeButton->setChecked(threeViewportsHidden && !widgetActive->isHidden());
-}
-
-void MainWindow::maximize(bool value)
-{
-    if(value)
-    {
-        for(int i = 0; i < 4; i++)
-        {
-            widget[i]->setOldHidden(widget[i]->isHidden());
-            hideViewportButtons[i]->setChecked(!(widget[i] == widgetActive));
-        }
-    }
-    else for(int i = 0; i < 4; i++) hideViewportButtons[i]->setChecked(widget[i]->oldHidden());
+    Journal::submit();
 }
 
 void MainWindow::snapTogether()
@@ -464,13 +339,13 @@ void MainWindow::snapTogether()
     }
     //center of bounding box
     QVector3D center = (max + min) / 2;
-    journal.newRecord(EDIT);
+    Journal::newRecord(EDIT);
     for(i = 0; i < selected.size(); i++)
     {
-        journal.addBefore(true, selected[i]);
+        Journal::addBefore(true, selected[i]);
         //move to center
         vertex()[selected[i]].setPosition(center);
-        journal.addAfter(true);
+        Journal::addAfter(true);
     }
 }
 
@@ -513,7 +388,7 @@ void MainWindow::weldTogether()
         if(groups[i].size() == 1) continue;
 
         //if found, create journal record;
-        journal.newRecord(EDIT);
+        Journal::newRecord(EDIT);
         break;
     }
 
@@ -526,10 +401,10 @@ void MainWindow::weldTogether()
         for(j = 1; j < groups[i].size(); j++)
         {
             int index = groups[i][j];
-            journal.addBefore(true, index);
+            Journal::addBefore(true, index);
             //remove vertex
             vertex().remove(index);
-            journal.addAfter(true);
+            Journal::addAfter(true);
             //replace this vertex with first from group in all triangles
             for(k = 0; k < triangle().size(); k++)
             {
@@ -539,9 +414,9 @@ void MainWindow::weldTogether()
                 {
                     if(triangle()[k].getIndex(l) == index)
                     {
-                        journal.addBefore(false, k);
+                        Journal::addBefore(false, k);
                         triangle()[k].setIndex(l, groups[i][0]);
-                        journal.addAfter(false);
+                        Journal::addAfter(false);
                         break;
                     }
                 }
@@ -556,7 +431,7 @@ void MainWindow::deleteSlot()
     int i, j, k;
     vector <int> vertexList, triangleList, vertexList2;
 
-    journal.newRecord(EDIT);
+    Journal::newRecord(EDIT);
 
     bool chain;
     int end;
@@ -640,83 +515,10 @@ void MainWindow::deleteSlot()
         if(j == triangle().size()) vertex().remove(vertexList2[i]);
     }
 
-   journal.submit();
+   Journal::submit();
 }
 
-void MainWindow::stopQuickAccess()
-{
-    setActiveTool(lastTool);
-}
 
-void MainWindow::undo()
-{
-    if(toolActive->busy() || journal.isEmpty()) return;
-
-    const Record &rec = journal.currentRO();
-    int i;
-
-    switch(rec.type())
-    {
-    case CREATE:
-    {
-        const Create &data = *rec.dataRO().create;
-        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        //remove what was created
-        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()].remove();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()].remove();
-        break;
-    }
-    case EDIT:
-    {
-        const Edit &data = *rec.dataRO().edit;
-        //replace edited elements with their "before" value
-        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].before();
-        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].before();
-
-        break;
-    }
-    }
-
-    journal.undo();
-}
-
-void MainWindow::redo()
-{
-    if(toolActive->busy() || journal.isFull()) return;
-    const Record &rec = journal.next();
-
-    int i;
-
-    switch(rec.type())
-    {
-    case CREATE:
-    {
-        const Create &data = *rec.dataRO().create;
-        //recreate elements
-        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].valRO();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].valRO();
-        break;
-    }
-    case EDIT:
-    {
-        const Edit &data = *rec.dataRO().edit;
-        //replace edited elements with their "after" value
-        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].after();
-        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].after();
-
-        break;
-    }
-    }
-
-    journal.redo();
-}
 
 void MainWindow::addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index)
 {
@@ -732,12 +534,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
     case Qt::Key_Shift:
     {
-        if(toolActive->shift()) toolActive->shift()->setChecked(true);
+        if(activeTool()->shift()) activeTool()->shift()->setChecked(true);
         break;
     }
     case Qt::Key_Control:
     {
-        if(toolActive->ctrl()) toolActive->ctrl()->setChecked(true);
+        if(activeTool()->ctrl()) activeTool()->ctrl()->setChecked(true);
         break;
     }
     case Qt::Key_1:
@@ -759,12 +561,12 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     {
     case Qt::Key_Shift:
     {
-        if(toolActive->shift()) toolActive->shift()->setChecked(false);
+        if(activeTool()->shift()) activeTool()->shift()->setChecked(false);
         break;
     }
     case Qt::Key_Control:
     {
-        if(toolActive->ctrl()) toolActive->ctrl()->setChecked(false);
+        if(activeTool()->ctrl()) activeTool()->ctrl()->setChecked(false);
         break;
     }
     }

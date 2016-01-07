@@ -1,10 +1,14 @@
 #include "tselect.h"
 #include "glwidget.h"
 #include "mainwindow.h"
+#include "journal.h"
+#include "target.h"
 
 using namespace Model;
+using namespace Journal;
+using namespace Target;
 
-TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+TSelect::TSelect() : ToolWithWidget()
 {
     button->setText("Select");
     int i;
@@ -30,7 +34,7 @@ TSelect::TSelect(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
 
 void TSelect::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
 
     switch(action)
     {
@@ -79,7 +83,7 @@ void TSelect::function(Action action, QMouseEvent *event)
     case STOP:
     {
         _busy = false;
-        journal->newRecord(EDIT);
+        Journal::newRecord(EDIT);
 
         if(workWithElements[0]->isChecked())
         {
@@ -110,7 +114,7 @@ void TSelect::function(Action action, QMouseEvent *event)
             }
         }
 
-        journal->submit();
+        Journal::submit();
         break;
     }
     }
@@ -118,7 +122,7 @@ void TSelect::function(Action action, QMouseEvent *event)
 
 void TSelect::countMinAndMax(QVector2D *min, QVector2D *max, const QVector2D &currentPosition)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     const QVector2D &startPosition = widget->getStartPosition();
 
     min->setX(qMin(startPosition.x(), currentPosition.x()) - 2);
@@ -129,7 +133,7 @@ void TSelect::countMinAndMax(QVector2D *min, QVector2D *max, const QVector2D &cu
 
 void TSelect::_select(const QVector2D &min, const QVector2D &max)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     //work with vertices
     bool workWithVert = workWithElements[0]->isChecked();
     int i;

@@ -1,13 +1,14 @@
 #include "toolwithwidget.h"
 #include "mainwindow.h"
+#include "target.h"
 
-ToolWithWidget::ToolWithWidget(MainWindow *mainWindow) : Tool(mainWindow)
+using namespace Target;
+
+ToolWithWidget::ToolWithWidget() : Tool()
 {
     _widget = new QWidget;
     layout = new QGridLayout;
     _widget->setLayout(layout);
-    journal = _mainWindow->getJournal();
-    workWithElements = _mainWindow->getWorkWithElements();
 }
 
 void ToolWithWidget::setActive(bool value)

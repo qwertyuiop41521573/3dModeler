@@ -1,14 +1,13 @@
 #include "tool.h"
-#include "mainwindow.h"
+#include "toolset.h"
+#include "workspace.h"
 
-Tool::Tool(MainWindow *mainWindow)
+Tool::Tool()
 {
-    _mainWindow = mainWindow;
     button = new QPushButton;
     button->setMaximumWidth(70);
     button->setCheckable(true);
     connect(button, SIGNAL(clicked(bool)), this, SLOT(handleClick(bool)));
-    _activeWidget = _mainWindow->getActiveWidget();
 }
 
 void Tool::setActive(bool value)
@@ -19,6 +18,6 @@ void Tool::setActive(bool value)
 
 void Tool::handleClick(bool pressed)
 {
-    if(pressed) _mainWindow->setActiveTool(this);
+    if(pressed) ToolSet::setActiveTool(this);
     else button->setChecked(true);
 }

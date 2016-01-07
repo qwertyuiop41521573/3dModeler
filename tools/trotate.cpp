@@ -4,7 +4,7 @@
 
 #include "gui/mylabel.h"
 
-TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
+TRotate::TRotate() : ToolWithPivot()
 {
     button->setText("Rotate");
     finalButton = new QPushButton("Rotate");
@@ -24,7 +24,7 @@ TRotate::TRotate(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
     checkBoxCustomAxis->setChecked(true);
     layout->addWidget(checkBoxCustomAxis, 4, 0, 1, 2);
     layout->addWidget(finalButton, 5, 0, 1, 2);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 }
 
@@ -36,7 +36,7 @@ void TRotate::function(Action action, QMouseEvent *event)
         return;
     }
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int i, j, k;
 
     ToolWithPivot::function(action, event);
@@ -103,7 +103,7 @@ void TRotate::function(Action action, QMouseEvent *event)
 
 bool TRotate::createRotationMatrix(QMatrix4x4 *rotation, double angle)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
 
     if(checkBoxCustomAxis->isChecked())
     {

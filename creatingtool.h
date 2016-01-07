@@ -6,7 +6,7 @@
 class CreatingTool : public ToolWithWidget
 {
 public:
-    CreatingTool(MainWindow *mainWindow);
+    CreatingTool();
 
 signals:
 

@@ -6,7 +6,7 @@
 class TTriangle : public CreatingTool
 {
 public:
-    TTriangle(MainWindow *mainWindow);
+    TTriangle();
 
     void function(Action action, QMouseEvent *event);
     void setActive(bool value);

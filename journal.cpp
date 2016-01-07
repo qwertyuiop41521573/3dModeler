@@ -1,33 +1,50 @@
 #include "journal.h"
 #include "model.h"
+#include "toolset.h"
+#include "tool.h"
+#include "j_signalhandler.h"
+
+#include <QObject>
 
 using namespace Model;
+using namespace ToolSet;
 
-Journal::Journal()
+namespace Journal
 {
+    vector <Record> _vec;
 
+    int _current = -1;
+    QRadioButton **_workWithElements;
+
+    vector <int> vertexList, triangleList;
+    Type currentType;
+
+    void push();
+    void undo();
+    void redo();
+    const Record &next();
+    bool isEmpty();
+    bool isFull();
+
+
+    SignalHandler *signalHandler;
 }
 
 void Journal::push()
 {
     //if we did some undos and from that point do something, we should clean the journal records starting from current point
-    for(int i = _current + 1; i < size(); i++) at(i).clean();
-    erase(begin() + _current + 1, end());
+    for(int i = _current + 1; i < _vec.size(); i++) _vec.at(i).clean();
+    _vec.erase(_vec.begin() + _current + 1, _vec.end());
     //and only then push
-    push_back(currentType);
+    _vec.push_back(currentType);
     _current++;
 }
 
 void Journal::cleanAll()
 {
-    for(int i = 0; i < size(); i++) at(i).clean();
-    clear();
+    for(int i = 0; i < _vec.size(); i++) _vec.at(i).clean();
+    _vec.clear();
     _current = -1;
-}
-
-void Journal::setVariables(QRadioButton **workWithElements)
-{
-    _workWithElements = workWithElements;
 }
 
 void Journal::newRecord(Type type)
@@ -40,7 +57,7 @@ void Journal::newRecord(Type type)
         triangleList.clear();
     }
     if(type == EDIT) push();
-};
+}
 
 void Journal::addBefore(bool isVertex, int index)
 {
@@ -87,7 +104,7 @@ void Journal::submit()
 
         //if nothing was selected before using tool
         current().clean();
-        erase(end());
+        _vec.erase(_vec.end());
         _current--;
         break;
     }
@@ -95,12 +112,88 @@ void Journal::submit()
 }
 
 void Journal::addVertex(int index)
-{
-    vertexList.push_back(index);
-}
+{ vertexList.push_back(index); }
 
 void Journal::addTriangle(int index)
+{ triangleList.push_back(index); }
+
+const Record &Journal::currentRO() { return _vec.at(_current); }
+Record &Journal::current() { return _vec.at(_current); }
+const Record &Journal::next() { return _vec.at(_current + 1); }
+void Journal::undo() { if(_current != -1) _current--; }
+void Journal::redo() { if(_current != _vec.size() - 1) _current++; }
+bool Journal::isEmpty() { return _current == -1; }
+bool Journal::isFull() { return _current == _vec.size() - 1; }
+
+void Journal::SignalHandler::undo()
 {
-    triangleList.push_back(index);
+    if(activeTool()->busy() || isEmpty()) return;
+
+    const Record &rec = currentRO();
+    int i;
+
+    switch(rec.type())
+    {
+    case CREATE:
+    {
+        const Create &data = *rec.dataRO().create;
+        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
+        //remove what was created
+        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()].remove();
+        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
+        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()].remove();
+        break;
+    }
+    case EDIT:
+    {
+        const Edit &data = *rec.dataRO().edit;
+        //replace edited elements with their "before" value
+        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
+        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].before();
+        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
+        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].before();
+
+        break;
+    }
+    }
+
+    undo();
 }
 
+void Journal::SignalHandler::redo()
+{
+    if(activeTool()->busy() || isFull()) return;
+    const Record &rec = next();
+
+    int i;
+
+    switch(rec.type())
+    {
+    case CREATE:
+    {
+        const Create &data = *rec.dataRO().create;
+        //recreate elements
+        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
+        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].valRO();
+        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
+        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].valRO();
+        break;
+    }
+    case EDIT:
+    {
+        const Edit &data = *rec.dataRO().edit;
+        //replace edited elements with their "after" value
+        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
+        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].after();
+        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
+        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].after();
+
+        break;
+    }
+    }
+
+    redo();
+}
+
+void Journal::connectActions(QAction *undoAction, QAction *redoAction)
+{ signalHandler = new SignalHandler(undoAction, redoAction); }

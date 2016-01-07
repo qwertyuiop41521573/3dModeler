@@ -1,6 +1,8 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 #include "mathfunctions.h"
+#include "toolset.h"
+#include "target.h"
 
 //colors
 #define GRAY       QVector3D(0.5, 0.5, 0.5)
@@ -14,16 +16,14 @@
 #define WHITE      QVector3D(1, 1, 1)
 
 #include <iostream>
+
 using namespace std;
 using namespace Model;
+using namespace ToolSet;
+using namespace Target;
 
-GLWidget::GLWidget(MainWindow *mainWindow, QWidget *parent) : QOpenGLWidget(parent)
+GLWidget::GLWidget() : QOpenGLWidget(0)
 {
-    _mainWindow = mainWindow;
-
-    activeTool = _mainWindow->getActiveTool();
-    workWithElements = _mainWindow->getWorkWithElements();
-
     timer = new QBasicTimer;
     programColor = new QGLShaderProgram;
     programTexture =new QGLShaderProgram;
@@ -350,7 +350,7 @@ void GLWidget::initTextures()
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-    if(!_isActive) _mainWindow->setActiveWidget(this);
+    if(!_isActive) Workspace::setActiveWidget(this);
 
     if(!toolIsOn) startPosition = lastPosition = QVector2D(event->x() - halfWidth, halfHeight - event->y());
     if(quickAccess) return;
@@ -359,7 +359,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     {
     case Qt::LeftButton:
     {
-        Tool *aT = *activeTool;
+        Tool *aT = activeTool();
         //  ! stage2     hasStage2 == true && stage2 == false
         //               hasStage2 == false
         //  hasStage2 ? !stage2 : true
@@ -369,13 +369,13 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     }
     case Qt::RightButton:
     {
-        _mainWindow->quickAccessToolOrbit();
+        quickAccessToolOrbit();
         quickAccess = true;
         break;
     }
     case Qt::MiddleButton:
     {
-        _mainWindow->quickAccessToolPan();
+        quickAccessToolPan();
         quickAccess = true;
     }
     }
@@ -383,10 +383,10 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if(event->buttons() & Qt::LeftButton || quickAccess || (*activeTool)->stage2())
+    if(event->buttons() & Qt::LeftButton || quickAccess || activeTool()->stage2())
     {
         toolIsOn = true;
-        (*activeTool)->function(EXECUTE, event);
+        activeTool()->function(EXECUTE, event);
         lastPosition = currentPosition = QVector2D(event->x() - halfWidth, halfHeight - event->y());
     }
 }
@@ -394,15 +394,14 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if(quickAccess)
-    {
-        toolIsOn = false;
-        _mainWindow->stopQuickAccess();
+    {        toolIsOn = false;
+        stopQuickAccess();
         quickAccess = false;
     }
     else if(event->button() == Qt::LeftButton)
     {
         toolIsOn = false;
-        Tool *aT = *activeTool;
+        Tool *aT = activeTool();
         if(aT->hasStage2() && !aT->stage2()) aT->function(STAGE2);
         else aT->function(STOP);
     }
@@ -514,7 +513,7 @@ void GLWidget::drawToolLines()
 {
     toolData.vertices.clear();
     toolData.indices.clear();
-    (*activeTool)->function(DRAW);
+    activeTool()->function(DRAW);
     vector <VertexData_Color> &vertices = toolData.vertices;
     vector <GLuint> &indices = toolData.indices;
     for(int i = 0; i < vertices.size(); i++) vertices[i].color = WHITE;

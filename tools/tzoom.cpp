@@ -1,15 +1,16 @@
 #include "tzoom.h"
 #include "glwidget.h"
 #include "mathfunctions.h"
+#include "workspace.h"
 
-TZoom::TZoom(MainWindow *mainWindow) : Tool(mainWindow)
+TZoom::TZoom() : Tool()
 {
     button->setText("Zoom");
 }
 
 void TZoom::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     if(action != EXECUTE) return;
     bool perspective = widget->getProjection() == PERSPECTIVE;
     double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / (perspective ? 40 : 100);

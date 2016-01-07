@@ -6,7 +6,7 @@
 class TOrbit : public Tool
 {
 public:
-    TOrbit(MainWindow *mainWindow);
+    TOrbit();
 
     void function(Action action, QMouseEvent *event);
 

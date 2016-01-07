@@ -1,10 +1,13 @@
 #include "tvertex.h"
 #include "glwidget.h"
 #include "mainwindow.h"
+#include "journal.h"
 
 #include "gui/mylabel.h"
 
-TVertex::TVertex(MainWindow *mainWindow) : CreatingTool(mainWindow)
+using namespace Journal;
+
+TVertex::TVertex() : CreatingTool()
 {
     button->setText("Vertex");
     finalButton = new QPushButton("Create Vertex");
@@ -19,7 +22,7 @@ TVertex::TVertex(MainWindow *mainWindow) : CreatingTool(mainWindow)
         layout->addWidget(spinBox[i], i, 1);
     }
     layout->addWidget(finalButton, 3, 0, 1, 2);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 }
 
@@ -28,11 +31,11 @@ void TVertex::function(Action action, QMouseEvent *event)
     using namespace Model;
     if(action == DRAW) return;
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     widget->countFinalInverseMatrix();
     if(action == START || action == FINAL)
     {
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
 
         QVector3D newVertex;
         if(action == START)
@@ -51,6 +54,6 @@ void TVertex::function(Action action, QMouseEvent *event)
     {
         _busy = false;
         vertex()[ver[0]].setSelected(true, false);
-        journal->submit();
+        Journal::submit();
     }
 }

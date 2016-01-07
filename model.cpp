@@ -14,21 +14,19 @@ namespace Model
     bool _loaded = false;
     bool _modified = false;
 
-    Journal *_journal;
     ElementContainer <Vertex> *_vertex;
     ElementContainer <Triangle> *_triangle;
 }
 
-void Model::init(Journal *journal)
+void Model::init()
 {
-    _journal = journal;
-    _vertex = new ElementContainer <Vertex>(journal);
-    _triangle = new ElementContainer <Triangle>(journal);
+    _vertex = new ElementContainer <Vertex>();
+    _triangle = new ElementContainer <Triangle>();
 }
 
 bool Model::load(const char *newFileName)
 {
-    _journal->cleanAll();
+    Journal::cleanAll();
     _loaded = true;
     FILE *input = fopen(newFileName, "rt");
     if(!input) _loaded = false;
@@ -64,7 +62,7 @@ bool Model::load(const char *newFileName)
 
 void Model::clear()
 {
-    _journal->cleanAll();
+    Journal::cleanAll();
     _vertex->clear();
     _triangle->clear();
     _loaded = false;

@@ -2,12 +2,13 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 #include "model.h"
+#include "journal.h"
 
 #include "gui/mylabel.h"
 
 using namespace Model;
 
-TCylinder::TCylinder(MainWindow *mainWindow) : TEllipse(mainWindow)
+TCylinder::TCylinder() : TEllipse()
 {
     button->setText("Cylinder");
     finalButton->setText("Create Cylinder");
@@ -31,7 +32,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     //cylinder's STAGE2 has much code from ellipse's STOP
     if(action != STOP && action != STAGE2) TEllipse::function(action, event);
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int segments = spinBoxSegments->value();
     int i;
 
@@ -50,7 +51,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         }
         createWallsAndSecondCap(true);
         for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].setSelected(true);
-        journal->submit();
+        Journal::submit();
         break;
     }
     //if(!_stage2) is done in TEllipse::function(action, event);
@@ -93,7 +94,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         }
         for(i = 0; i < 2 * segments + 2; i++) vertex()[ver[i]].setSelected(true, false);
         leave();
-        journal->submit();
+        Journal::submit();
         break;
     }
     case STAGE2:
@@ -139,7 +140,7 @@ void TCylinder::createWallsAndSecondCap(bool final)
 
 void TCylinder::leave()
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     widget->setToolIsOn(false);
     setStage2(false);
     widget->setMouseTracking(false);

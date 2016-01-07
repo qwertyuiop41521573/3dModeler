@@ -22,7 +22,7 @@ class Tool : public QObject
 {
     Q_OBJECT
 public:
-    Tool(MainWindow *mainWindow);
+    Tool();
 
     virtual void setActive(bool value);
     //"function" contains actual job of tool
@@ -46,11 +46,7 @@ public:
     { return _ctrl; };
 
 protected:
-    MainWindow *_mainWindow;
     bool _hasStage2 = false;
-    //pointer to pointer to active viewport, pointer to current active viewport is (*_activeWidget)
-    //class GLWidget has the same pointer to active tool
-    GLWidget **_activeWidget;
     //button to switch to this tool
     QPushButton *button;
 
@@ -58,6 +54,9 @@ protected:
 
     QCheckBox *_shift = 0;
     QCheckBox *_ctrl = 0;
+
+protected slots:
+    void final() { function(FINAL); };
 
 private slots:
     void handleClick(bool pressed);

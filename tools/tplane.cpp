@@ -3,10 +3,12 @@
 #include "mainwindow.h"
 #include "mathfunctions.h"
 #include "model.h"
+#include "journal.h"
 
 using namespace Model;
+using namespace Journal;
 
-TPlane::TPlane(MainWindow *mainWindow) : CreatingTool(mainWindow)
+TPlane::TPlane() : CreatingTool()
 {
     button->setText("Plane");
     checkBoxSquare = new MyCheckBoxMW;
@@ -21,7 +23,7 @@ void TPlane::function(Action action, QMouseEvent *event)
 {
     if(action == DRAW) return;
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int i;
     widget->countFinalInverseMatrix();
 
@@ -30,7 +32,7 @@ void TPlane::function(Action action, QMouseEvent *event)
     case START:
     {
         _busy = true;
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
         //create the cap without other parts    
         //all cap vertices are in 1 point
 
@@ -113,7 +115,7 @@ void TPlane::function(Action action, QMouseEvent *event)
 
         if(_hasStage2) break;
         _busy = false;
-        journal->submit();
+        Journal::submit();
     }
     }
 }

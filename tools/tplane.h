@@ -8,7 +8,7 @@
 class TPlane : public CreatingTool
 {
 public:
-    TPlane(MainWindow *mainWindow);
+    TPlane();
 
     void function(Action action, QMouseEvent *event);
 

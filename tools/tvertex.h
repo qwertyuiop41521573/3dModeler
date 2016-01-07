@@ -8,7 +8,7 @@
 class TVertex : public CreatingTool
 {
 public:
-    TVertex(MainWindow *mainWindow);
+    TVertex();
 
     void function(Action action, QMouseEvent *event);
 signals:

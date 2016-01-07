@@ -44,7 +44,12 @@ SOURCES += \
     record.cpp \
     journal.cpp \
     elementcontainer.cpp \
-    element.cpp
+    element.cpp \
+    toolset.cpp \
+    workspace.cpp \
+    w_signalhandler.cpp \
+    j_signalhandler.cpp \
+    target.cpp
 
 
 HEADERS += \
@@ -88,7 +93,12 @@ HEADERS += \
     record.h \
     journal.h \
     elementcontainer.h \
-    element.h
+    element.h \
+    toolset.h \
+    workspace.h \
+    w_signalhandler.h \
+    j_signalhandler.h \
+    target.h
 
 
 RESOURCES += \
@@ -116,15 +126,15 @@ RESOURCES += \
 
 # shaders for flat and smooth shaded
 # light ?
-# make journal namespace
 # colors in glwidget
+# move dirty code to functions
+# separate big classes to namespaces
 # remove all int i, j ...
 # replace positionRO with position() const
-
-
+# vertices are removed (which should not be removed!!)
+# rewrite namespace Target
 
 
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget
-
 

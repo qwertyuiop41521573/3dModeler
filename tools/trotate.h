@@ -8,7 +8,7 @@
 class TRotate : public ToolWithPivot
 {
 public:
-    TRotate(MainWindow *mainWindow);
+    TRotate();
 
     void function(Action action, QMouseEvent *event);
 

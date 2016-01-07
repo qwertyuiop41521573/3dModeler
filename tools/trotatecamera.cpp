@@ -1,14 +1,15 @@
 #include "trotatecamera.h"
 #include "glwidget.h"
+#include "workspace.h"
 
-TRotateCamera::TRotateCamera(MainWindow *mainWindow) : Tool(mainWindow)
+TRotateCamera::TRotateCamera() : Tool()
 {
     button->setText("Rotate");
 }
 
 void TRotateCamera::function(Action action, QMouseEvent *event)
 {
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     if(action != EXECUTE || widget->getProjection() != PERSPECTIVE) return;
     Camera &camera = widget->getCamera();
     camera.addToRotation(Z, (-event->x() + widget->getHalfWidth() + widget->getLastPosition().x()) / double(3));

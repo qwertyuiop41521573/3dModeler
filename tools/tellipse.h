@@ -9,7 +9,7 @@
 class TEllipse : public CreatingTool
 {
 public:
-    TEllipse(MainWindow *mainWindow);
+    TEllipse();
 
     void function(Action action, QMouseEvent *event);
 

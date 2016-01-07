@@ -1,14 +1,16 @@
 #include "tsphere.h"
 #include "mainwindow.h"
 #include "mathfunctions.h"
+#include "journal.h"
 
 #include "gui/mylabel.h"
 
 //#include <QMatrix3x3>
 
 using namespace Model;
+using namespace Journal;
 
-TSphere::TSphere(MainWindow *mainWindow) : CreatingTool(mainWindow)
+TSphere::TSphere() : CreatingTool()
 {
     button->setText("Sphere");
     finalButton = new QPushButton("Create Sphere");
@@ -63,7 +65,7 @@ TSphere::TSphere(MainWindow *mainWindow) : CreatingTool(mainWindow)
     layout->addWidget(radius, 8, 0, 1, 2);
     layout->addWidget(spinBoxRadius, 8, 2, 1, 2);
     layout->addWidget(finalButton, 9, 0, 1, 4);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 }
 
@@ -71,7 +73,7 @@ void TSphere::function(Action action, QMouseEvent *event)
 {
     if(action == DRAW) return;
  
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int segmentsXY = spinBoxSegmentsXY->value();
     int segmentsZ = spinBoxSegmentsZ->value();
     int i, j;
@@ -81,7 +83,7 @@ void TSphere::function(Action action, QMouseEvent *event)
     case START:
     {
         _busy = true;
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
         widget->countFinalInverseMatrix();
         widget->fromScreenToWorld(&startPosition3D, event);
 
@@ -115,14 +117,14 @@ void TSphere::function(Action action, QMouseEvent *event)
 
         ver.clear();
         tri.clear();
-        journal->newRecord(CREATE);
+        Journal::newRecord(CREATE);
         for(i = 0; i < segmentsXY * (segmentsZ / 2 - 1) + 2; i++) ver.push_back(vertex().push({{0, 0, 0}}));
 
         setVertices(center, radius);
         triangulate();
 
         for(i = 0; i < ver.size(); i++) vertex()[ver[i]].setSelected(true);
-        journal->submit();
+        Journal::submit();
         break;
     }
     case EXECUTE:
@@ -160,7 +162,7 @@ void TSphere::function(Action action, QMouseEvent *event)
         }
         for(i = 0; i < ver.size(); i++) vertex()[ver[i]].setSelected(true, false);
         _busy = false;
-        journal->submit();
+        Journal::submit();
         break;
     }
     }

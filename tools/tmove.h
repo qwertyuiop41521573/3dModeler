@@ -8,7 +8,7 @@
 class TMove : public TransformingTool
 {
 public:
-    TMove(MainWindow *mainWindow);
+    TMove();
 
     void function(Action action, QMouseEvent *event);
 

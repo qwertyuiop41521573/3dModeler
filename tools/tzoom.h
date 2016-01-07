@@ -6,7 +6,7 @@
 class TZoom : public Tool
 {
 public:
-    TZoom(MainWindow *mainWindow);
+    TZoom();
 
     void function(Action action, QMouseEvent *event);
 

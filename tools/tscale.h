@@ -8,7 +8,7 @@
 class TScale : public ToolWithPivot
 {
 public:
-    TScale(MainWindow *mainWindow);
+    TScale();
 
     void function(Action action, QMouseEvent *event);
 

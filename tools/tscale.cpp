@@ -2,7 +2,7 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 
-TScale::TScale(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
+TScale::TScale() : ToolWithPivot()
 {
     button->setText("Scale");
     finalButton = new QPushButton("Scale");
@@ -16,7 +16,7 @@ TScale::TScale(MainWindow *mainWindow) : ToolWithPivot(mainWindow)
     }
 
     layout->addWidget(finalButton, 4, 0, 1, 2);
-    connect(finalButton, SIGNAL(clicked()), _mainWindow, SLOT(final()));
+    connect(finalButton, SIGNAL(clicked()), this, SLOT(final()));
     _widget->hide();
 
 }
@@ -29,7 +29,7 @@ void TScale::function(Action action, QMouseEvent *event)
         return;
     }
 
-    GLWidget *widget = *_activeWidget;
+    GLWidget *widget = Workspace::activeWidget();
     int i, j, k;
 
     ToolWithPivot::function(action, 0);

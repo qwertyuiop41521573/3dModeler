@@ -1,7 +1,10 @@
 #include "transformingtool.h"
 #include "journal.h"
+#include "target.h"
 
-TransformingTool::TransformingTool(MainWindow *mainWindow) : ToolWithWidget(mainWindow)
+using namespace Target;
+
+TransformingTool::TransformingTool() : ToolWithWidget()
 {
     for(int i = 0; i < 3; i++)
     {
@@ -16,7 +19,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     if(action == START || action == FINAL)
     {
         _busy = true;
-        journal->newRecord(EDIT);
+        Journal::newRecord(EDIT);
 
         toTransform.clear();
         int i;
@@ -51,7 +54,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
             checked.clear();
         }
 
-        for(int i = 0; i < toTransform.size(); i++) journal->addBefore(true, toTransform[i]);
+        for(int i = 0; i < toTransform.size(); i++) Journal::addBefore(true, toTransform[i]);
 
         if(action == FINAL) action = EXECUTE;
     }
@@ -59,10 +62,10 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     {
         _busy = false;
 
-        vector <TwoElementsWithIndex <Vertex> > &vertex = journal->current().data().edit->vertex();
+        vector <TwoElementsWithIndex <Vertex> > &vertex = Journal::current().data().edit->vertex();
         for(int i = 0; i < vertex.size(); i++) vertex[i].setAfter(Model::vertex()[vertex[i].index()]);
 
-        journal->submit();
+        Journal::submit();
     }
     //actual transformation
     if(action == EXECUTE)

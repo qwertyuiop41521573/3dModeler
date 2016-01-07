@@ -8,7 +8,7 @@
 class TSelect : public ToolWithWidget
 {
 public:
-    TSelect(MainWindow *mainWindow);
+    TSelect();
 
     void function(Action action, QMouseEvent *event);
 
