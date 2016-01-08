@@ -181,9 +181,7 @@ void MainWindow::newModel()
 }
 
 void MainWindow::handleClose()
-{
-    if(Model::modified() ? saveRequest() : true) close();
-}
+{ if(Model::modified() ? saveRequest() : true) close(); }
 
 void MainWindow::createActionsAndMenus()
 {

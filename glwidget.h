@@ -20,7 +20,7 @@ class VertexData_Color
 {
 public:
     VertexData_Color(QVector3D pos = { 0, 0, 0 }, QVector3D col = { 0, 0, 0 })
-    { position = pos; color = col; };
+    { position = pos; color = col; }
 
     QVector3D position;
     QVector3D color;
@@ -41,13 +41,12 @@ struct VertexAndIndexData
 class TwoDimArray
 {
 public:
-    TwoDimArray(float *data)
-    { _data = data; };
+    TwoDimArray(float *data) { _data = data; }
 
     float operator()(int ind1, int ind2) const
-    { return _data[4 * ind2 + ind1]; };
+    { return _data[4 * ind2 + ind1]; }
 
-    private:
+private:
     float *_data;
 };
 
@@ -58,83 +57,53 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 public:
     explicit GLWidget();
+    void initShaderPrograms();
+    void initProjections();
+    void initGrid();
+    void initAxis();
+    void initFrame();
 
-    void setActive(bool value)
-    { _isActive = value; };
+    void setActive(bool value) { _isActive = value; }
 
     void setRenderingMode(RenderingMode newRenderingMode)
-    { renderingMode = newRenderingMode; };
+    { renderingMode = newRenderingMode; }
 
-    RenderingMode getRenderingMode()
-    { return renderingMode; };
-
-    bool getWireframeOverlay()
-    { return wireframeOverlay; };
-
-    void setWireframeOverlay(bool value)
-    { wireframeOverlay = value; };
-
-    const QVector2D &getLastPosition()
-    { return lastPosition; };
-
-    const QVector2D &getStartPosition()
-    { return startPosition; };
-
-    const QVector2D &getCurrentPosition()
-    { return currentPosition; };
+    RenderingMode getRenderingMode() { return renderingMode; }
+    bool getWireframeOverlay() { return wireframeOverlay; }
+    void setWireframeOverlay(bool value) { wireframeOverlay = value; }
+    const QVector2D &getLastPosition() { return lastPosition; }
+    const QVector2D &getStartPosition() { return startPosition; }
+    const QVector2D &getCurrentPosition() { return currentPosition; }
 
     void setProjection(Projection newProjection)
-    { projection = newProjection; };
+    { projection = newProjection; }
 
-    Projection getProjection()
-    { return projection; };
-
-    void multiplyScaleBy(double number)
-    { scale *= number; };
-
-    double getScale()
-    { return scale; };
-
-    const QMatrix4x4 &getFinalMatrix()
-    { return finalMatrix; };
-
+    Projection getProjection() { return projection; }
+    void multiplyScaleBy(double number) { scale *= number; }
+    double getScale() { return scale; }
+    const QMatrix4x4 &getFinalMatrix() { return finalMatrix; }
     const QMatrix4x4 &getFinalInverseMatrix()
-    { return finalMatrixInverse; };
+    { return finalMatrixInverse; }
 
 
-
-    const QMatrix4x4 &getRotationMatrix()
-    { return rotationMatrix; };
+    const QMatrix4x4 &getRotationMatrix() { return rotationMatrix; }
 
     const QMatrix4x4 &getRotationMatrixInverse()
-    { return rotationMatrixInverse; };
+    { return rotationMatrixInverse; }
 
-    void setOldHidden(bool value)
-    { _oldHidden = value; };
-
-    bool oldHidden()
-    { return _oldHidden; };
-
-    int getHalfWidth()
-    { return halfWidth; };
-
-    int getHalfHeight()
-    { return halfHeight; };
-
-    Camera &getCamera()
-    { return camera[projection]; };
-
-    void setToolIsOn(bool value)
-    { toolIsOn = value; };
-
-    VertexAndIndexData &getToolData()
-    { return toolData; };
+    void setOldHidden(bool value) { _oldHidden = value; }
+    bool oldHidden() { return _oldHidden; }
+    int getHalfWidth() { return _width / 2; }
+    int getHalfHeight() { return _height / 2; }
+    Camera &getCamera() { return camera[projection]; }
+    void setToolIsOn(bool value) { toolIsOn = value; }
+    VertexAndIndexData &getToolData() { return toolData; }
 
 
     void countRotationMatrices();
     void countFinalInverseMatrix();
     void countFinalMatrix()
-    { finalMatrix = (projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse) * projectionMatrix; };
+    { finalMatrix = (projection == PERSPECTIVE ? toolMatrixPerspectiveInverse : toolMatrixInverse) * projectionMatrix; }
 
 
     void fromWorldToScreen(QVector2D *answer, const QVector3D &vector, bool point = true);
@@ -146,6 +115,8 @@ public:
 protected:
     void initializeGL();
     void resizeGL(int newWidth, int newHeight);
+    void resizeFrame();
+    void countMatrices();
     void paintGL();
 
     void timerEvent(QTimerEvent *event);
@@ -160,15 +131,13 @@ protected:
 public slots:
 
 private:
-    int width, height;
-    int halfWidth, halfHeight;
+    int _width, _height;
     RenderingMode renderingMode = WIREFRAME;
     bool wireframeOverlay = false;
     Projection projection;
     Camera camera[7];
     double scale = 100;
 
-    QBasicTimer *timer;
     QGLShaderProgram *programColor, *programTexture, *program;
 
 
@@ -178,7 +147,7 @@ private:
     QMatrix4x4 frameMatrix;
     QMatrix4x4 finalMatrix, toolMatrix, toolMatrixPerspectiveInverse;
     QMatrix4x4 toolMatrixInverse, finalMatrixInverse;
-    qreal aspect;
+    double aspect;
     const qreal zNear = 0.1, zFar = 1000, fov = 45.0;    
 
     QVector2D lastPosition, currentPosition, startPosition;
@@ -210,9 +179,14 @@ private:
     void setupProjection();
 
     void glClearColorVector(const QVector3D &vector)
-    { glClearColor(vector.x(), vector.y(), vector.z(), 1); };
+    { glClearColor(vector.x(), vector.y(), vector.z(), 1); }
 
     void drawAdittional();
+    void drawSelectedFaces();
+    void drawAxis();
+    void drawGrid();
+    void drawFrame();
+
     void prepareProgramColor(const QMatrix4x4 &matrix);
     void addSelectedFace(int num);
     void line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3D color);

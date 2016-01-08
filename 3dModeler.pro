@@ -133,6 +133,11 @@ RESOURCES += \
 # replace positionRO with position() const
 # vertices are removed (which should not be removed!!)
 # rewrite namespace Target
+# move functions from MainWindow (like snapTogether) to ToolSet
+# separate Tool::function()
+
+
+
 
 
 # textures don't work
