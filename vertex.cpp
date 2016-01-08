@@ -34,5 +34,5 @@ void Vertex::setUV(float u, float v)
 void Vertex::operator =(const Vertex &vertex)
 {
     Element::operator =(vertex);
-    _position = vertex.positionRO();
+    _position = vertex.position();
 }

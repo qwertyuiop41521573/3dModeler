@@ -10,10 +10,10 @@ public:
     Triangle(int *values);
 
     int getIndex(int num) const
-    { return index[num]; };
+    { return index[num]; }
 
     void setIndex(int num, int newIndex)
-    { index[num] = newIndex; };
+    { index[num] = newIndex; }
 
     void operator =(const Triangle &triangle);
 

@@ -6,11 +6,7 @@
 class MyComboBox : public QComboBox
 {
 public:
-    MyComboBox();
-
-signals:
-
-public slots:
+    MyComboBox() { setMaximumWidth(150); }
 };
 
 #endif // MYCOMBOBOX_H

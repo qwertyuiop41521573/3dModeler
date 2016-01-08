@@ -13,12 +13,10 @@
 using namespace std;
 
 typedef enum { WIREFRAME, FLAT_SHADED, SMOOTH_SHADED, TEXTURED } RenderingMode;
-
 typedef enum { TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT, PERSPECTIVE } Projection;
 
-class VertexData_Color
+struct VertexData_Color
 {
-public:
     VertexData_Color(QVector3D pos = { 0, 0, 0 }, QVector3D col = { 0, 0, 0 })
     { position = pos; color = col; }
 

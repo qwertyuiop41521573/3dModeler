@@ -63,7 +63,7 @@ void ToolSet::SignalHandler::snapTogether()
     {
         if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
 
-        min = max = vertex()[i].positionRO();
+        min = max = vertex()[i].position();
         selected.push_back(i);
         break;
     }
@@ -75,7 +75,7 @@ void ToolSet::SignalHandler::snapTogether()
         if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
 
         selected.push_back(i);
-        const QVector3D &pos = vertex()[i].positionRO();
+        const QVector3D &pos = vertex()[i].position();
 
         if(pos.x() > max.x()) max.setX(pos.x());
         if(pos.y() > max.y()) max.setY(pos.y());
@@ -116,7 +116,7 @@ void ToolSet::SignalHandler::weldTogether()
         //search for previous vertex with same coordinates (in groups, not vertex)
         for(j = 0; j < groups.size(); j++)
         {
-            if(vertex()[i].positionRO() != vertex()[groups[j][0]].positionRO()) continue;
+            if(vertex()[i].position() != vertex()[groups[j][0]].position()) continue;
             //if found, add current vertex to appropriate group
             groups[j].push_back(i);
             break;

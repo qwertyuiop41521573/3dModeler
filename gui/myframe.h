@@ -7,10 +7,6 @@ class MyFrame : public QFrame
 {
 public:
     MyFrame(bool vertical = false);
-
-signals:
-
-public slots:
 };
 
 #endif // MYHFRAME_H

@@ -154,7 +154,7 @@ void TSphere::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if mouse was not moved and all sphere points match
-        if(vertex()[ver[0]].positionRO() == vertex()[ver[1]].positionRO())
+        if(vertex()[ver[0]].position() == vertex()[ver[1]].position())
         {
             removeAll();
             _busy = false;

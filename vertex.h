@@ -12,20 +12,11 @@ class Vertex : public Element
 public:
     Vertex(const QVector3D &position = { 0, 0, 0 });
 
-    QVector3D &position()
-    { return _position; };
-
-    const QVector3D &positionRO() const
-    { return _position; };
-
-    void setPosition(const QVector3D &vector)
-    { _position = vector; };
-
-    void setPosition(Axis axis, double value)
-    { _position[axis] = value; };
-
-    void move(const QVector3D &vector)
-    { _position += vector; };
+    QVector3D &position() { return _position; }
+    const QVector3D &position() const { return _position; }
+    void setPosition(const QVector3D &vector) { _position = vector; }
+    void setPosition(Axis axis, double value) { _position[axis] = value; }
+    void move(const QVector3D &vector) { _position += vector; }
 
     void setPosition(float x, float y);
     void setPosition(float x, float y, float z);
@@ -33,7 +24,7 @@ public:
     void setUV(float u, float v);
 
     bool operator ==(const Vertex &vertex)
-    { return _position == vertex.positionRO(); };
+    { return _position == vertex.position(); }
 
     void operator =(const Vertex &vertex);
 

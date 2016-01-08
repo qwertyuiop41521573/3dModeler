@@ -42,7 +42,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
         for(i = 0; i < vertex().size(); i++)
         {
             //check if this vertex is selected
-            if(!widget->isSelected(vertex()[i].positionRO(), min, max)) continue;
+            if(!widget->isSelected(vertex()[i].position(), min, max)) continue;
 
             //check if it is already in newTriangle
             bool selectedBefore = false;

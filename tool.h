@@ -26,24 +26,24 @@ public:
 
     virtual void setActive(bool value);
     //"function" contains actual job of tool
-    virtual void function(Action action, QMouseEvent *event = 0) {};
-    virtual bool stage2() {};
+    virtual void function(Action action, QMouseEvent *event = 0) {}
+    virtual bool stage2() {}
 
     QPushButton *getButton()
-    { return button; };
+    { return button; }
 
     bool hasStage2()
-    { return _hasStage2; };
+    { return _hasStage2; }
 
     bool busy()
-    { return _busy; };
+    { return _busy; }
 
     //some tools have options that can be used by pressing shift or ctrl
     QCheckBox *shift()
-    { return _shift; };
+    { return _shift; }
 
     QCheckBox *ctrl()
-    { return _ctrl; };
+    { return _ctrl; }
 
 protected:
     bool _hasStage2 = false;
@@ -56,7 +56,7 @@ protected:
     QCheckBox *_ctrl = 0;
 
 protected slots:
-    void final() { function(FINAL); };
+    void final() { function(FINAL); }
 
 private slots:
     void handleClick(bool pressed);

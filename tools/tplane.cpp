@@ -67,22 +67,22 @@ void TPlane::function(Action action, QMouseEvent *event)
             //height can be 0 or 1 (which point will be returned by
             //    fromScreenToWorld(event, widget) at action == START,
             //    depends on camera angle
-            double height = vertex()[ver[0]].positionRO().z();
+            double height = vertex()[ver[0]].position().z();
             QVector3D worldCoordinates;
             widget->fromScreenToWorld(&worldCoordinates, event, true, height);
             vertex()[ver[2]].setPosition(worldCoordinates);
-            diagonal = QVector2D(vertex()[ver[2]].positionRO() - vertex()[ver[0]].positionRO());
+            diagonal = QVector2D(vertex()[ver[2]].position() - vertex()[ver[0]].position());
             if(square)
             {
                 countDiagonalForSquare(&diagonal);
-                vertex()[ver[2]].setPosition(vertex()[ver[0]].positionRO() + QVector3D(diagonal, 0));
+                vertex()[ver[2]].setPosition(vertex()[ver[0]].position() + QVector3D(diagonal, 0));
             }
-            posB = QVector3D(vertex()[ver[0]].positionRO().x(), vertex()[ver[2]].positionRO().y(), height);
-            posA = QVector3D(vertex()[ver[2]].positionRO().x(), vertex()[ver[0]].positionRO().y(), height);
+            posB = QVector3D(vertex()[ver[0]].position().x(), vertex()[ver[2]].position().y(), height);
+            posA = QVector3D(vertex()[ver[2]].position().x(), vertex()[ver[0]].position().y(), height);
         }
         else
         {
-            QVector2D startPosition = QVector2D(widget->getFinalMatrix() * QVector4D(vertex()[ver[0]].positionRO(), 1));
+            QVector2D startPosition = QVector2D(widget->getFinalMatrix() * QVector4D(vertex()[ver[0]].position(), 1));
             QVector2D currentPosition = QVector2D(event->x() - widget->getHalfWidth(), widget->getHalfHeight() - event->y());
             diagonal = currentPosition - startPosition;
             if(square)

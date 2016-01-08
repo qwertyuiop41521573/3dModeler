@@ -62,7 +62,7 @@ void Journal::newRecord(Type type)
 void Journal::addBefore(bool isVertex, int index)
 {
     //before tool was used
-    Edit &data = *current().data().edit;
+    Edit &data = *current()->data().edit;
     if(isVertex) data.vertex().push_back({index, vertex()[index]});
     else data.triangle().push_back({index, triangle()[index]});
 }
@@ -70,7 +70,7 @@ void Journal::addBefore(bool isVertex, int index)
 void Journal::addAfter(bool isVertex)
 {
     //after
-    Edit &data = *current().data().edit;
+    Edit &data = *current()->data().edit;
     if(isVertex)
     {
         vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
@@ -92,18 +92,18 @@ void Journal::submit()
     {
         //values of new elements are recorded after submit() is called (because vertices are being moved during creation)
         push();        
-        Create &data = *current().data().create;
-        for(i = 0; i < vertexList.size(); i++) data.ver().push_back({vertex()[vertexList[i]], vertexList[i]});
-        for(i = 0; i < triangleList.size(); i++) data.tri().push_back({triangle()[triangleList[i]], triangleList[i]});
+        Create &data = *current()->data().create;
+        for(i = 0; i < vertexList.size(); i++) data.vertex().push_back({vertex()[vertexList[i]], vertexList[i]});
+        for(i = 0; i < triangleList.size(); i++) data.triangle().push_back({triangle()[triangleList[i]], triangleList[i]});
         break;
     }
     case EDIT:
     {
-        Edit &data = *current().data().edit;
-        if(data.verRO().size() || data.triRO().size()) break;
+        Edit &data = *current()->data().edit;
+        if(data.vertex().size() || data.triangle().size()) break;
 
         //if nothing was selected before using tool
-        current().clean();
+        current()->clean();
         _vec.erase(_vec.end());
         _current--;
         break;
@@ -117,8 +117,7 @@ void Journal::addVertex(int index)
 void Journal::addTriangle(int index)
 { triangleList.push_back(index); }
 
-const Record &Journal::currentRO() { return _vec.at(_current); }
-Record &Journal::current() { return _vec.at(_current); }
+Record *Journal::current() { return &_vec.at(_current); }
 const Record &Journal::next() { return _vec.at(_current + 1); }
 void Journal::undo() { if(_current != -1) _current--; }
 void Journal::redo() { if(_current != _vec.size() - 1) _current++; }
@@ -129,28 +128,28 @@ void Journal::SignalHandler::undo()
 {
     if(activeTool()->busy() || isEmpty()) return;
 
-    const Record &rec = currentRO();
+    const Record &rec = *current();
     int i;
 
     switch(rec.type())
     {
     case CREATE:
     {
-        const Create &data = *rec.dataRO().create;
-        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
+        const Create &data = *rec.data().create;
+        const vector <ElementWithIndex <Vertex> > &vertex = data.vertex();
         //remove what was created
         for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()].remove();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
+        const vector <ElementWithIndex <Triangle> > &triangle = data.triangle();
         for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()].remove();
         break;
     }
     case EDIT:
     {
-        const Edit &data = *rec.dataRO().edit;
+        const Edit &data = *rec.data().edit;
         //replace edited elements with their "before" value
-        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
+        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
         for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].before();
-        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
+        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
         for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].before();
 
         break;
@@ -171,21 +170,21 @@ void Journal::SignalHandler::redo()
     {
     case CREATE:
     {
-        const Create &data = *rec.dataRO().create;
+        const Create &data = *rec.data().create;
         //recreate elements
-        const vector <ElementWithIndex <Vertex> > &vertex = data.verRO();
-        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].valRO();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triRO();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].valRO();
+        const vector <ElementWithIndex <Vertex> > &vertex = data.vertex();
+        for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].value();
+        const vector <ElementWithIndex <Triangle> > &triangle = data.triangle();
+        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].value();
         break;
     }
     case EDIT:
     {
-        const Edit &data = *rec.dataRO().edit;
+        const Edit &data = *rec.data().edit;
         //replace edited elements with their "after" value
-        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.verRO();
+        const vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
         for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].after();
-        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triRO();
+        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
         for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].after();
 
         break;

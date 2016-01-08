@@ -120,20 +120,20 @@ void TBox::function(Action action, QMouseEvent *event)
         //if cube
         if(checkBoxCube->isChecked() && dy != 0)
         {
-            QVector3D dh = normal * sign(dy) * (vertex()[ver[6]].positionRO() - vertex()[ver[4]].positionRO()).length() / qSqrt(2);
-            for(i = 0; i < 4; i++) vertex()[ver[4 + i]].setPosition(vertex()[ver[i]].positionRO() + dh);
+            QVector3D dh = normal * sign(dy) * (vertex()[ver[6]].position() - vertex()[ver[4]].position()).length() / qSqrt(2);
+            for(i = 0; i < 4; i++) vertex()[ver[4 + i]].setPosition(vertex()[ver[i]].position() + dh);
         }
         else for(i = 0; i < 4; i++) vertex()[ver[4 + i]].move(normal * dy);
 
-        QVector3D diagonal = vertex()[ver[6]].positionRO() - vertex()[ver[4]].positionRO();
-        QVector3D e_x = vertex()[ver[7]].positionRO() - vertex()[ver[4]].positionRO();
+        QVector3D diagonal = vertex()[ver[6]].position() - vertex()[ver[4]].position();
+        QVector3D e_x = vertex()[ver[7]].position() - vertex()[ver[4]].position();
 
         //flip the box if needed
-        if(QVector3D::dotProduct(normal, vertex()[ver[0]].positionRO() - vertex()[ver[4]].positionRO()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
-        QVector3D temp = vertex()[ver[1]].positionRO();
+        if(QVector3D::dotProduct(normal, vertex()[ver[0]].position() - vertex()[ver[4]].position()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
+        QVector3D temp = vertex()[ver[1]].position();
         vertex()[ver[1]] = vertex()[ver[3]];
         vertex()[ver[3]].setPosition(temp);
-        temp = vertex()[ver[5]].positionRO();
+        temp = vertex()[ver[5]].position();
         vertex()[ver[5]] = vertex()[ver[7]];
         vertex()[ver[7]].setPosition(temp);
         break;
@@ -174,7 +174,7 @@ void TBox::function(Action action, QMouseEvent *event)
         for(i = 0; i < 4; i++)
         {
             //the second cap is the same as first
-            ver.push_back(vertex().push(vertex()[ver[i]].positionRO()));
+            ver.push_back(vertex().push(vertex()[ver[i]].position()));
             vertex()[ver[4 + i]].setNewSelected(true);
         }
 

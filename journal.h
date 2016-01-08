@@ -18,8 +18,7 @@ namespace Journal
     void transform(const QMatrix4x4 &matrix);
     void submit();
 
-    const Record &currentRO();
-    Record &current();
+    Record *current();
     void cleanAll();    
 
     void connectActions(QAction *undoAction, QAction *redoAction);

@@ -195,8 +195,8 @@ void TEllipse::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if ellipse is a line
-        QVector3D v1 = vertex()[ver[segments - 1]].positionRO() - vertex()[ver[segments]].positionRO();
-        QVector3D v2 = vertex()[ver[segments - 2]].positionRO() - vertex()[ver[segments]].positionRO();
+        QVector3D v1 = vertex()[ver[segments - 1]].position() - vertex()[ver[segments]].position();
+        QVector3D v2 = vertex()[ver[segments - 2]].position() - vertex()[ver[segments]].position();
         if(QVector3D::crossProduct(v1, v2).length() == 0)
         {
             //remove cap

@@ -62,7 +62,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     {
         _busy = false;
 
-        vector <TwoElementsWithIndex <Vertex> > &vertex = Journal::current().data().edit->vertex();
+        vector <TwoElementsWithIndex <Vertex> > &vertex = Journal::current()->data().edit->vertex();
         for(int i = 0; i < vertex.size(); i++) vertex[i].setAfter(Model::vertex()[vertex[i].index()]);
 
         Journal::submit();
@@ -70,6 +70,6 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     //actual transformation
     if(action == EXECUTE)
     {
-        for(int i = 0; i < toTransform.size(); i++) vertex()[toTransform[i]].setPosition(transformation * vertex()[toTransform[i]].positionRO());
+        for(int i = 0; i < toTransform.size(); i++) vertex()[toTransform[i]].setPosition(transformation * vertex()[toTransform[i]].position());
     }
 }

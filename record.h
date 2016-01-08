@@ -20,14 +20,14 @@ public:
         _index = index;
     }
 
-    const T &valRO() const
-    { return _value; };
+    const T &value() const
+    { return _value; }
 
     T &value()
-    { return _value; };
+    { return _value; }
 
     int index() const
-    { return _index; };
+    { return _index; }
 
 private:
     T _value;
@@ -44,16 +44,16 @@ public:
     }
 
     void setAfter(const T &after)
-    { _after = after; };
+    { _after = after; }
 
     const T &before() const
-    { return _before; };
+    { return _before; }
 
     const T &after() const
-    { return _after; };
+    { return _after; }
 
     int index() const
-    { return _index; };
+    { return _index; }
 
 private:
     T _before, _after;
@@ -76,17 +76,17 @@ public:
         delete _triangle;
     }
 
-    const vector <ElementWithIndex <Vertex> > &verRO() const
-    { return *_vertex; };
+    const vector <ElementWithIndex <Vertex> > &vertex() const
+    { return *_vertex; }
 
-    vector <ElementWithIndex <Vertex> > &ver()
-    { return *_vertex; };
+    vector <ElementWithIndex <Vertex> > &vertex()
+    { return *_vertex; }
 
-    const vector <ElementWithIndex <Triangle> > &triRO() const
-    { return *_triangle; };
+    const vector <ElementWithIndex <Triangle> > &triangle() const
+    { return *_triangle; }
 
-    vector <ElementWithIndex <Triangle> > &tri()
-    { return *_triangle; };
+    vector <ElementWithIndex <Triangle> > &triangle()
+    { return *_triangle; }
 
 private:
     vector <ElementWithIndex <Vertex> > *_vertex;
@@ -109,16 +109,16 @@ public:
     }
 
     vector <TwoElementsWithIndex <Vertex> > &vertex()
-    { return *_vertex; };
+    { return *_vertex; }
 
-    const vector <TwoElementsWithIndex <Vertex> > &verRO() const
-    { return *_vertex; };
+    const vector <TwoElementsWithIndex <Vertex> > &vertex() const
+    { return *_vertex; }
 
     vector <TwoElementsWithIndex <Triangle> > &triangle()
-    { return *_triangle; };
+    { return *_triangle; }
 
-    const vector <TwoElementsWithIndex <Triangle> > &triRO() const
-    { return *_triangle; };
+    const vector <TwoElementsWithIndex <Triangle> > &triangle() const
+    { return *_triangle; }
 
 private:
     vector <TwoElementsWithIndex <Vertex> > *_vertex;
@@ -137,14 +137,14 @@ public:
     Record(Type type);
     void clean();
 
-    const Data &dataRO() const
-    { return _data; };
+    const Data &data() const
+    { return _data; }
 
     Data &data()
-    { return _data; };
+    { return _data; }
 
     Type type() const
-    { return _type; };
+    { return _type; }
 
 signals:
 

@@ -7,10 +7,6 @@ class MySpinBox : public QDoubleSpinBox
 {
 public:
     MySpinBox();
-
-signals:
-
-public slots:
 };
 
 #endif // MYSPINBOX_H

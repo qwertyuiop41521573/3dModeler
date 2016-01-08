@@ -6,11 +6,7 @@
 class MyCheckBoxMW : public QCheckBox
 {
 public:
-    MyCheckBoxMW();
-
-signals:
-
-public slots:
+    MyCheckBoxMW() { setMaximumWidth(130); }
 };
 
 #endif // MYCHECKBOXMW_H

@@ -64,19 +64,19 @@ void TCylinder::function(Action action, QMouseEvent *event)
         for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].move(normal * dy);
 
         //v1 and v2 are not parallel vectors in cap, [v1, v2] is normal to cap
-        QVector3D v1 = vertex()[ver[0]].positionRO() - vertex()[ver[segments]].positionRO();
-        QVector3D v2 = vertex()[ver[1]].positionRO() - vertex()[ver[segments]].positionRO();
-        QVector3D h = vertex()[ver[segments]].positionRO() - vertex()[ver[2 * segments + 1]].positionRO();
+        QVector3D v1 = vertex()[ver[0]].position() - vertex()[ver[segments]].position();
+        QVector3D v2 = vertex()[ver[1]].position() - vertex()[ver[segments]].position();
+        QVector3D h = vertex()[ver[segments]].position() - vertex()[ver[2 * segments + 1]].position();
 
         //flip if needed
         if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) <= 0) break;
         QVector3D temp;
         for(i = 0; i < segments / 2; i++)
         {
-            temp = vertex()[ver[segments + 1 + i]].positionRO();
+            temp = vertex()[ver[segments + 1 + i]].position();
             vertex()[ver[segments + 1 + i]] = vertex()[ver[2 * segments - i]];
             vertex()[ver[2 * segments - i]].setPosition(temp);
-            temp = vertex()[ver[i]].positionRO();
+            temp = vertex()[ver[i]].position();
             vertex()[ver[i]] = vertex()[ver[segments - 1 - i]];
             vertex()[ver[segments - 1 - i]].setPosition(temp);
         }
@@ -122,7 +122,7 @@ void TCylinder::createWallsAndSecondCap(bool final)
 
     QVector3D height = final ? normal * spinBoxHeight->value() : QVector3D(0, 0, 0);
     //add vertices for second cap
-    for(i = 0; i <= segments; i++) ver.push_back(vertex().push(vertex()[ver[i]].positionRO() + height));
+    for(i = 0; i <= segments; i++) ver.push_back(vertex().push(vertex()[ver[i]].position() + height));
 
     //add triangles for walls and second cap
 

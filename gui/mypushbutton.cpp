@@ -9,6 +9,5 @@ MyPushButton::MyPushButton(int index) : QPushButton(0)
     connect(this, SIGNAL(toggled(bool)), this, SLOT(handleClick()));
 }
 
-void MyPushButton::handleClick()
-{ Workspace::hideViewport(_index); }
+void MyPushButton::handleClick() { Workspace::hideViewport(_index); }
 

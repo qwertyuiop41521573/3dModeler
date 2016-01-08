@@ -142,16 +142,16 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
     int j;
     if(workWithVert)
     {
-        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex()[i].setNewSelected(widget->isSelected(vertex()[i].positionRO(), min, max));
+        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex()[i].setNewSelected(widget->isSelected(vertex()[i].position(), min, max));
     }
     else
     {
         vector <QVector2D> vertexOnScreen(vertex().size());
-        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) widget->fromWorldToScreen(&vertexOnScreen[i], vertex()[i].positionRO());
+        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) widget->fromWorldToScreen(&vertexOnScreen[i], vertex()[i].position());
 
 
         bool selected[vertex().size()];
-        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) selected[i] = widget->isSelected(vertex()[i].positionRO(), min, max);
+        for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) selected[i] = widget->isSelected(vertex()[i].position(), min, max);
 
         int k;
         QVector2D rectanglePoints[4];

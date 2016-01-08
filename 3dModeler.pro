@@ -129,12 +129,11 @@ RESOURCES += \
 # shaders for flat and smooth shaded
 # light ?
 # move dirty code to functions
-# separate big classes to namespaces
 # remove all int i, j ...
-# replace positionRO with position() const
 # vertices are removed (which should not be removed!!)
 # rewrite namespace Target
 # fix undo delete
+# make Record a base class for Create and Edit (record.h)
 # divide Tool::function()
 
 
