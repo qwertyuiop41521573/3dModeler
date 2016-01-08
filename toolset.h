@@ -4,6 +4,7 @@
 class Tool;
 
 class QGridLayout;
+class QAction;
 
 namespace ToolSet
 {
@@ -19,6 +20,8 @@ namespace ToolSet
     void stopQuickAccess();
 
     void hideCylinderWidget();
+
+    void connectActions(QAction *selectAllAction, QAction *selectNoneAction, QAction *snapTogetherAction, QAction *weldTogetherAction, QAction *deleteAction);
 }
 
 #endif // TOOLSET_H

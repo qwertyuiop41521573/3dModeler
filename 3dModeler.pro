@@ -49,7 +49,8 @@ SOURCES += \
     workspace.cpp \
     w_signalhandler.cpp \
     j_signalhandler.cpp \
-    target.cpp
+    target.cpp \
+    t_signalhandler.cpp
 
 
 HEADERS += \
@@ -98,7 +99,8 @@ HEADERS += \
     workspace.h \
     w_signalhandler.h \
     j_signalhandler.h \
-    target.h
+    target.h \
+    t_signalhandler.h
 
 
 RESOURCES += \
@@ -126,15 +128,14 @@ RESOURCES += \
 
 # shaders for flat and smooth shaded
 # light ?
-# colors in glwidget
 # move dirty code to functions
 # separate big classes to namespaces
 # remove all int i, j ...
 # replace positionRO with position() const
 # vertices are removed (which should not be removed!!)
 # rewrite namespace Target
-# move functions from MainWindow (like snapTogether) to ToolSet
-# separate Tool::function()
+# fix undo delete
+# divide Tool::function()
 
 
 

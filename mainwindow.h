@@ -21,12 +21,6 @@ private slots:
     void saveAs();
     void handleClose();
 
-    void selectAll();
-    void selectNone();
-    void snapTogether();
-    void weldTogether();
-    void deleteSlot();
-
 private:
     QWidget *workWithWidget;
 
@@ -71,7 +65,6 @@ private:
 
     bool saveRequest();
     bool openFileDialog(QString title);
-    void addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index);
 
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);

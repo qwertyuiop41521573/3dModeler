@@ -1,4 +1,5 @@
 #include "toolset.h"
+#include "t_signalhandler.h"
 
 #include "tools/tpan.h"
 #include "tools/tzoom.h"
@@ -43,9 +44,10 @@ namespace ToolSet
     TCylinder *tCylinder;
     TSphere *tSphere;
 
-    //pointers to other tools
-    //toolActive is used like widgetActive
     Tool *_activeTool, *lastTool;
+
+
+    SignalHandler *signalHandler;
 }
 
 void ToolSet::init()
@@ -144,3 +146,7 @@ void ToolSet::hideCylinderWidget()
     tCylinder->getWidget()->hide();
 }
 
+void ToolSet::connectActions(QAction *selectAllAction, QAction *selectNoneAction, QAction *snapTogetherAction, QAction *weldTogetherAction, QAction *deleteAction)
+{
+    signalHandler = new SignalHandler(selectAllAction, selectNoneAction, snapTogetherAction, weldTogetherAction, deleteAction);
+}
