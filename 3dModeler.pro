@@ -135,8 +135,10 @@ RESOURCES += \
 # divide Tool::function()
 # while creating box without wireframeOverlay, the plane should be visible
 # smoothing Groups, creatingTools should create objects with right smoothing groups
-# remove selectedFaces.clear() from drawShaded()
 # rename flat_shaded.vert to shaded.vert
+# std::vectors in glwidget should be created in .cpp, not cleared
+# fix saving model
+# fix bug - deleting cylinder caps
 
 
 

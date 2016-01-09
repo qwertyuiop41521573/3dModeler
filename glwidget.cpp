@@ -250,8 +250,6 @@ void GLWidget::drawFlatShaded()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_FLAT);
 
-    selectedFaces.clear();
-
     vector <VertexData_Flat> vertices;
     for(int i = 0; i < triangle().size(); i++)
     {
@@ -299,8 +297,6 @@ void GLWidget::drawSmoothShaded()
     glEnable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_FLAT);
-
-    selectedFaces.clear();
 
     vector <VertexData_Flat> vertices;
 
@@ -376,6 +372,7 @@ void GLWidget::drawSelectedFaces()
     programColor->bind();
     prepareProgramColor(projectionMatrix);
 
+    selectedFaces.clear();
     for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists() && (triangle()[i].newSelected() || triangle()[i].selected())) addSelectedFace(i);
 
     int selectedFacesLength = selectedFaces.size();
@@ -415,7 +412,6 @@ void GLWidget::drawWireframe()
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLineWidth(1);
 
-    selectedFaces.clear();
     vertices_col.clear();
     for(int i = 0; i < triangle().size(); i++)
     {
