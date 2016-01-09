@@ -156,7 +156,7 @@ void Journal::SignalHandler::undo()
     }
     }
 
-    undo();
+    Journal::undo();
 }
 
 void Journal::SignalHandler::redo()
@@ -191,7 +191,7 @@ void Journal::SignalHandler::redo()
     }
     }
 
-    redo();
+    Journal::redo();
 }
 
 void Journal::connectActions(QAction *undoAction, QAction *redoAction)
