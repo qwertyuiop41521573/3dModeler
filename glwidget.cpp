@@ -33,6 +33,7 @@ GLWidget::GLWidget() : QOpenGLWidget(0)
 void GLWidget::initShaderPrograms()
 {
     programColor = new QGLShaderProgram;
+    programFlat = new QGLShaderProgram;
     programTexture = new QGLShaderProgram;
 }
 
@@ -135,17 +136,25 @@ void GLWidget::countMatrices()
 
 void GLWidget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     setupProjection();
-    draw();
-    drawAdittional();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindBuffer(GL_ARRAY_BUFFER, modelVboIds[0]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelVboIds[1]);
+
+
+    if(renderingMode != WIREFRAME) drawTriangles();
+    else drawSelectedFaces();
+
     if(renderingMode == WIREFRAME || wireframeOverlay)
     {
-        glEnable(GL_CULL_FACE);
-        glPolygonMode(GL_FRONT, GL_LINE);
-        draw(true);
+        drawVertices();
+        drawWireframe();
     }
-    //transforming tools and TSelect draw guiding lines
+
+    drawAxis();
+    if(projection == PERSPECTIVE) drawGrid();
+    drawFrame();
     if(_isActive && toolIsOn) drawToolLines();
 }
 
@@ -166,48 +175,18 @@ void GLWidget::setupProjection()
     projectionMatrix.translate(-camera[projection].position());
 }
 
-void GLWidget::draw(bool wireframe)
+void GLWidget::drawTriangles()
 {
-    RenderingMode renderingModeCurrent = wireframe ? WIREFRAME : renderingMode;
-
-    QVector3D color;
-    glBindBuffer(GL_ARRAY_BUFFER, modelVboIds[0]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelVboIds[1]);
-
-    if(wireframe)
-    {
-        glDisable(GL_CULL_FACE);
-        color = black;
-        //draw vertices
-        if(workWithElements[0]->isChecked())
-        {
-            glPointSize(4);
-            programColor->bind();
-            prepareProgramColor(projectionMatrix);
-
-            vertices_col.clear();
-            for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertices_col.push_back({vertex()[i].position(), vertex()[i].newSelected() ? blue : vertex()[i].selected() ? red : black});
-            int vertSize = vertices_col.size();
-            indices.resize(vertSize);
-            for(int i = 0; i < vertSize; i++) indices[i] = i;
-
-            glBufferData(GL_ARRAY_BUFFER, vertSize * vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertSize * GLuintSize, indices.data(), GL_STATIC_DRAW);
-
-            glDrawElements(GL_POINTS, vertSize, GL_UNSIGNED_INT, 0);
-        }
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glLineWidth(1);
-    }
-
-    //draw triangles
+    /*RenderingMode renderingModeCurrent = wireframe ? WIREFRAME : renderingMode;
     if(renderingModeCurrent != WIREFRAME) {
         glEnable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glShadeModel(GL_FLAT);
     }
+    QVector3D color;
+    if(wireframe) color = black;
     if(renderingModeCurrent == FLAT_SHADED || renderingModeCurrent == SMOOTH_SHADED) color = shaded;
-    if(renderingModeCurrent == TEXTURED && !textured()) color = shaded;
+    else if(renderingModeCurrent == TEXTURED && !textured()) color = shaded;
 
     int structSize;
     QString fragment;
@@ -259,39 +238,239 @@ void GLWidget::draw(bool wireframe)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLuintSize, indices.data(), GL_STATIC_DRAW);
     if(wireframe) glEnable(GL_POLYGON_OFFSET_LINE);
     glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_INT, 0);
-    glDisable(GL_POLYGON_OFFSET_LINE);
+    glDisable(GL_POLYGON_OFFSET_LINE);*/
+
+    if(renderingMode == FLAT_SHADED) drawFlatShaded();
+    if(renderingMode == SMOOTH_SHADED) drawSmoothShaded();
 }
 
-void GLWidget::drawAdittional()
+void GLWidget::drawFlatShaded()
 {
-    programColor->bind();
-    prepareProgramColor(projectionMatrix);
+    glEnable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glShadeModel(GL_FLAT);
 
-    drawSelectedFaces();
-    drawAxis();
-    if(projection == PERSPECTIVE) drawGrid();
-    drawFrame();
+    selectedFaces.clear();
+
+    vector <VertexData_Flat> vertices;
+    for(int i = 0; i < triangle().size(); i++)
+    {
+        if(!triangle()[i].exists()) continue;
+
+        QVector3D v[3];
+        for(int j = 0; j < 3; j++) v[j] = vertex()[triangle()[i].getIndex(j)].position();
+        QVector3D normal = QVector3D::crossProduct(v[1] - v[0], v[2] - v[0]).normalized();
+
+        QVector3D color;
+        if(workWithElements[1]->isChecked() && (triangle()[i].newSelected() || triangle()[i].selected())) color = triangle()[i].newSelected() ? blue : red;
+        else color = shaded;
+
+
+        for(int j = 0; j < 3; j++)
+            vertices.push_back({v[j], normal, color});
+    }
+    int structSize = sizeof(VertexData_Flat);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * structSize, vertices.data(), GL_STATIC_DRAW);
+
+    indices.resize(vertices.size());
+    for(int i = 0; i < vertices.size(); i++) indices[i] = i;
+    programFlat->bind();
+
+    int positionLocation = programFlat->attributeLocation("a_position");
+    programFlat->enableAttributeArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
+
+    int normalLocation = programFlat->attributeLocation("a_normal");
+    programFlat->enableAttributeArray(normalLocation);
+    glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)vectorSize);
+
+    int colorLocation = programFlat->attributeLocation("a_color");
+    programFlat->enableAttributeArray(colorLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)(2 * vectorSize));
+
+    programFlat->setUniformValue("mvp_matrix", projectionMatrix);
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size() * GLuintSize, indices.data(), GL_STATIC_DRAW);
+    glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
+}
+
+void GLWidget::drawSmoothShaded()
+{
+    glEnable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glShadeModel(GL_FLAT);
+
+    selectedFaces.clear();
+
+    vector <VertexData_Flat> vertices;
+
+    vector<vector<QVector3D> > vertexGroup(vertex().size());
+    for(int i = 0; i < triangle().size(); i++)
+    {
+        if(!triangle()[i].exists()) continue;
+
+        QVector3D v[3];
+        for(int j = 0; j < 3; j++) v[j] = vertex()[triangle()[i].getIndex(j)].position();
+        QVector3D normal = QVector3D::crossProduct(v[1] - v[0], v[2] - v[0]).normalized();
+        for(int j = 0; j < 3; j++)
+            vertexGroup[triangle()[i].getIndex(j)].push_back(normal);
+    }
+
+    for(int i = 0; i < vertexGroup.size(); i++) {
+        QVector3D normal(0, 0, 0);
+        for(int j = 0; j < vertexGroup[i].size(); j++)
+            normal += vertexGroup[i][j];
+        vertexGroup[i][0] = normal / vertexGroup[i].size();
+        vertexGroup[i].resize(1);
+    }
+
+    for(int i = 0; i < triangle().size(); i++)
+    {
+        if(!triangle()[i].exists()) continue;
+
+        QVector3D color;
+        if(workWithElements[1]->isChecked() && (triangle()[i].newSelected() || triangle()[i].selected())) color = triangle()[i].newSelected() ? blue : red;
+        else color = shaded;
+
+
+        for(int j = 0; j < 3; j++) {
+            int index = triangle()[i].getIndex(j);
+            vertices.push_back({vertex()[index].position(), vertexGroup[index][0], color});
+        }
+    }
+
+
+    int structSize = sizeof(VertexData_Flat);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * structSize, vertices.data(), GL_STATIC_DRAW);
+
+    indices.resize(vertices.size());
+    for(int i = 0; i < vertices.size(); i++) indices[i] = i;
+    programFlat->bind();
+
+    int positionLocation = programFlat->attributeLocation("a_position");
+    programFlat->enableAttributeArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
+
+    int normalLocation = programFlat->attributeLocation("a_normal");
+    programFlat->enableAttributeArray(normalLocation);
+    glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)vectorSize);
+
+    int colorLocation = programFlat->attributeLocation("a_color");
+    programFlat->enableAttributeArray(colorLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)(2 * vectorSize));
+
+    programFlat->setUniformValue("mvp_matrix", projectionMatrix);
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size() * GLuintSize, indices.data(), GL_STATIC_DRAW);
+    glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void GLWidget::drawSelectedFaces()
 {
+    if(!workWithElements[1]->isChecked()) return;
+
+    programColor->bind();
+    prepareProgramColor(projectionMatrix);
+
+    for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists() && (triangle()[i].newSelected() || triangle()[i].selected())) addSelectedFace(i);
+
     int selectedFacesLength = selectedFaces.size();
-    if(selectedFacesLength)
+    if(!selectedFacesLength) return;
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    indices.resize(selectedFacesLength);
+    for(int i = 0; i < selectedFacesLength; i++) indices[i] = i;
+    glBufferData(GL_ARRAY_BUFFER, selectedFacesLength * vertexData_ColorSize, selectedFaces.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, selectedFacesLength * GLuintSize, indices.data(), GL_STATIC_DRAW);
+    glDrawElements(GL_TRIANGLES, selectedFacesLength, GL_UNSIGNED_INT, 0);
+}
+
+void GLWidget::drawVertices()
+{
+    glDisable(GL_CULL_FACE);
+    if(!workWithElements[0]->isChecked()) return;
+
+    glPointSize(4);
+    programColor->bind();
+    prepareProgramColor(projectionMatrix);
+
+    vertices_col.clear();
+    for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertices_col.push_back({vertex()[i].position(), vertex()[i].newSelected() ? blue : vertex()[i].selected() ? red : black});
+    int vertSize = vertices_col.size();
+    indices.resize(vertSize);
+    for(int i = 0; i < vertSize; i++) indices[i] = i;
+
+    glBufferData(GL_ARRAY_BUFFER, vertSize * vertexData_ColorSize, vertices_col.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertSize * GLuintSize, indices.data(), GL_STATIC_DRAW);
+
+    glDrawElements(GL_POINTS, vertSize, GL_UNSIGNED_INT, 0);
+}
+
+void GLWidget::drawWireframe()
+{
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(1);
+
+    selectedFaces.clear();
+    vertices_col.clear();
+    for(int i = 0; i < triangle().size(); i++)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        indices.resize(selectedFacesLength);
-        for(int i = 0; i < selectedFacesLength; i++) indices[i] = i;
-        glBufferData(GL_ARRAY_BUFFER, selectedFacesLength * vertexData_ColorSize, selectedFaces.data(), GL_STATIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, selectedFacesLength * GLuintSize, indices.data(), GL_STATIC_DRAW);
-        glDrawElements(GL_TRIANGLES, selectedFacesLength, GL_UNSIGNED_INT, 0);
+        if(triangle()[i].exists()) for(int j = 0; j < 3; j++) vertices_col.push_back({ vertex()[triangle()[i].getIndex(j)].position(), black });
     }
+    int structSize = vertexData_ColorSize;
+    int verticesLength = vertices_col.size();
+    glBufferData(GL_ARRAY_BUFFER, verticesLength * structSize, vertices_col.data(), GL_STATIC_DRAW);
+
+
+    indices.resize(verticesLength);
+    for(int i = 0; i < verticesLength; i++) indices[i] = i;
+    programColor->bind();
+
+    int vertexLocation = programColor->attributeLocation("a_position");
+    programColor->enableAttributeArray(vertexLocation);
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
+
+    int fragmentLocation = programColor->attributeLocation("a_color");
+    programColor->enableAttributeArray(fragmentLocation);
+    glVertexAttribPointer(fragmentLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)vectorSize);
+
+    programColor->setUniformValue("mvp_matrix", projectionMatrix);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesLength * GLuintSize, indices.data(), GL_STATIC_DRAW);
+//    if(wireframe)
+
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    glDrawElements(GL_TRIANGLES, verticesLength, GL_UNSIGNED_INT, 0);
+    glDisable(GL_POLYGON_OFFSET_LINE);
+}
+
+void GLWidget::addSelectedFace(int num)
+{
+    QVector3D selectedColor(triangle()[num].newSelected() ? blue : red);
+    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(vertex()[triangle()[num].getIndex(j)].position(), selectedColor));
 }
 
 void GLWidget::drawAxis()
 {
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLineWidth(1);
-    glBufferData(GL_ARRAY_BUFFER, 6 * vertexData_ColorSize, axis.vertices.data(), GL_STATIC_DRAW);
+
+
+    int structSize = vertexData_ColorSize;
+    glBufferData(GL_ARRAY_BUFFER, 6 * structSize, axis.vertices.data(), GL_STATIC_DRAW);
+
+    programColor->bind();
+
+    int vertexLocation = programColor->attributeLocation("a_position");
+    programColor->enableAttributeArray(vertexLocation);
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
+
+    int fragmentLocation = programColor->attributeLocation("a_color");
+    programColor->enableAttributeArray(fragmentLocation);
+    glVertexAttribPointer(fragmentLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)vectorSize);
+
+    programColor->setUniformValue("mvp_matrix", projectionMatrix);
+
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * GLuintSize, axis.indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -329,11 +508,14 @@ void GLWidget::timerEvent(QTimerEvent *event) { update(); }
 
 void GLWidget::initShaders()
 {
-    if(!programColor->addShaderFromSourceFile(QGLShader::Vertex, ":/color.vert")) close();
-    if(!programColor->addShaderFromSourceFile(QGLShader::Fragment, ":/color.frag")) close();
+    if(!programColor->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/color.vert")) close();
+    if(!programColor->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/color.frag")) close();
 
-    if(!programTexture->addShaderFromSourceFile(QGLShader::Vertex, ":/texture.vert")) close();
-    if(!programTexture->addShaderFromSourceFile(QGLShader::Fragment, ":/texture.frag")) close();
+    if(!programFlat->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/flat_shaded.vert")) close();
+    if(!programFlat->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/flat_shaded.frag")) close();
+
+    if(!programTexture->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/texture.vert")) close();
+    if(!programTexture->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/texture.frag")) close();
 }
 
 /*
@@ -429,14 +611,8 @@ void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix)
     glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, vertexData_ColorSize, 0);
     int colorLocation = programColor->attributeLocation("a_color");
     programColor->enableAttributeArray(colorLocation);
-    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, vertexData_ColorSize, vectorSize);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, vertexData_ColorSize, (void*)vectorSize);
     programColor->setUniformValue("mvp_matrix", matrix);
-}
-
-void GLWidget::addSelectedFace(int num)
-{
-    QVector3D selectedColor(triangle()[num].newSelected() ? blue : red);
-    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(vertex()[triangle()[num].getIndex(j)].position(), selectedColor));
 }
 
 void GLWidget::countRotationMatrices()
@@ -522,6 +698,7 @@ void GLWidget::drawToolLines()
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * vertexData_ColorSize, vertices.data(), GL_STATIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * GLuintSize, indices.data(), GL_STATIC_DRAW);
     glDisable(GL_DEPTH_TEST);
+    glLineWidth(1);
     glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
     glEnable(GL_DEPTH_TEST);
 }

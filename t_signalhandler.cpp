@@ -261,7 +261,7 @@ void ToolSet::SignalHandler::deleteSlot()
         if(j == triangle().size()) vertex().remove(vertexList2[i]);
     }
 
-   Journal::submit();
+    Journal::submit();
 }
 
 void ToolSet::SignalHandler::addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index)

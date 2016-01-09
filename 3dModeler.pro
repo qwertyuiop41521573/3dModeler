@@ -126,14 +126,16 @@ RESOURCES += \
 # check STAGE2 in TBox - should not work but works
 
 
-# shaders for flat and smooth shaded
+
 # light ?
 # move dirty code to functions
 # remove all int i, j ...
 # rewrite namespace Target
 # make Record a base class for Create and Edit (record.h)
 # divide Tool::function()
-
+# while creating box without wireframeOverlay, the plane should be visible
+# smoothing Groups, creatingTools should create objects with right smoothing groups
+# fix undo rotate
 
 
 

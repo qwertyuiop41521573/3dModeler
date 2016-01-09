@@ -24,6 +24,13 @@ struct VertexData_Color
     QVector3D color;
 };
 
+struct VertexData_Flat
+{
+    QVector3D position;
+    QVector3D normal;
+    QVector3D color;
+};
+
 struct VertexData_Texture
 {
     QVector3D position;
@@ -136,7 +143,7 @@ private:
     Camera camera[7];
     double scale = 100;
 
-    QGLShaderProgram *programColor, *programTexture, *program;
+    QGLShaderProgram *programColor, *programFlat, *programTexture;
 
 
 
@@ -157,7 +164,7 @@ private:
     GLuint texture;
     GLuint modelVboIds[2];
 
-    const void *vectorSize = (const void*)sizeof(QVector3D);
+    int vectorSize = sizeof(QVector3D);
     int vertexData_ColorSize = sizeof(VertexData_Color);
     int vertexData_TextureSize = sizeof(VertexData_Texture);
     int GLuintSize = sizeof(GLuint);
@@ -173,22 +180,29 @@ private:
     bool _oldHidden;
     VertexAndIndexData toolData;
 
-    void draw(bool wireframe = false);
     void setupProjection();
+    void drawTriangles();
+    void drawFlatShaded();
+    void drawSmoothShaded();
+    void drawSelectedFaces();
+    void drawVertices();
+    void drawWireframe();
+    void drawAxis();
+    void drawGrid();
+    void drawFrame();
+    void drawToolLines();
+
 
     void glClearColorVector(const QVector3D &vector)
     { glClearColor(vector.x(), vector.y(), vector.z(), 1); }
 
-    void drawAdittional();
-    void drawSelectedFaces();
-    void drawAxis();
-    void drawGrid();
-    void drawFrame();
+
+
 
     void prepareProgramColor(const QMatrix4x4 &matrix);
     void addSelectedFace(int num);
     void line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3D color);
-    void drawToolLines();
+
 };
 
 #endif // GLWIDGET_H
