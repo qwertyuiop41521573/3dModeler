@@ -142,7 +142,7 @@ void TBox::function(Action action, QMouseEvent *event)
     case STOP:
     {
         //if height == 0
-        if(vertex[ver[7]] == vertex[ver[3]])
+        if(vertex()[ver[7]] == vertex()[ver[3]])
         {
             //remove box - last 8 vertices and 12 triangles
             removeAll();

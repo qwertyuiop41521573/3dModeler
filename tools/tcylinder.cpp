@@ -86,7 +86,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
     {
         //if height == 0 we remove cylinder (2 * segments + 2 vertices and 4 *
         //    segments triangles
-        if(vertex[ver[2 * segments + 1]] == vertex[ver[segments]])
+        if(vertex()[ver[2 * segments + 1]] == vertex()[ver[segments]])
         {
             removeAll();
             leave();
