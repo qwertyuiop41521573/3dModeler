@@ -252,7 +252,7 @@ void ToolSet::SignalHandler::deleteSlot()
         //if there are some, we should check if one of them is built on this vertex
         for(j = 0; j < triangle().size(); j++)
         {
-            if(!triangle()[i].exists()) continue;
+            if(!triangle()[j].exists()) continue;
 
             for(k = 0; k < 3; k++) if(triangle()[j].getIndex(k) == vertexList2[i]) break;
             if(k < 3) break;

@@ -130,7 +130,6 @@ RESOURCES += \
 # light ?
 # move dirty code to functions
 # remove all int i, j ...
-# vertices are removed (which should not be removed!!)
 # rewrite namespace Target
 # make Record a base class for Create and Edit (record.h)
 # divide Tool::function()
