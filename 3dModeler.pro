@@ -136,7 +136,9 @@ RESOURCES += \
 # while creating box without wireframeOverlay, the plane should be visible
 # smoothing Groups, creatingTools should create objects with right smoothing groups
 # fix undo rotate
-
+# fix creating box - plane should disappear if it
+# remove selectedFaces.clear() from drawShaded()
+# rename flat_shaded.vert to shaded.vert
 
 
 

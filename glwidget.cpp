@@ -304,7 +304,11 @@ void GLWidget::drawSmoothShaded()
 
     vector <VertexData_Flat> vertices;
 
-    vector<vector<QVector3D> > vertexGroup(vertex().size());
+    int vertexSize = 0;
+    for(int i = 0; i < vertex().size(); i++)
+        if(vertex()[i].exists()) vertexSize++;
+    vector<vector<QVector3D> > vertexGroup(vertexSize);
+
     for(int i = 0; i < triangle().size(); i++)
     {
         if(!triangle()[i].exists()) continue;
