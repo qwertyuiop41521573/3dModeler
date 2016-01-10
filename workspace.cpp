@@ -52,7 +52,7 @@ void Workspace::initWidgets()
     widget[3]->setProjection(PERSPECTIVE);
 
     _activeWidget = widget[3];
-    widget[3]->setRenderingMode(FLAT_SHADED);
+    widget[3]->setRenderingMode(SMOOTH_SHADED);
     widget[3]->setWireframeOverlay(true);
     setActiveWidget(widget[3]);
 }
