@@ -25,4 +25,5 @@ void Triangle::operator =(const Triangle &triangle)
 {
     Element::operator =(triangle);
     for(int i = 0; i < 3; i++) index[i] = triangle.getIndex(i);
+    _smoothingGroup = triangle.smoothingGroup();
 }

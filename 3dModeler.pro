@@ -138,7 +138,6 @@ RESOURCES += \
 # move some functions from GLWidget to Workspace
 # move functions from ElementContainer to static functions in Element
 # move function with tri.push_back to CreatinTool ?
-# undo / redo should record smoothingGroups
 # normals should be stored in Model, not counted in paintGL()
 # default for perspective should be smoothshaded without wireframe overlay
 # fix bug - after creating some objects smoothing groups are wrong
