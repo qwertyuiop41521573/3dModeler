@@ -65,7 +65,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
         {
             _busy = false;
             Journal::newRecord(CREATE);
-            tri.push_back(triangle().push(newTriangle.data()));
+            tri.push_back(triangle().push({newTriangle.data(), 0}));
             Journal::submit();
             for(i = 0; i < 3; i++) vertex()[newTriangle[i]].setSelected(true, false);
             newTriangle.clear();

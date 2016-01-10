@@ -91,18 +91,18 @@ void TBox::function(Action action, QMouseEvent *event)
         }
 
         //triangles of the box:
-        tri.push_back(triangle().push({ver[0], ver[1], ver[2]}));
-        tri.push_back(triangle().push({ver[0], ver[2], ver[3]}));
-        tri.push_back(triangle().push({ver[0], ver[5], ver[1]}));
-        tri.push_back(triangle().push({ver[0], ver[4], ver[5]}));
-        tri.push_back(triangle().push({ver[1], ver[6], ver[2]}));
-        tri.push_back(triangle().push({ver[1], ver[5], ver[6]}));
-        tri.push_back(triangle().push({ver[2], ver[7], ver[3]}));
-        tri.push_back(triangle().push({ver[2], ver[6], ver[7]}));
-        tri.push_back(triangle().push({ver[3], ver[4], ver[0]}));
-        tri.push_back(triangle().push({ver[3], ver[7], ver[4]}));
-        tri.push_back(triangle().push({ver[4], ver[6], ver[5]}));
-        tri.push_back(triangle().push({ver[4], ver[7], ver[6]}));
+        addTriangle(0, 1, 2, 0);
+        addTriangle(0, 2, 3, 0);
+        addTriangle(0, 5, 1, 1);
+        addTriangle(0, 4, 5, 1);
+        addTriangle(1, 6, 2, 2);
+        addTriangle(1, 5, 6, 2);
+        addTriangle(2, 7, 3, 1);
+        addTriangle(2, 6, 7, 1);
+        addTriangle(3, 4, 0, 2);
+        addTriangle(3, 7, 4, 2);
+        addTriangle(4, 6, 5, 0);
+        addTriangle(4, 7, 6, 0);
 
         Journal::submit();
         break;
@@ -193,6 +193,11 @@ void TBox::function(Action action, QMouseEvent *event)
         widget->setMouseTracking(true);
     }
     }
+}
+
+void TBox::addTriangle(int v0, int v1, int v2, int smoothingGroup)
+{
+    tri.push_back(triangle().push({ver[v0], ver[v1], ver[v2], smoothingGroup}));
 }
 
 void TBox::handleCubeClick(bool value)

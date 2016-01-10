@@ -326,41 +326,39 @@ void GLWidget::drawSmoothShaded()
 
     vector <VertexData_Flat> vertices;
 
-    vector<vector<QVector3D> > vertexGroup(vertex().size());
+
+    vector<AdditiveMap> vertexGroup(vertex().size());
 
     for(int i = 0; i < triangle().size(); i++)
     {
-        if(!triangle()[i].exists()) continue;
+        const Triangle &t = triangle()[i];
+        if(!t.exists()) continue;
 
         QVector3D v[3];
-        for(int j = 0; j < 3; j++) v[j] = vertex()[triangle()[i].getIndex(j)].position();
+        for(int j = 0; j < 3; j++) v[j] = vertex()[t.getIndex(j)].position();
         QVector3D normal = QVector3D::crossProduct(v[1] - v[0], v[2] - v[0]).normalized();
-        for(int j = 0; j < 3; j++)
-            vertexGroup[triangle()[i].getIndex(j)].push_back(normal);
+        for(int j = 0; j < 3; j++) vertexGroup[t.getIndex(j)].push(t.smoothingGroup(), normal);
+
     }
 
     for(int i = 0; i < vertexGroup.size(); i++) {
-        if(vertexGroup[i].empty()) continue;
-
-        QVector3D normal(0, 0, 0);
-        for(int j = 0; j < vertexGroup[i].size(); j++)
-            normal += vertexGroup[i][j];
-        vertexGroup[i][0] = normal.normalized();
-        vertexGroup[i].resize(1);
+        AdditiveMap &m = vertexGroup[i];
+        if(!m.empty()) for(AdditiveMap::iterator j = m.begin(); j != m.end(); j++) j->second.normalize();
     }
 
     for(int i = 0; i < triangle().size(); i++)
     {
-        if(!triangle()[i].exists()) continue;
+        const Triangle &t = triangle()[i];
+        if(!t.exists()) continue;
 
         QVector3D color;
-        if(workWithElements[1]->isChecked() && (triangle()[i].newSelected() || triangle()[i].selected())) color = triangle()[i].newSelected() ? blue : red;
+        if(workWithElements[1]->isChecked() && (t.newSelected() || t.selected())) color = t.newSelected() ? blue : red;
         else color = shaded;
 
 
         for(int j = 0; j < 3; j++) {
-            int index = triangle()[i].getIndex(j);
-            vertices.push_back({vertex()[index].position(), vertexGroup[index][0], color});
+            int index = t.getIndex(j);
+            vertices.push_back({vertex()[index].position(), vertexGroup[index].at(t.smoothingGroup()), color});
         }
     }
 

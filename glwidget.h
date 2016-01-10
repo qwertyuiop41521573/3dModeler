@@ -55,6 +55,17 @@ private:
     float *_data;
 };
 
+class AdditiveMap : public map<int, QVector3D>
+{
+public:
+    void push(int smoothingGroup, const QVector3D &normal)
+    {
+        if(!count(smoothingGroup))
+            insert(pair<int, QVector3D>(smoothingGroup, normal));
+        else at(smoothingGroup) += normal;
+    }
+};
+
 class MainWindow;
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
