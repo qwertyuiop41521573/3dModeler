@@ -134,13 +134,14 @@ RESOURCES += \
 # make Record a base class for Create and Edit (record.h)
 # divide Tool::function()
 # while creating box without wireframeOverlay, the plane should be visible
-# smoothing Groups, creatingTools should create objects with right smoothing groups
 # fix saving model
 # move some functions from GLWidget to Workspace
 # move functions from ElementContainer to static functions in Element
-# fix bug - creating second box with final button after first box was created with mouse
 # move function with tri.push_back to CreatinTool ?
 # undo / redo should record smoothingGroups
+# normals should be stored in Model, not counted in paintGL()
+# default for perspective should be smoothshaded without wireframe overlay
+# fix bug - after creating some objects smoothing groups are wrong
 
 
 # textures don't work

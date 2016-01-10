@@ -74,6 +74,8 @@ void TBox::function(Action action, QMouseEvent *event)
             size[i] = spinBox[i + 3]->value();
         }
 
+        ver.clear();
+        tri.clear();
         Journal::newRecord(CREATE);
         for(i = 0; i < 8; i++)
         {

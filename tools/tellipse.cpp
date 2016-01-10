@@ -224,7 +224,7 @@ void TEllipse::triangulateCap(bool flip)
     int i;
 
     //set triangle indices for first cap
-    for(i = 0; i < segments; i++) tri.push_back(triangle().push({ver[(i + flip) % segments], ver[(i + !flip) % segments], ver[segments], 0}));
+    for(i = 0; i < segments; i++) addTriangle((i + flip) % segments, (i + !flip) % segments, segments, 0);
 }
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)
