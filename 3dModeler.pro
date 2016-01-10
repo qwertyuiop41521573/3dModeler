@@ -135,9 +135,10 @@ RESOURCES += \
 # divide Tool::function()
 # while creating box without wireframeOverlay, the plane should be visible
 # smoothing Groups, creatingTools should create objects with right smoothing groups
-# std::vectors in glwidget should be created in .cpp, not cleared
 # fix saving model
 # fix bug - deleting cylinder caps
+# move some functions from GLWidget to Workspace
+
 
 
 

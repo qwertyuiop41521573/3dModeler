@@ -62,11 +62,6 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 public:
     explicit GLWidget();
-    void initShaderPrograms();
-    void initProjections();
-    void initGrid();
-    void initAxis();
-    void initFrame();
 
     void setActive(bool value) { _isActive = value; }
 
@@ -89,7 +84,6 @@ public:
     const QMatrix4x4 &getFinalMatrix() { return finalMatrix; }
     const QMatrix4x4 &getFinalInverseMatrix()
     { return finalMatrixInverse; }
-
 
     const QMatrix4x4 &getRotationMatrix() { return rotationMatrix; }
 
@@ -118,20 +112,7 @@ public:
     bool isSelected(const QVector3D &vertex, const QVector2D &min, const QVector2D &max);
 
 protected:
-    void initializeGL();
-    void resizeGL(int newWidth, int newHeight);
-    void resizeFrame();
-    void countMatrices();
-    void paintGL();
 
-    void timerEvent(QTimerEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
-
-    void initShaders();
-   // void initTextures();
 
 public slots:
 
@@ -145,15 +126,12 @@ private:
 
     QGLShaderProgram *programColor, *programShaded, *programTexture;
 
-
-
     QMatrix4x4 projectionMatrix, projectionWithoutTranslation;
     QMatrix4x4 rotationMatrix, rotationMatrixInverse;
     QMatrix4x4 frameMatrix;
     QMatrix4x4 finalMatrix, toolMatrix, toolMatrixPerspectiveInverse;
     QMatrix4x4 toolMatrixInverse, finalMatrixInverse;
     double aspect;
-    const qreal zNear = 0.1, zFar = 1000, fov = 45.0;    
 
     QVector2D lastPosition, currentPosition, startPosition;
 
@@ -164,45 +142,50 @@ private:
     GLuint texture;
     GLuint modelVboIds[2];
 
-    int vectorSize = sizeof(QVector3D);
-    int vertexData_ColorSize = sizeof(VertexData_Color);
-    int vertexData_TextureSize = sizeof(VertexData_Texture);
-    int GLuintSize = sizeof(GLuint);
-
     VertexAndIndexData grid, axis, frame;
-
-    vector <VertexData_Texture> vertices_tex;
-    vector <VertexData_Color> vertices_col;
     vector <VertexData_Color> selectedFaces;
-    vector <GLuint> indices;
-
 
     bool _oldHidden;
     VertexAndIndexData toolData;
 
-    void setupProjection();
-    void drawTriangles();
-    void drawFlatShaded();
-    void drawSmoothShaded();
-    void drawSelectedFaces();
-    void drawVertices();
-    void drawWireframe();
-    void drawAxis();
-    void drawGrid();
-    void drawFrame();
-    void drawToolLines();
 
+        void initShaderPrograms();
+        void initProjections();
+        void initGrid();
+            void line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3D color);
+        void initAxis();
+        void initFrame();
 
-    void glClearColorVector(const QVector3D &vector)
-    { glClearColor(vector.x(), vector.y(), vector.z(), 1); }
+    void initializeGL();
+        void glClearColorVector(const QVector3D &vector)
+        { glClearColor(vector.x(), vector.y(), vector.z(), 1); }
+        void initShaders();
+         // void initTextures();
 
+    void resizeGL(int newWidth, int newHeight);
+        void resizeFrame();
+        void countMatrices();
 
+    void paintGL();
+        void setupProjection();
+        void drawTriangles();
+        void drawFlatShaded();
+        void drawSmoothShaded();
+        void drawSelectedFaces();
+            void prepareProgramColor(const QMatrix4x4 &matrix);
+            void addSelectedFace(int num);
+        void drawVertices();
+        void drawWireframe();
+        void drawAxis();
+        void drawGrid();
+        void drawFrame();
+        void drawToolLines();
 
-
-    void prepareProgramColor(const QMatrix4x4 &matrix);
-    void addSelectedFace(int num);
-    void line(VertexAndIndexData *data, QVector3D a, QVector3D b, QVector3D color);
-
+    void timerEvent(QTimerEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 };
 
 #endif // GLWIDGET_H
