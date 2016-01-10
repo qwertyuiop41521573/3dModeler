@@ -143,7 +143,7 @@ private:
     Camera camera[7];
     double scale = 100;
 
-    QGLShaderProgram *programColor, *programFlat, *programTexture;
+    QGLShaderProgram *programColor, *programShaded, *programTexture;
 
 
 

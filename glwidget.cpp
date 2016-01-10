@@ -33,7 +33,7 @@ GLWidget::GLWidget() : QOpenGLWidget(0)
 void GLWidget::initShaderPrograms()
 {
     programColor = new QGLShaderProgram;
-    programFlat = new QGLShaderProgram;
+    programShaded = new QGLShaderProgram;
     programTexture = new QGLShaderProgram;
 }
 
@@ -272,21 +272,21 @@ void GLWidget::drawFlatShaded()
 
     indices.resize(vertices.size());
     for(int i = 0; i < vertices.size(); i++) indices[i] = i;
-    programFlat->bind();
+    programShaded->bind();
 
-    int positionLocation = programFlat->attributeLocation("a_position");
-    programFlat->enableAttributeArray(positionLocation);
+    int positionLocation = programShaded->attributeLocation("a_position");
+    programShaded->enableAttributeArray(positionLocation);
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
 
-    int normalLocation = programFlat->attributeLocation("a_normal");
-    programFlat->enableAttributeArray(normalLocation);
+    int normalLocation = programShaded->attributeLocation("a_normal");
+    programShaded->enableAttributeArray(normalLocation);
     glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)vectorSize);
 
-    int colorLocation = programFlat->attributeLocation("a_color");
-    programFlat->enableAttributeArray(colorLocation);
+    int colorLocation = programShaded->attributeLocation("a_color");
+    programShaded->enableAttributeArray(colorLocation);
     glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)(2 * vectorSize));
 
-    programFlat->setUniformValue("mvp_matrix", projectionMatrix);
+    programShaded->setUniformValue("mvp_matrix", projectionMatrix);
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size() * GLuintSize, indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
@@ -345,21 +345,21 @@ void GLWidget::drawSmoothShaded()
 
     indices.resize(vertices.size());
     for(int i = 0; i < vertices.size(); i++) indices[i] = i;
-    programFlat->bind();
+    programShaded->bind();
 
-    int positionLocation = programFlat->attributeLocation("a_position");
-    programFlat->enableAttributeArray(positionLocation);
+    int positionLocation = programShaded->attributeLocation("a_position");
+    programShaded->enableAttributeArray(positionLocation);
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, structSize, 0);
 
-    int normalLocation = programFlat->attributeLocation("a_normal");
-    programFlat->enableAttributeArray(normalLocation);
+    int normalLocation = programShaded->attributeLocation("a_normal");
+    programShaded->enableAttributeArray(normalLocation);
     glVertexAttribPointer(normalLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)vectorSize);
 
-    int colorLocation = programFlat->attributeLocation("a_color");
-    programFlat->enableAttributeArray(colorLocation);
+    int colorLocation = programShaded->attributeLocation("a_color");
+    programShaded->enableAttributeArray(colorLocation);
     glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, structSize, (void*)(2 * vectorSize));
 
-    programFlat->setUniformValue("mvp_matrix", projectionMatrix);
+    programShaded->setUniformValue("mvp_matrix", projectionMatrix);
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size() * GLuintSize, indices.data(), GL_STATIC_DRAW);
     glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
@@ -511,8 +511,8 @@ void GLWidget::initShaders()
     if(!programColor->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/color.vert")) close();
     if(!programColor->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/color.frag")) close();
 
-    if(!programFlat->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/flat_shaded.vert")) close();
-    if(!programFlat->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/flat_shaded.frag")) close();
+    if(!programShaded->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/shaded.vert")) close();
+    if(!programShaded->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/shaded.frag")) close();
 
     if(!programTexture->addShaderFromSourceFile(QGLShader::Vertex, ":/shaders/texture.vert")) close();
     if(!programTexture->addShaderFromSourceFile(QGLShader::Fragment, ":/shaders/texture.frag")) close();

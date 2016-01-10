@@ -2,9 +2,9 @@
     <qresource prefix="/">
         <file>shaders/color.frag</file>
         <file>shaders/color.vert</file>
-        <file>shaders/flat_shaded.frag</file>
-        <file>shaders/flat_shaded.vert</file>
         <file>shaders/texture.frag</file>
         <file>shaders/texture.vert</file>
+        <file>shaders/shaded.frag</file>
+        <file>shaders/shaded.vert</file>
     </qresource>
 </RCC>
