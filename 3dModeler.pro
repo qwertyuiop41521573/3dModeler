@@ -136,7 +136,6 @@ RESOURCES += \
 # while creating box without wireframeOverlay, the plane should be visible
 # smoothing Groups, creatingTools should create objects with right smoothing groups
 # fix saving model
-# fix bug - deleting cylinder caps
 # move some functions from GLWidget to Workspace
 
 
