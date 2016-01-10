@@ -22,7 +22,6 @@ private:
     MySpinBox *spinBox[6];
 
     void leave();
-    void addTriangle(int v0, int v1, int v2, int smoothingGroup);
 
 private slots:
     void handleCubeClick(bool value);

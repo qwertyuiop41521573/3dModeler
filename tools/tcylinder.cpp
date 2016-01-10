@@ -127,14 +127,14 @@ void TCylinder::createWallsAndSecondCap(bool final)
     //add triangles for walls and second cap
 
     //cap
-    for(i = 0; i < segments; i++) tri.push_back(triangle().push({ver[segments + 1 + i], ver[segments + 1 + (i + 1) % segments], ver[segments + 1 + segments]}));
+    for(i = 0; i < segments; i++) addTriangle(segments + 1 + i, segments + 1 + (i + 1) % segments, segments + 1 + segments, 0);
 
     //wall
     for(i = 0; i < segments; i++)
     {
         int t = (i + 1) % segments;
-        tri.push_back(triangle().push({ver[segments + 1 + t], ver[segments + 1 + i], ver[i]}));
-        tri.push_back(triangle().push({ver[i], ver[t], ver[segments + 1 + t]}));
+        addTriangle(segments + 1 + t, segments + 1 + i, i, 1);
+        addTriangle(i, t, segments + 1 + t, 1);
     }
 }
 

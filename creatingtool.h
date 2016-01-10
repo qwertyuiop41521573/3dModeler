@@ -18,6 +18,7 @@ protected:
     vector <int> tri;
 
     void removeAll();
+    void addTriangle(int v0, int v1, int v2, int smoothingGroup);
 };
 
 #endif // CREATINGTOOL_H

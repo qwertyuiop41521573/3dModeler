@@ -178,8 +178,8 @@ void TSphere::triangulate()
     //create top and bottom caps
     for(i = 0; i < segmentsXY; i++)
     {
-        tri.push_back(triangle().push({ver[0], ver[1 + i], ver[1 + (1 + i) % segmentsXY]}));
-        tri.push_back(triangle().push({ver[ver.size() - 1], ver[ver.size() - 2 - i], ver[ver.size() - 2 - (1 + i) % segmentsXY]}));
+        addTriangle(0, 1 + i, 1 + (1 + i) % segmentsXY, 0);
+        addTriangle(ver.size() - 1, ver.size() - 2 - i, ver.size() - 2 - (1 + i) % segmentsXY, 0);
     }
     //create walls (triangles on neighbour vertex rings)
     for(i = 0; i < segmentsZ / 2 - 2; i++)
@@ -188,8 +188,8 @@ void TSphere::triangulate()
         {
             int st = 1 + segmentsXY * i;
             int last = (st + j) % segmentsXY;
-            tri.push_back(triangle().push({ver[st + j], ver[st + segmentsXY + j], ver[st + last]}));
-            tri.push_back(triangle().push({ver[st + last], ver[st + segmentsXY + j], ver[st + segmentsXY + last]}));
+            addTriangle(st + j, st + segmentsXY + j, st + last, 0);
+            addTriangle(st + last, st + segmentsXY + j, st + segmentsXY + last, 0);
         }
     }
 }

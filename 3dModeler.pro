@@ -139,9 +139,8 @@ RESOURCES += \
 # move some functions from GLWidget to Workspace
 # move functions from ElementContainer to static functions in Element
 # fix bug - creating second box with final button after first box was created with mouse
-
-# current:
-# smoothing Groups, creatingTools should create objects with right smoothing groups
+# move function with tri.push_back to CreatinTool ?
+# undo / redo should record smoothingGroups
 
 
 # textures don't work

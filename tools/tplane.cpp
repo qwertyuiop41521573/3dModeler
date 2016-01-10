@@ -46,8 +46,8 @@ void TPlane::function(Action action, QMouseEvent *event)
             vertex()[ver[i]].setNewSelected(true);
         }
         bool flip = _hasStage2;
-        tri.push_back(triangle().push({ver[!flip], ver[flip], ver[2]}));
-        tri.push_back(triangle().push({ver[2 * !flip], ver[2 * flip], ver[3]}));
+        addTriangle(!flip, flip, 2, 0);
+        addTriangle(2 * !flip, 2 * flip, 3, 0);
         break;
     }
     case EXECUTE:
