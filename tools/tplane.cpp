@@ -98,6 +98,7 @@ void TPlane::function(Action action, QMouseEvent *event)
         int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;
         vertex()[ver[4 - a]].setPosition(posA);
         vertex()[ver[a]].setPosition(posB);
+        updateNormals();
         break;
     }
     case STOP:

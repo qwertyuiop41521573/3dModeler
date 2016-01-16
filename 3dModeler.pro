@@ -138,9 +138,20 @@ RESOURCES += \
 # move some functions from GLWidget to Workspace
 # move functions from ElementContainer to static functions in Element
 # move function with tri.push_back to CreatinTool ?
-# normals should be stored in Model, not counted in paintGL()
 # default for perspective should be smoothshaded without wireframe overlay
 # fix bug - after creating some objects smoothing groups are wrong
+# rename Triangle::getIndex() to index()
+# make Triangle::vertex() to replace vertex()[triangle()[i].getIndex(j)] with triangle()[i].vertex(j)
+# make function to shorten vertex()[ver[i]]
+# undo / redo should record normals
+# TransformingTool::function(Action action, QMouseEvent *event) - remove event ?
+# make triangles accesible by vertex
+# CreatingTool and TransformingTool have common function - updateNormals() and common vector<int> tri
+# in journal.cpp remove rec reference
+
+
+# current:
+# normals should be stored in Model, not counted in paintGL() - for smooth shaded
 
 
 # textures don't work

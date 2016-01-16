@@ -279,19 +279,15 @@ void GLWidget::drawFlatShaded()
     vector <VertexData_Flat> vertices;
     for(int i = 0; i < triangle().size(); i++)
     {
-        if(!triangle()[i].exists()) continue;
-
-        QVector3D v[3];
-        for(int j = 0; j < 3; j++) v[j] = vertex()[triangle()[i].getIndex(j)].position();
-        QVector3D normal = QVector3D::crossProduct(v[1] - v[0], v[2] - v[0]).normalized();
+        const Triangle &t = triangle()[i];
+        if(!t.exists()) continue;
 
         QVector3D color;
-        if(workWithElements[1]->isChecked() && (triangle()[i].newSelected() || triangle()[i].selected())) color = triangle()[i].newSelected() ? blue : red;
+        if(workWithElements[1]->isChecked() && (t.newSelected() || t.selected())) color = t.newSelected() ? blue : red;
         else color = shaded;
 
-
         for(int j = 0; j < 3; j++)
-            vertices.push_back({v[j], normal, color});
+            vertices.push_back({vertex()[t.getIndex(j)].position(), t.normal(), color});
     }
     int structSize = sizeof(VertexData_Flat);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * structSize, vertices.data(), GL_STATIC_DRAW);

@@ -29,21 +29,13 @@ public:
     virtual void function(Action action, QMouseEvent *event = 0) {}
     virtual bool stage2() {}
 
-    QPushButton *getButton()
-    { return button; }
-
-    bool hasStage2()
-    { return _hasStage2; }
-
-    bool busy()
-    { return _busy; }
+    QPushButton *getButton() { return button; }
+    bool hasStage2() { return _hasStage2; }
+    bool busy() { return _busy; }
 
     //some tools have options that can be used by pressing shift or ctrl
-    QCheckBox *shift()
-    { return _shift; }
-
-    QCheckBox *ctrl()
-    { return _ctrl; }
+    QCheckBox *shift() { return _shift; }
+    QCheckBox *ctrl() { return _ctrl; }
 
 protected:
     bool _hasStage2 = false;

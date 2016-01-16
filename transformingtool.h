@@ -21,9 +21,11 @@ protected:
     vector <bool> checked;
     //list of selected vertices
     vector <int> toTransform;
+    vector <int> tri;
     QMatrix4x4 transformation;
 
     void function(Action action, QMouseEvent *event);
+    void updateNormals();
 };
 
 #endif // TRANSFORMINGTOOL_H

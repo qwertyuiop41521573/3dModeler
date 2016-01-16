@@ -106,6 +106,7 @@ void TBox::function(Action action, QMouseEvent *event)
         addTriangle(4, 6, 5, 0);
         addTriangle(4, 7, 6, 0);
 
+        updateNormals();
         Journal::submit();
         break;
     }
@@ -131,13 +132,16 @@ void TBox::function(Action action, QMouseEvent *event)
         QVector3D e_x = vertex()[ver[7]].position() - vertex()[ver[4]].position();
 
         //flip the box if needed
-        if(QVector3D::dotProduct(normal, vertex()[ver[0]].position() - vertex()[ver[4]].position()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) <= 0) break;
-        QVector3D temp = vertex()[ver[1]].position();
-        vertex()[ver[1]] = vertex()[ver[3]];
-        vertex()[ver[3]].setPosition(temp);
-        temp = vertex()[ver[5]].position();
-        vertex()[ver[5]] = vertex()[ver[7]];
-        vertex()[ver[7]].setPosition(temp);
+        if(QVector3D::dotProduct(normal, vertex()[ver[0]].position() - vertex()[ver[4]].position()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) > 0) {
+            QVector3D temp = vertex()[ver[1]].position();
+            vertex()[ver[1]] = vertex()[ver[3]];
+            vertex()[ver[3]].setPosition(temp);
+            temp = vertex()[ver[5]].position();
+            vertex()[ver[5]] = vertex()[ver[7]];
+            vertex()[ver[7]].setPosition(temp);
+        }
+
+        updateNormals();
         break;
     }
     //last click in viewport for this tool

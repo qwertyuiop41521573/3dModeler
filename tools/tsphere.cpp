@@ -125,6 +125,7 @@ void TSphere::function(Action action, QMouseEvent *event)
 
         for(i = 0; i < ver.size(); i++) vertex()[ver[i]].setSelected(true);
         Journal::submit();
+        updateNormals();
         break;
     }
     case EXECUTE:
@@ -149,6 +150,7 @@ void TSphere::function(Action action, QMouseEvent *event)
         double radius = (worldCoordinates - startPosition3D).length();
 
         setVertices(startPosition3D, radius);
+        updateNormals();
         break;
     }
     case STOP:

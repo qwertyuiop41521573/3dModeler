@@ -69,6 +69,7 @@ void TTriangle::function(Action action, QMouseEvent *event)
             Journal::submit();
             for(i = 0; i < 3; i++) vertex()[newTriangle[i]].setSelected(true, false);
             newTriangle.clear();
+            updateNormals();
         }
     }
     //if "cancel" was pressed

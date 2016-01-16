@@ -18,31 +18,29 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     using namespace Model;
     if(action == START || action == FINAL)
     {
-        _busy = true;
+        if(action == START) _busy = true;
         Journal::newRecord(EDIT);
 
         toTransform.clear();
-        int i;
 
         //fill list of selected vertices or vertices that belong to selected triangles
         if(workWithElements[0]->isChecked())
         {
-            for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists() && vertex()[i].selected()) toTransform.push_back(i);
+            for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists() && vertex()[i].selected()) toTransform.push_back(i);
         }
         else
         {
-            int j;
-
             int index;
             //we nee "checked" no to repeat vertices that belong to more than 1 triangle
             checked.resize(vertex().size());
-            for(i = 0; i < vertex().size(); i++) checked[i] = false;
+            for(int i = 0; i < vertex().size(); i++) checked[i] = false;
 
-            for(i = 0; i < triangle().size(); i++)
+            for(int i = 0; i < triangle().size(); i++)
             {
-                if(!triangle()[i].exists() || !triangle()[i].selected()) continue;
+                if(!triangle()[i].exists() || !triangle()[i].selected())
+                    continue;
 
-                for(j = 0; j < 3; j++)
+                for(int j = 0; j < 3; j++)
                 {
                     index = triangle()[i].getIndex(j);
                     if(checked[index]) continue;
@@ -54,9 +52,28 @@ void TransformingTool::function(Action action, QMouseEvent *event)
             checked.clear();
         }
 
+        tri.clear();
+        for(int i = 0; i < toTransform.size(); i++) {
+            for(int j = 0; j < triangle().size(); j++) {
+                for(int k = 0; k < 3; k++) {
+                    if(toTransform[i] == triangle()[j].getIndex(k)) {
+                        int l;
+                        for(l = 0; l < tri.size(); l++)
+                            if(tri[l] == j) break;
+                        if(l == tri.size()) tri.push_back(j);
+                        break;
+                    }
+                }
+            }
+        }
+
+
         for(int i = 0; i < toTransform.size(); i++) Journal::addBefore(true, toTransform[i]);
 
-        if(action == FINAL) action = EXECUTE;
+        if(action == FINAL) {
+            TransformingTool::function(EXECUTE, 0);
+            TransformingTool::function(STOP, 0);
+        }
     }
     if(action == STOP)
     {
@@ -71,5 +88,11 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     if(action == EXECUTE)
     {
         for(int i = 0; i < toTransform.size(); i++) vertex()[toTransform[i]].setPosition(transformation * vertex()[toTransform[i]].position());
+        updateNormals();
     }
+}
+
+void TransformingTool::updateNormals()
+{
+    for(int i = 0; i < tri.size(); i++) Model::triangle()[tri[i]].countNormal();
 }

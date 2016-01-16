@@ -19,6 +19,7 @@ protected:
 
     void removeAll();
     void addTriangle(int v0, int v1, int v2, int smoothingGroup);
+    void updateNormals();
 };
 
 #endif // CREATINGTOOL_H

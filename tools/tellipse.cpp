@@ -132,6 +132,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
         for(i = 0; i <= segments; i++) vertex()[ver[i]].setSelected(true);
         if(!_hasStage2) Journal::submit();
+        updateNormals();
         break;
     }
 
@@ -190,6 +191,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             bool front = projection == FRONT || projection == BACK;
             createCap({ !front, front, 0.f, 1.f }, angle, scaleAndTranslate);
         }
+        updateNormals();
         break;
     }
     case STOP:

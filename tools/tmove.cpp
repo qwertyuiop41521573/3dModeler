@@ -55,7 +55,6 @@ void TMove::function(Action action, QMouseEvent *event)
     for(i = 0; i < 3; i++) drInWorld[i] *= !pushButton[i]->isChecked();
 
     transformation.setToIdentity();
-    transformation.setToIdentity();
     transformation.translate(drInWorld[0], drInWorld[1], drInWorld[2]);
 
     TransformingTool::function(action, 0);

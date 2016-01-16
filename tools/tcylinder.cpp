@@ -52,6 +52,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         createWallsAndSecondCap(true);
         for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].setSelected(true);
         Journal::submit();
+        updateNormals();
         break;
     }
     //if(!_stage2) is done in TEllipse::function(action, event);
@@ -69,10 +70,10 @@ void TCylinder::function(Action action, QMouseEvent *event)
         QVector3D h = vertex()[ver[segments]].position() - vertex()[ver[2 * segments + 1]].position();
 
         //flip if needed
-        if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) <= 0) break;
-        QVector3D temp;
-        for(i = 0; i < segments / 2; i++)
+        if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) > 0) for(i = 0; i < segments / 2; i++)
         {
+            QVector3D temp;
+
             temp = vertex()[ver[segments + 1 + i]].position();
             vertex()[ver[segments + 1 + i]] = vertex()[ver[2 * segments - i]];
             vertex()[ver[2 * segments - i]].setPosition(temp);
@@ -80,6 +81,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
             vertex()[ver[i]] = vertex()[ver[segments - 1 - i]];
             vertex()[ver[segments - 1 - i]].setPosition(temp);
         }
+        updateNormals();
         break;
     }
     case STOP:

@@ -11,14 +11,9 @@ public:
 
     void setActive(bool value);
 
-    QWidget *getWidget()
-    { return _widget; }
-
-    void setStage2(bool value)
-    { _stage2 = value; }
-
-    bool stage2()
-    { return _stage2; }
+    QWidget *getWidget() { return _widget; }
+    void setStage2(bool value) { _stage2 = value; }
+    bool stage2() { return _stage2; }
 
 signals:
 
