@@ -2,6 +2,7 @@
 #include "glwidget.h"
 #include "workspace.h"
 #include "target.h"
+#include "trianglecontainer.h"
 
 using namespace Model;
 using namespace Target;
@@ -43,25 +44,26 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     }
     else
     {
+        checked.resize(vertex().size());
+        for(i = 0; i < vertex().size(); i++) checked[i] = false;
+
         //similar with triangles
         int index;
-        for(i = 0; i < triangle().size(); i++)
-        {
-            if(!triangle()[i].exists() || !triangle()[i].selected()) continue;
+        tr_it it;
+        for(it = triangle().begin(); it != triangle().end(); it++) {
+            if(!it->exists() || !it->selected()) continue;
 
-            min = max = vertex()[triangle()[i].getIndex(0)].position();
+            min = max = it->vertex(0).position();
             break;
         }
 
-        checked.resize(vertex().size());
-        for(i = 0; i < vertex().size(); i++) checked[i] = false;
-        for( ; i < triangle().size(); i++)
+        for( ; it != triangle().end(); it++)
         {
-            if(!triangle()[i].exists() || !triangle()[i].selected()) continue;
+            if(!it->exists() || !it->selected()) continue;
 
             for(j = 0; j < 3; j++)
             {
-                index = triangle()[i].getIndex(j);
+                index = it->getIndex(j);
                 if(checked[index]) continue;
 
                 for(k = 0; k < 3; k++)

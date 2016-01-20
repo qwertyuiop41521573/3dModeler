@@ -34,8 +34,9 @@ template <class T> int ElementContainer <T>::push(const T &t)
     }
 
     //record to journal
-    if(t.isVertex()) Journal::addVertex(index);
-    else Journal::addTriangle(index);
+    //if(t.isVertex())
+    Journal::addVertex(index);
+    //else Journal::addTriangle(index);
     return index;
 }
 

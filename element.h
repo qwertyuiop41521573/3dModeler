@@ -7,33 +7,20 @@ class Element
 public:
     Element();
 
-    void setSelected(bool value)
-    { _selected = value; };
-
-    void setNewSelected(bool value)
-    { _newSelected = value; };
+    void setSelected(bool value) { _selected = value; }
+    void setNewSelected(bool value) { _newSelected = value; }
 
     void setSelected(bool selected, bool newSelected);
 
-    bool selected() const
-    { return _selected; };
-
-    bool newSelected() const
-    { return _newSelected; };
+    bool selected() const { return _selected; }
+    bool newSelected() const { return _newSelected; }
 
     void operator =(const Element &element);
 
-    bool exists() const
-    { return _exists; };
-
-    void remove()
-    { _exists = false; };
-
-    void undoRemove()
-    { _exists = true; };
-
-    bool isVertex() const
-    { return _isVertex; };
+    bool exists() const { return _exists; }
+    virtual void remove() { _exists = false; }
+    void undoRemove() { _exists = true; }
+    bool isVertex() const { return _isVertex; }
 
 protected:
     bool _isVertex;

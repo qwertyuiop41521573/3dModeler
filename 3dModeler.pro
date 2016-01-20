@@ -50,7 +50,8 @@ SOURCES += \
     w_signalhandler.cpp \
     j_signalhandler.cpp \
     target.cpp \
-    t_signalhandler.cpp
+    t_signalhandler.cpp \
+    trianglecontainer.cpp
 
 
 HEADERS += \
@@ -100,7 +101,9 @@ HEADERS += \
     w_signalhandler.h \
     j_signalhandler.h \
     target.h \
-    t_signalhandler.h
+    t_signalhandler.h \
+    types.h \
+    trianglecontainer.h
 
 
 RESOURCES += \
@@ -145,13 +148,29 @@ RESOURCES += \
 # make function to shorten vertex()[ver[i]]
 # undo / redo should record normals
 # TransformingTool::function(Action action, QMouseEvent *event) - remove event ?
-# make triangles accesible by vertex
 # CreatingTool and TransformingTool have common function - updateNormals() and common vector<int> tri
 # in journal.cpp remove rec reference
+# in tselect.cpp fromWorldToScreen() is counted twice (for 'vertexOnScreen' and 'selected')
+# add 'bool checked[]' to lists of vertices/triangles that should not repeat
+# in glwidget rename VertexData_Flat to shaded
+
+# normals should be stored in Model, not counted in paintGL() - for smooth shaded
+# normals should be stored in Model, not counted in paintGL() - update when delete, snapTogether...
+# remove Model::init()
+# save and load smoothing groups and normals
+# rename ElementWithIndex ...
+# remove all 'vector<tr_it> tri'
 
 
 # current:
-# normals should be stored in Model, not counted in paintGL() - for smooth shaded
+# previous - in glwidget.cpp (drawSmoothShaded)
+# remove '_exists' parameter in Triangle ?
+# rewrite or remove ElementContainer
+
+# use accessing triangles by vertex where possible
+
+
+
 
 
 # textures don't work

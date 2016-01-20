@@ -3,6 +3,7 @@
 
 #include "vertex.h"
 #include "triangle.h"
+#include "types.h"
 
 using namespace std;
 
@@ -34,6 +35,26 @@ private:
     int _index;
 };
 
+class ElementWithIndex_Triangle
+{
+public:
+    ElementWithIndex_Triangle(tr_it iterator)
+    {
+        _value = *iterator;
+        _iterator = iterator;
+    }
+
+    const Triangle &value() const { return _value; }
+    Triangle &value() { return _value; }
+    //Triangle *pointer() { return _pointer; }
+    Triangle &reference() const { return *_iterator; }
+
+private:
+    Triangle _value;
+    tr_it _iterator;
+};
+
+
 template <class T> class TwoElementsWithIndex
 {
 public:
@@ -60,6 +81,27 @@ private:
     int _index;
 };
 
+class TwoElementsWithIndex_Triangle
+{
+public:
+    TwoElementsWithIndex_Triangle(tr_it iterator)
+    {
+        _before = *iterator;
+        _iterator = iterator;
+    }
+
+    void setAfter() { _after = *_iterator; }
+    const Triangle &before() const { return _before; }
+    const Triangle &after() const { return _after; }
+    tr_it iterator() const { return _iterator; }
+    Triangle &reference() const { return *_iterator; }
+    //int index() const
+    //{ return _index; }
+
+private:
+    Triangle _before, _after;
+    tr_it _iterator;
+};
 
 class Create
 {
@@ -67,7 +109,7 @@ public:
     Create()
     {
         _vertex = new vector <ElementWithIndex <Vertex> >;
-        _triangle = new vector <ElementWithIndex <Triangle> >;
+        _triangle = new vector <ElementWithIndex_Triangle>;
     }
 
     ~Create()
@@ -82,15 +124,15 @@ public:
     vector <ElementWithIndex <Vertex> > &vertex()
     { return *_vertex; }
 
-    const vector <ElementWithIndex <Triangle> > &triangle() const
+    const vector <ElementWithIndex_Triangle> &triangle() const
     { return *_triangle; }
 
-    vector <ElementWithIndex <Triangle> > &triangle()
+    vector <ElementWithIndex_Triangle> &triangle()
     { return *_triangle; }
 
 private:
     vector <ElementWithIndex <Vertex> > *_vertex;
-    vector <ElementWithIndex <Triangle> > *_triangle;
+    vector <ElementWithIndex_Triangle> *_triangle;
 };
 
 class Edit
@@ -99,7 +141,7 @@ public:
     Edit()
     {
         _vertex = new vector <TwoElementsWithIndex <Vertex> >;
-        _triangle = new vector <TwoElementsWithIndex <Triangle> >;
+        _triangle = new vector <TwoElementsWithIndex_Triangle>;
     }
 
     ~Edit()
@@ -114,15 +156,17 @@ public:
     const vector <TwoElementsWithIndex <Vertex> > &vertex() const
     { return *_vertex; }
 
-    vector <TwoElementsWithIndex <Triangle> > &triangle()
+    //vector <TwoElementsWithIndex <Triangle> > &triangle()
+    vector <TwoElementsWithIndex_Triangle> &triangle()
     { return *_triangle; }
 
-    const vector <TwoElementsWithIndex <Triangle> > &triangle() const
+    const vector <TwoElementsWithIndex_Triangle> &triangle() const
     { return *_triangle; }
 
 private:
     vector <TwoElementsWithIndex <Vertex> > *_vertex;
-    vector <TwoElementsWithIndex <Triangle> > *_triangle;
+    //vector <TwoElementsWithIndex <Triangle> > *_triangle;
+    vector <TwoElementsWithIndex_Triangle> *_triangle;
 };
 
 union Data

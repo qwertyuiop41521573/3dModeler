@@ -2,6 +2,7 @@
 #include "model.h"
 #include "journal.h"
 #include "target.h"
+#include "trianglecontainer.h"
 
 #include <QAction>
 
@@ -28,7 +29,8 @@ void ToolSet::SignalHandler::selectAll()
     //or triangles
     else
     {
-        for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists()) triangle().setSelected(i, true);
+        for(tr_it it = triangle().begin(); it != triangle().end(); it++)
+            if(it->exists()) triangle().setSelected(it, true);
     }
     Journal::submit();
 }
@@ -43,7 +45,8 @@ void ToolSet::SignalHandler::selectNone()
     }
     else
     {
-        for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists()) triangle().setSelected(i, false);
+        for(tr_it it = triangle().begin(); it != triangle().end(); it++)
+            if(it->exists()) triangle().setSelected(it, false);
     }
     Journal::submit();
 }
@@ -154,16 +157,16 @@ void ToolSet::SignalHandler::weldTogether()
             vertex().remove(index);
             Journal::addAfter(true);
             //replace this vertex with first from group in all triangles
-            for(k = 0; k < triangle().size(); k++)
+            for(tr_it it = triangle().begin(); it != triangle().end(); it++)
             {
-                if(!triangle()[k].exists()) continue;
+                if(!it->exists()) continue;
 
                 for(l = 0; l < 3; l++)
                 {
-                    if(triangle()[k].getIndex(l) == index)
+                    if(it->getIndex(l) == index)
                     {
-                        Journal::addBefore(false, k);
-                        triangle()[k].setIndex(l, groups[i][0]);
+                        Journal::addBefore(it);
+                        it->setIndex(l, groups[i][0]);
                         Journal::addAfter(false);
                         break;
                     }
@@ -177,7 +180,8 @@ void ToolSet::SignalHandler::deleteSlot()
 {
     using namespace Model;
     int i, j, k;
-    vector <int> vertexList, triangleList, vertexList2;
+    vector <int> vertexList, vertexList2;
+    vector<tr_it> triangleList;
 
     Journal::newRecord(EDIT);
 
@@ -195,9 +199,9 @@ void ToolSet::SignalHandler::deleteSlot()
         bool selected;
         int l;
         //loop though all triangles
-        for(i = 0; i < triangle().size(); i++)
+        for(tr_it it = triangle().begin(); it != triangle().end(); it++)
         {
-            if(!triangle()[i].exists()) continue;
+            if(!it->exists()) continue;
 
             selected = false;
             for(j = 0; j < 3; j++)
@@ -205,14 +209,14 @@ void ToolSet::SignalHandler::deleteSlot()
                 //check if this triangle's vertices were removed
                 for(k = 0; k < vertexList.size(); k++)
                 {
-                    if(vertexList[k] != triangle()[i].getIndex(j)) continue;
+                    if(vertexList[k] != it->getIndex(j)) continue;
                     //if there is one vertex removed
 
                     //add this triangle to list
-                    triangleList.push_back(i);
+                    triangleList.push_back(it);
                     selected = true;
                     //and other 2 vertices to vertexList2
-                    for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, triangle()[i].getIndex(l));
+                    for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, it->getIndex(l));
                     break;
                 }
                 if(selected) break;
@@ -222,22 +226,24 @@ void ToolSet::SignalHandler::deleteSlot()
     else
     {
         //add to triangleList all selected triangles
-        for(i = 0; i < triangle().size(); i++)
+        for(tr_it it = triangle().begin(); it != triangle().end(); it++)
         {
-            if(!triangle()[i].exists() || !triangle()[i].selected()) continue;
+            if(!it->exists() || !it->selected()) continue;
 
-            triangleList.push_back(i);
+            triangleList.push_back(it);
             //and all vertices of this triangle
-            for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, triangle()[i].getIndex(j));
+            for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, it->getIndex(j));
         }
 
     }
 
     //remove triangles from list
-    for(i = 0; i < triangleList.size(); i++) triangle().remove(triangleList[i]);
+    for(i = 0; i < triangleList.size(); i++)
+        triangle().rem(triangleList[i]);
 
     //check if there are some existing triangles (when deleting, they are just marked as not existing)
-    for(i = 0; i < triangle().size(); i++) if(triangle()[i].exists()) break;
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++)
+        if(it->exists()) break;
     bool noTriangles = i == triangle().size();
 
     for(i = 0; i < vertexList2.size(); i++)
@@ -250,15 +256,17 @@ void ToolSet::SignalHandler::deleteSlot()
             continue;
         }
         //if there are some, we should check if one of them is built on this vertex
-        for(j = 0; j < triangle().size(); j++)
+        tr_it it;
+        for(it = triangle().begin(); it != triangle().end(); it++)
         {
-            if(!triangle()[j].exists()) continue;
+            if(!it->exists()) continue;
 
-            for(k = 0; k < 3; k++) if(triangle()[j].getIndex(k) == vertexList2[i]) break;
+            for(k = 0; k < 3; k++) if(it->getIndex(k) == vertexList2[i])
+                break;
             if(k < 3) break;
         }
         //if no such triangle found, remove vertex
-        if(j == triangle().size()) vertex().remove(vertexList2[i]);
+        if(it == triangle().end()) vertex().remove(vertexList2[i]);
     }
 
     Journal::submit();

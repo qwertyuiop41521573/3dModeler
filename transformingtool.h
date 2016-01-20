@@ -2,6 +2,7 @@
 #define TRANSFORMINGTOOL_H
 
 #include "toolwithwidget.h"
+#include "types.h"
 
 #include "gui/myspinbox.h"
 
@@ -21,7 +22,7 @@ protected:
     vector <bool> checked;
     //list of selected vertices
     vector <int> toTransform;
-    vector <int> tri;
+    vector<tr_it> tri;
     QMatrix4x4 transformation;
 
     void function(Action action, QMouseEvent *event);

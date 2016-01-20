@@ -7,6 +7,12 @@
 #include "camera.h"
 #include "element.h"
 
+#include <vector>
+
+using namespace std;
+
+class Triangle;
+
 class Vertex : public Element
 {
 public:
@@ -28,9 +34,15 @@ public:
 
     void operator =(const Vertex &vertex);
 
+    void addTriangle(Triangle *triangle);
+    void delTriange(Triangle *triangle);
+    const vector<Triangle*> &triangles() const { return _triangles; }
+
 private:
     QVector3D _position;
     QVector2D UVCoordinates;
+
+    vector<Triangle*> _triangles;
 };
 
 #endif // VERTEX_H

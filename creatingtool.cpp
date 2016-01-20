@@ -1,15 +1,13 @@
 #include "creatingtool.h"
 #include "model.h"
+#include "trianglecontainer.h"
 
-CreatingTool::CreatingTool() : ToolWithWidget()
-{
-
-}
+CreatingTool::CreatingTool() : ToolWithWidget() {}
 
 void CreatingTool::removeAll()
 {
     for(int i = 0; i < ver.size(); i++) Model::vertex()[ver[i]].remove();
-    for(int i = 0; i < tri.size(); i++) Model::triangle()[tri[i]].remove();
+    for(int i = 0; i < tri.size(); i++) tri[i]->remove();
 }
 
 void CreatingTool::addTriangle(int v0, int v1, int v2, int smoothingGroup)
@@ -19,5 +17,5 @@ void CreatingTool::addTriangle(int v0, int v1, int v2, int smoothingGroup)
 
 void CreatingTool::updateNormals()
 {
-    for(int i = 0; i < tri.size(); i++) Model::triangle()[tri[i]].countNormal();
+    for(int i = 0; i < tri.size(); i++) tri[i]->countNormal();
 }

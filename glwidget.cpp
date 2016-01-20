@@ -3,6 +3,7 @@
 #include "mathfunctions.h"
 #include "toolset.h"
 #include "target.h"
+#include "trianglecontainer.h"
 
 #include <iostream>
 
@@ -277,17 +278,14 @@ void GLWidget::drawFlatShaded()
     glShadeModel(GL_FLAT);
 
     vector <VertexData_Flat> vertices;
-    for(int i = 0; i < triangle().size(); i++)
-    {
-        const Triangle &t = triangle()[i];
-        if(!t.exists()) continue;
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
+        if(!it->exists()) continue;
 
         QVector3D color;
-        if(workWithElements[1]->isChecked() && (t.newSelected() || t.selected())) color = t.newSelected() ? blue : red;
+        if(workWithElements[1]->isChecked() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
         else color = shaded;
 
-        for(int j = 0; j < 3; j++)
-            vertices.push_back({vertex()[t.getIndex(j)].position(), t.normal(), color});
+        for(int j = 0; j < 3; j++) vertices.push_back({it->vertex(j).position(), it->normal(), color});
     }
     int structSize = sizeof(VertexData_Flat);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * structSize, vertices.data(), GL_STATIC_DRAW);
@@ -323,38 +321,47 @@ void GLWidget::drawSmoothShaded()
     vector <VertexData_Flat> vertices;
 
 
+
     vector<AdditiveMap> vertexGroup(vertex().size());
 
-    for(int i = 0; i < triangle().size(); i++)
-    {
-        const Triangle &t = triangle()[i];
-        if(!t.exists()) continue;
+    /*for(int i = 0; i < vertex().size(); i++) {
+        const Vertex &v = vertex()[i];
+        if(!v.exists()) continue;
 
-        QVector3D v[3];
-        for(int j = 0; j < 3; j++) v[j] = vertex()[t.getIndex(j)].position();
-        QVector3D normal = QVector3D::crossProduct(v[1] - v[0], v[2] - v[0]).normalized();
-        for(int j = 0; j < 3; j++) vertexGroup[t.getIndex(j)].push(t.smoothingGroup(), normal);
+        const vector<Triangle*> &triangles = v.triangles();
+        for(int j = 0; j < triangles.size(); j++) {
+            const Triangle &t = *triangles[j];
+            vertexGroup[i].push(t.smoothingGroup(), t.normal());
+            cerr << t.smoothingGroup() << ' ' << t.normal().x() << ' ' << t.normal().y() << ' ' << t.normal().z() << '\n';
+            t.smoothingGroup();
+            t.normal();
+        }
+    }*/
 
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
+        if(!it->exists()) continue;
+
+        for(int j = 0; j < 3; j++) vertexGroup[it->getIndex(j)].push(it->smoothingGroup(), it->normal());
+        //cerr << t.smoothingGroup() << ' ' << t.normal().x() << ' ' << t.normal().y() << ' ' << t.normal().z() << '\n';
     }
+
 
     for(int i = 0; i < vertexGroup.size(); i++) {
         AdditiveMap &m = vertexGroup[i];
         if(!m.empty()) for(AdditiveMap::iterator j = m.begin(); j != m.end(); j++) j->second.normalize();
     }
 
-    for(int i = 0; i < triangle().size(); i++)
-    {
-        const Triangle &t = triangle()[i];
-        if(!t.exists()) continue;
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
+        if(!it->exists()) continue;
 
         QVector3D color;
-        if(workWithElements[1]->isChecked() && (t.newSelected() || t.selected())) color = t.newSelected() ? blue : red;
+        if(workWithElements[1]->isChecked() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
         else color = shaded;
 
 
         for(int j = 0; j < 3; j++) {
-            int index = t.getIndex(j);
-            vertices.push_back({vertex()[index].position(), vertexGroup[index].at(t.smoothingGroup()), color});
+            int index = it->getIndex(j);
+            vertices.push_back({vertex()[index].position(), vertexGroup[index].at(it->smoothingGroup()), color});
         }
     }
 
@@ -392,7 +399,7 @@ void GLWidget::drawSelectedFaces()
     prepareProgramColor(projectionMatrix);
 
     selectedFaces.clear();
-    for(int i = 0; i < triangle().size(); i++) if(triangle()[i].exists() && (triangle()[i].newSelected() || triangle()[i].selected())) addSelectedFace(i);
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++)  if(it->exists() && (it->newSelected() || it->selected())) addSelectedFace(it);
 
     int selectedFacesLength = selectedFaces.size();
     if(!selectedFacesLength) return;
@@ -416,10 +423,10 @@ void GLWidget::prepareProgramColor(const QMatrix4x4 &matrix)
     programColor->setUniformValue("mvp_matrix", matrix);
 }
 
-void GLWidget::addSelectedFace(int num)
+void GLWidget::addSelectedFace(tr_it iterator)
 {
-    QVector3D selectedColor(triangle()[num].newSelected() ? blue : red);
-    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(vertex()[triangle()[num].getIndex(j)].position(), selectedColor));
+    QVector3D selectedColor(iterator->newSelected() ? blue : red);
+    for(int j = 0; j < 3; j++) selectedFaces.push_back(VertexData_Color(iterator->vertex(j).position(), selectedColor));
 }
 
 void GLWidget::drawVertices()
@@ -449,10 +456,8 @@ void GLWidget::drawWireframe()
     glLineWidth(1);
 
     vector <VertexData_Color> vertices;
-    for(int i = 0; i < triangle().size(); i++)
-    {
-        if(triangle()[i].exists()) for(int j = 0; j < 3; j++) vertices.push_back({ vertex()[triangle()[i].getIndex(j)].position(), black });
-    }
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++) if(it->exists()) for(int j = 0; j < 3; j++) vertices.push_back({it->vertex(j).position(), black});
+
     int structSize = vertexData_Color_Size;
     int verticesLength = vertices.size();
     glBufferData(GL_ARRAY_BUFFER, verticesLength * structSize, vertices.data(), GL_STATIC_DRAW);

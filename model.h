@@ -7,6 +7,8 @@
 
 using namespace std;
 
+class TriangleContainer;
+
 namespace Model
 {
     void init();
@@ -17,7 +19,8 @@ namespace Model
     bool textured();
     bool empty();
     ElementContainer <Vertex> &vertex();
-    ElementContainer <Triangle> &triangle();
+    //ElementContainer <Triangle> &triangle();
+    TriangleContainer &triangle();
     const QString &fileName();
     void setFileName(const QString &fileName);
     bool loaded();

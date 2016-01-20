@@ -35,4 +35,22 @@ void Vertex::operator =(const Vertex &vertex)
 {
     Element::operator =(vertex);
     _position = vertex.position();
+    _triangles = vertex.triangles();
+}
+
+void Vertex::addTriangle(Triangle *triangle)
+{
+    int i;
+    for(i = 0; i < _triangles.size(); i++)
+        if(_triangles[i] == triangle) break;
+    if(i == _triangles.size()) _triangles.push_back(triangle);
+}
+
+void Vertex::delTriange(Triangle *triangle)
+{
+    for(int i = 0; i < _triangles.size(); i++) {
+        if(_triangles[i] != triangle) continue;
+        _triangles.erase(_triangles.begin() + i);
+        return;
+    }
 }

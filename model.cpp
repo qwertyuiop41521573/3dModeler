@@ -1,5 +1,7 @@
 #include "model.h"
 #include "journal.h"
+#include "types.h"
+#include "trianglecontainer.h"
 
 #include <stdio.h>
 #include <iostream>
@@ -14,14 +16,13 @@ namespace Model
     bool _loaded = false;
     bool _modified = false;
 
-    ElementContainer <Vertex> *_vertex;
-    ElementContainer <Triangle> *_triangle;
+    ElementContainer <Vertex> _vertex;
+    //ElementContainer <Triangle> _triangle;
+    TriangleContainer _triangle;
 }
 
 void Model::init()
 {
-    _vertex = new ElementContainer <Vertex>();
-    _triangle = new ElementContainer <Triangle>();
 }
 
 bool Model::load(const char *newFileName)
@@ -34,25 +35,25 @@ bool Model::load(const char *newFileName)
     {
         int i, j, size;
         fscanf(input, "%i", &size);
-        _vertex->resize(size);
+        _vertex.resize(size);
         double x, y, z;
-        for(i = 0; i < _vertex->size(); i++)
+        for(i = 0; i < _vertex.size(); i++)
         {
             fscanf(input, "%lf %lf %lf ", &x, &y, &z);
-            _vertex->at(i) = QVector3D(x, y, z);
+            _vertex[i] = QVector3D(x, y, z);
         }
         fscanf(input, "%i", &size);
-        _triangle->resize(size);
         int temp;
-        for(i = 0; i < _triangle->size(); i++ )
+        for(i = 0; i < size; i++ )
         {
-            for(j = 0; j < 3; j++)
-            {
+            _triangle.push_back(Triangle());
+            for(j = 0; j < 3; j++) {
                 fscanf(input, "%i", &temp);
-                _triangle->at(i).setIndex(j, temp);
+                _triangle.back().setIndex(j, temp);
             }
-            _triangle->at(i).setSelected(false, false);
-            _triangle->at(i).undoRemove();
+
+            _triangle.back().setSelected(false, false);
+            _triangle.back().undoRemove();
         }
     }
     _modified = false;
@@ -63,8 +64,9 @@ bool Model::load(const char *newFileName)
 void Model::clear()
 {
     Journal::cleanAll();
-    _vertex->clear();
-    _triangle->clear();
+    _vertex.clear();
+
+    _triangle.clear();
     _loaded = false;
 }
 
@@ -76,24 +78,25 @@ bool Model::save()
 
     int i, j;
     int vertices = 0;
-    for(i = 0; i < _vertex->size(); i++) if(_vertex->at(i).exists()) vertices++;
+    for(i = 0; i < _vertex.size(); i++) if(_vertex[i].exists()) vertices++;
     fprintf(output, "%i ", vertices);
-    for(i = 0; i < _vertex->size(); i++)
+    for(i = 0; i < _vertex.size(); i++)
     {
-        if(!_vertex->at(i).exists()) continue;
+        if(!_vertex[i].exists()) continue;
 
-        const QVector3D &pos = _vertex->at(i).position();
+        const QVector3D &pos = _vertex[i].position();
         fprintf(output, "%lg %lg %lg ", pos.x(), pos.y(), pos.z());
     }
 
     int triangles = 0;
-    for(i = 0; i < _triangle->size(); i++) if(_triangle->at(i).exists()) triangles++;
+    for(tr_it it = _triangle.begin(); it != _triangle.end(); it++)
+        if(it->exists()) triangles++;
     fprintf(output, "%i ", triangles);
-    for(i = 0; i < _triangle->size(); i++)
+    for(tr_it it = _triangle.begin(); it != _triangle.end(); it++)
     {
-        if(!_triangle->at(i).exists()) continue;
+        if(!it->exists()) continue;
 
-        for(j = 0; j < 3; j++) fprintf(output, "%i ", _triangle->at(i).getIndex(j));
+        for(j = 0; j < 3; j++) fprintf(output, "%i ", it->getIndex(j));
     }
 
     fclose(output);
@@ -105,13 +108,14 @@ bool Model::save()
 
 bool Model::empty()
 {
-    for(int i = 0; i < _vertex->size(); i++) if(_vertex->at(i).exists()) return false;
+    for(int i = 0; i < _vertex.size(); i++) if(_vertex[i].exists()) return false;
     return true;
 }
 
 bool Model::textured() { return _textured; }
-ElementContainer <Vertex> &Model::vertex() { return *_vertex; }
-ElementContainer <Triangle> &Model::triangle() { return *_triangle; }
+ElementContainer <Vertex> &Model::vertex() { return _vertex; }
+//ElementContainer <Triangle> &Model::triangle() { return _triangle; }
+TriangleContainer &Model::triangle() { return _triangle; }
 const QString &Model::fileName() { return _fileName; }
 void Model::setFileName(const QString &fileName) { _fileName = fileName; }
 bool Model::loaded() { return _loaded; }

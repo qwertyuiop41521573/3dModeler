@@ -2,6 +2,7 @@
 #include "glwidget.h"
 #include "mainwindow.h"
 #include "journal.h"
+#include "trianglecontainer.h"
 
 using namespace Model;
 

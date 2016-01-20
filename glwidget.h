@@ -9,6 +9,7 @@
 
 #include "tool.h"
 #include "model.h"
+#include "types.h"
 
 using namespace std;
 
@@ -184,7 +185,7 @@ private:
         void drawSmoothShaded();
         void drawSelectedFaces();
             void prepareProgramColor(const QMatrix4x4 &matrix);
-            void addSelectedFace(int num);
+            void addSelectedFace(tr_it iterator);
         void drawVertices();
         void drawWireframe();
         void drawAxis();

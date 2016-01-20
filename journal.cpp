@@ -3,6 +3,7 @@
 #include "toolset.h"
 #include "tool.h"
 #include "j_signalhandler.h"
+#include "trianglecontainer.h"
 
 #include <QObject>
 
@@ -16,7 +17,8 @@ namespace Journal
     int _current = -1;
     QRadioButton **_workWithElements;
 
-    vector <int> vertexList, triangleList;
+    vector <int> vertexList;
+    vector<tr_it> triangleList;
     Type currentType;
 
     void push();
@@ -64,8 +66,18 @@ void Journal::addBefore(bool isVertex, int index)
 {
     //before tool was used
     Edit &data = *current()->data().edit;
-    if(isVertex) data.vertex().push_back({index, vertex()[index]});
-    else data.triangle().push_back({index, triangle()[index]});
+    //if(isVertex)
+    data.vertex().push_back({index, vertex()[index]});
+    //else data.triangle().push_back({index, triangle()[index]});
+}
+
+void Journal::addBefore(tr_it it)
+{
+    //before tool was used
+    Edit &data = *current()->data().edit;
+    //if(isVertex) data.vertex().push_back({index, vertex()[index]});
+    //else
+    data.triangle().push_back(it);
 }
 
 void Journal::addAfter(bool isVertex)
@@ -77,11 +89,7 @@ void Journal::addAfter(bool isVertex)
         vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
         vertex[vertex.size() - 1].setAfter(Model::vertex()[vertex[vertex.size() - 1].index()]);
     }
-    else
-    {
-        vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
-        triangle[triangle.size() - 1].setAfter(Model::triangle()[triangle[triangle.size() - 1].index()]);
-    }
+    else data.triangle().back().setAfter();
 }
 
 void Journal::submit()
@@ -95,7 +103,7 @@ void Journal::submit()
         push();        
         Create &data = *current()->data().create;
         for(i = 0; i < vertexList.size(); i++) data.vertex().push_back({vertex()[vertexList[i]], vertexList[i]});
-        for(i = 0; i < triangleList.size(); i++) data.triangle().push_back({triangle()[triangleList[i]], triangleList[i]});
+        for(i = 0; i < triangleList.size(); i++) data.triangle().push_back({triangleList[i]});
         break;
     }
     case EDIT:
@@ -115,8 +123,8 @@ void Journal::submit()
 void Journal::addVertex(int index)
 { vertexList.push_back(index); }
 
-void Journal::addTriangle(int index)
-{ triangleList.push_back(index); }
+void Journal::addTriangle(tr_it it)
+{ triangleList.push_back(it); }
 
 Record *Journal::current() { return &_vec.at(_current); }
 const Record &Journal::next() { return _vec.at(_current + 1); }
@@ -139,8 +147,9 @@ void Journal::SignalHandler::undo()
         const vector <ElementWithIndex <Vertex> > &vertex = data.vertex();
         //remove what was created
         for(int i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()].remove();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triangle();
-        for(int i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()].remove();
+        const vector <ElementWithIndex_Triangle> &triangle = data.triangle();
+        for(int i = 0; i < triangle.size(); i++)
+            triangle[i].reference().remove();
         break;
     }
     case EDIT:
@@ -149,8 +158,9 @@ void Journal::SignalHandler::undo()
         //replace edited elements with their "before" value
         const vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
         for(int i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].before();
-        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
-        for(int i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].before();
+        const vector <TwoElementsWithIndex_Triangle> &triangle = data.triangle();
+        for(int i = 0; i < triangle.size(); i++)
+            triangle[i].reference() = triangle[i].before();
 
         updateNormals(data);
 
@@ -176,8 +186,9 @@ void Journal::SignalHandler::redo()
         //recreate elements
         const vector <ElementWithIndex <Vertex> > &vertex = data.vertex();
         for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].value();
-        const vector <ElementWithIndex <Triangle> > &triangle = data.triangle();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].value();
+        const vector <ElementWithIndex_Triangle> &triangle = data.triangle();
+        for(i = 0; i < triangle.size(); i++)
+            triangle[i].reference() = triangle[i].value();
         break;
     }
     case EDIT:
@@ -186,8 +197,9 @@ void Journal::SignalHandler::redo()
         //replace edited elements with their "after" value
         const vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
         for(i = 0; i < vertex.size(); i++) Model::vertex()[vertex[i].index()] = vertex[i].after();
-        const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
-        for(i = 0; i < triangle.size(); i++) Model::triangle()[triangle[i].index()] = triangle[i].after();
+        const vector <TwoElementsWithIndex_Triangle> &triangle = data.triangle();
+        for(i = 0; i < triangle.size(); i++)
+            triangle[i].reference() = triangle[i].after();
 
         updateNormals(data);
 
@@ -201,23 +213,24 @@ void Journal::SignalHandler::redo()
 void Journal::updateNormals(const Edit &data)
 {
     const vector <TwoElementsWithIndex <Vertex> > &vertex = data.vertex();
-    const vector <TwoElementsWithIndex <Triangle> > &triangle = data.triangle();
+    const vector <TwoElementsWithIndex_Triangle> &triangle = data.triangle();
 
-    vector<int> tri;
-    for(int i = 0; i < triangle.size(); i++) tri.push_back(triangle[i].index());
+    vector<tr_it> tri;
+    for(int i = 0; i < triangle.size(); i++)
+        tri.push_back(triangle[i].iterator());
     for(int i = 0; i < vertex.size(); i++) {
-        for(int j = 0; j < Model::triangle().size(); j++) {
+        for(tr_it it = Model::triangle().begin(); it != Model::triangle().end(); it++) {
             for(int k = 0; k < 3; k++) {
-                if(Model::triangle()[j].getIndex(k) == vertex[i].index()) {
+                if(it->getIndex(k) == vertex[i].index()) {
                     int l;
-                    for(l = 0; l < tri.size(); l++) if(tri[l] == j) break;
-                    if(l == tri.size()) tri.push_back(j);
+                    for(l = 0; l < tri.size(); l++) if(tri[l] == it) break;
+                    if(l == tri.size()) tri.push_back(it);
                     break;
                 }
             }
         }
     }
-    for(int i = 0; i < tri.size(); i++) Model::triangle()[tri[i]].countNormal();
+    for(int i = 0; i < tri.size(); i++) tri[i]->countNormal();
 }
 
 void Journal::connectActions(QAction *undoAction, QAction *redoAction)

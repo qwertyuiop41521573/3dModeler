@@ -1,6 +1,7 @@
 #include "transformingtool.h"
 #include "journal.h"
 #include "target.h"
+#include "trianglecontainer.h"
 
 using namespace Target;
 
@@ -35,14 +36,13 @@ void TransformingTool::function(Action action, QMouseEvent *event)
             checked.resize(vertex().size());
             for(int i = 0; i < vertex().size(); i++) checked[i] = false;
 
-            for(int i = 0; i < triangle().size(); i++)
-            {
-                if(!triangle()[i].exists() || !triangle()[i].selected())
+            for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
+                if(!it->exists() || !it->selected())
                     continue;
 
                 for(int j = 0; j < 3; j++)
                 {
-                    index = triangle()[i].getIndex(j);
+                    index = it->getIndex(j);
                     if(checked[index]) continue;
 
                     checked[index] = true;
@@ -54,13 +54,13 @@ void TransformingTool::function(Action action, QMouseEvent *event)
 
         tri.clear();
         for(int i = 0; i < toTransform.size(); i++) {
-            for(int j = 0; j < triangle().size(); j++) {
+            for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
                 for(int k = 0; k < 3; k++) {
-                    if(toTransform[i] == triangle()[j].getIndex(k)) {
+                    if(toTransform[i] == it->getIndex(k)) {
                         int l;
                         for(l = 0; l < tri.size(); l++)
-                            if(tri[l] == j) break;
-                        if(l == tri.size()) tri.push_back(j);
+                            if(tri[l] == it) break;
+                        if(l == tri.size()) tri.push_back(it);
                         break;
                     }
                 }
@@ -94,5 +94,5 @@ void TransformingTool::function(Action action, QMouseEvent *event)
 
 void TransformingTool::updateNormals()
 {
-    for(int i = 0; i < tri.size(); i++) Model::triangle()[tri[i]].countNormal();
+    for(int i = 0; i < tri.size(); i++) tri[i]->countNormal();
 }
