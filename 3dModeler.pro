@@ -163,7 +163,6 @@ RESOURCES += \
 
 # normals should be stored in Model, not counted in paintGL() - for smooth shaded
 # normals should be stored in Model, not counted in paintGL() - update when delete, snapTogether...
-# remove Model::init()
 # save and load smoothing groups and normals
 # rename ElementWithIndex ...
 # remove all 'vector<tr_it> tri'

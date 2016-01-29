@@ -7,7 +7,7 @@
 
 #include "records/rcreate.h"
 #include "records/redit.h"
-#include "rdelete.h"
+#include "records/rdelete.h"
 
 #include <QObject>
 

@@ -21,10 +21,6 @@ namespace Model
     TriangleContainer _triangle;
 }
 
-void Model::init()
-{
-}
-
 bool Model::load(const char *newFileName)
 {
     Journal::cleanAll();

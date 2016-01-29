@@ -11,7 +11,6 @@ class TriangleContainer;
 
 namespace Model
 {
-    void init();
     bool load(const char *fileName);
     void clear();
     bool save();

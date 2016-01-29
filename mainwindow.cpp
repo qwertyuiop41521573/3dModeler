@@ -12,7 +12,6 @@ using namespace Target;
 
 MainWindow::MainWindow()
 {
-    Model::init();
     ToolSet::init();
     Workspace::init();
     initMainWindow();
