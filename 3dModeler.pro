@@ -180,7 +180,6 @@ RESOURCES += \
 # use accessing triangles by vertex where possible
 
 
-
 # textures don't work
 # tCylinder->widget() is not hidden as it is the biggest widget
 

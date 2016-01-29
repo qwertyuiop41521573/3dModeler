@@ -21,9 +21,6 @@ namespace Journal
     int _current = -1;
     QRadioButton **_workWithElements;
 
-    vector <int> vertexList;
-    vector<tr_it> triangleList;
-
     void undo();
     void redo();
 
