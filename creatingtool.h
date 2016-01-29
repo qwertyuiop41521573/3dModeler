@@ -6,13 +6,6 @@
 
 class CreatingTool : public ToolWithWidget
 {
-public:
-    CreatingTool();
-
-signals:
-
-public slots:
-
 protected:
     //indices of created vertices and triangles
     vector <int> ver;

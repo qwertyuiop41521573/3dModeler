@@ -4,6 +4,7 @@
 #include "tool.h"
 #include "j_signalhandler.h"
 #include "trianglecontainer.h"
+#include "types.h"
 
 #include "records/rcreate.h"
 #include "records/redit.h"
@@ -16,17 +17,19 @@ using namespace ToolSet;
 
 namespace Journal
 {
-    vector <Record*> _vec;
+    vector<Record*> _vec;
 
-    int _current = -1;
+    rec_it _current = --_vec.begin();
+   // int _current = -1;
     QRadioButton **_workWithElements;
 
     void undo();
     void redo();
 
-    Record *next();
     bool isEmpty();
     bool isFull();
+
+    Record *next();
 
 
     SignalHandler *signalHandler;
@@ -38,28 +41,28 @@ void Journal::cleanAll()
 {
     for(int i = 0; i < _vec.size(); i++) delete _vec.at(i);
     _vec.clear();
-    _current = -1;
+    _current = _vec.end();
 }
 
 void Journal::newRecord(Type type)
 {
     //if we did some undos and from that point do something, we should clean the journal records starting from current point
-    for(int i = _current + 1; i < _vec.size(); i++) delete _vec.at(i);
-    _vec.erase(_vec.begin() + _current + 1, _vec.end());
+    for(rec_it it = _current + 1; it != _vec.end(); it++) delete *it;
+    _vec.erase(_current + 1, _vec.end());
     //and only then push
     Record *record;
     if(type == CREATE) record = new RCreate;
     if(type == EDIT)   record = new REdit;
     if(type == DELETE) record = new RDelete;
     _vec.push_back(record);
-    _current++;
+    _current = --_vec.end();
 }
 
 void Journal::addBefore(bool isVertex, int index)
 {
     //before tool was used
     //if(isVertex)
-    static_cast<REdit*>(current())->vertex().push_back({index, vertex()[index]});
+    static_cast<REdit*>(*_current)->vertex().push_back({index, vertex()[index]});
     //else data.triangle().push_back({index, triangle()[index]});
 }
 
@@ -69,13 +72,13 @@ void Journal::addBefore(tr_it it)
     //Edit &data = *current()->data().edit;
     //if(isVertex) data.vertex().push_back({index, vertex()[index]});
     //else
-    static_cast<REdit*>(current())->triangle().push_back(it);
+    static_cast<REdit*>(*_current)->triangle().push_back(it);
 }
 
 void Journal::addAfter(bool isVertex)
 {
     //after
-    REdit &data = *static_cast<REdit*>(current());
+    REdit &data = *static_cast<REdit*>(*_current);
     if(isVertex)
     {
         vector <TwoVerticesWithIndex> &vertex = data.vertex();
@@ -91,14 +94,14 @@ void Journal::addVertex(int index)
 void Journal::addTriangle(tr_it it)
 { static_cast<RecordWith1Element*>(_vec.back())->triangle().push_back(it); }
 
-Record *Journal::current() { return _vec.at(_current); }
-Record *Journal::next() { return _vec.at(_current + 1); }
+Record *Journal::current() { return *_current; }
+Record *Journal::next() { return *(_current + 1); }
 
-void Journal::undo() { if(_current != -1) _current--; }
-void Journal::redo() { if(_current != _vec.size() - 1) _current++; }
+void Journal::undo() { if(_current != --_vec.begin()) _current--; }
+void Journal::redo() { if(_current != --_vec.end()) _current++; }
 
-bool Journal::isEmpty() { return _current == -1; }
-bool Journal::isFull() { return _current == _vec.size() - 1; }
+bool Journal::isEmpty() { return _current == --_vec.begin(); }
+bool Journal::isFull() { return _current == --_vec.end(); }
 
 void Journal::SignalHandler::undo()
 {

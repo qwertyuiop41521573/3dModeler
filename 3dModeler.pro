@@ -165,8 +165,6 @@ RESOURCES += \
 # normals should be stored in Model, not counted in paintGL() - update when delete, snapTogether...
 # save and load smoothing groups and normals
 # rename ElementWithIndex ...
-# remove all 'vector<tr_it> tri'
-# in Journal replace int _current with iterator
 # in journal::submit check if nothing was selected / created before submitting
 # use vector::back() instead of [size() - 1]
 # replace 'x - 1' with '--x', same with +
