@@ -280,7 +280,6 @@ void GLWidget::drawFlatShaded()
     vector <VertexData_Flat> vertices;
     for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
         if(!it->exists()) continue;
-
         QVector3D color;
         if(workWithElements[1]->isChecked() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
         else color = shaded;
@@ -328,22 +327,15 @@ void GLWidget::drawSmoothShaded()
         const Vertex &v = vertex()[i];
         if(!v.exists()) continue;
 
-        const vector<Triangle*> &triangles = v.triangles();
-        for(int j = 0; j < triangles.size(); j++) {
-            const Triangle &t = *triangles[j];
+        for(int j = 0; j < v.triangles().size(); j++) {
+            const Triangle &t = *v.triangles()[j];
             vertexGroup[i].push(t.smoothingGroup(), t.normal());
-            cerr << t.smoothingGroup() << ' ' << t.normal().x() << ' ' << t.normal().y() << ' ' << t.normal().z() << '\n';
-            t.smoothingGroup();
-            t.normal();
         }
     }*/
 
-    for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
-        if(!it->exists()) continue;
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++)
+        if(it->exists()) for(int j = 0; j < 3; j++) vertexGroup[it->getIndex(j)].push(it->smoothingGroup(), it->normal());
 
-        for(int j = 0; j < 3; j++) vertexGroup[it->getIndex(j)].push(it->smoothingGroup(), it->normal());
-        //cerr << t.smoothingGroup() << ' ' << t.normal().x() << ' ' << t.normal().y() << ' ' << t.normal().z() << '\n';
-    }
 
 
     for(int i = 0; i < vertexGroup.size(); i++) {
@@ -353,7 +345,6 @@ void GLWidget::drawSmoothShaded()
 
     for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
         if(!it->exists()) continue;
-
         QVector3D color;
         if(workWithElements[1]->isChecked() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
         else color = shaded;
@@ -456,7 +447,10 @@ void GLWidget::drawWireframe()
     glLineWidth(1);
 
     vector <VertexData_Color> vertices;
-    for(tr_it it = triangle().begin(); it != triangle().end(); it++) if(it->exists()) for(int j = 0; j < 3; j++) vertices.push_back({it->vertex(j).position(), black});
+    for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
+        if(it->exists()) for(int j = 0; j < 3; j++)
+            vertices.push_back({it->vertex(j).position(), black});
+    }
 
     int structSize = vertexData_Color_Size;
     int verticesLength = vertices.size();

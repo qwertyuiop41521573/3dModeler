@@ -20,14 +20,17 @@ Triangle::Triangle(int *values, int smoothingGroup)
     init(smoothingGroup);
 }
 
+Triangle::Triangle(const Triangle &triangle)
+{
+    for(int i = 0; i < 3; i++) index[i] = triangle.getIndex(i);
+    init(triangle.smoothingGroup());
+}
+
 void Triangle::init(int smoothingGroup)
 {
     _isVertex = false;
     _smoothingGroup = smoothingGroup;
     //countNormal();
-
-    for(int i = 0; i < 3; i++)
-        if(index[i] != -1) vertex(i).addTriangle(this);
 }
 
 void Triangle::countNormal()
@@ -42,8 +45,9 @@ void Triangle::operator =(const Triangle &triangle)
     Element::operator =(triangle);
     for(int i = 0; i < 3; i++) index[i] = triangle.getIndex(i);
     _smoothingGroup = triangle.smoothingGroup();
-    for(int i = 0; i < 3; i++)
-        if(index[i] != -1) vertex(i).addTriangle(this);
+    //for(int i = 0; i < 3; i++)
+      //  if(index[i] != -1) vertex(i).addTriangle(this);
+
     //_normal = triangle.normal();
 }
 
@@ -62,5 +66,8 @@ void Triangle::setIndex(int num, int newIndex)
 void Triangle::remove()
 {
     Element::remove();
-    for(int i = 0; i < 3; i++) vertex(i).delTriange(this);
+    for(int i = 0; i < 3; i++) vertex(i).delTriangle(this);
 }
+
+void Triangle::record()
+{ for(int i = 0; i < 3; i++) if(index[i] != -1) vertex(i).addTriangle(this); }

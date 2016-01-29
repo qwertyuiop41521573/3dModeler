@@ -45,9 +45,9 @@ template <class T> void ElementContainer <T>::remove(int index)
 {
     Model::modify();
     //"element.remove(i)" is the same as "element[i].remove()", but records to journal
-    Journal::addBefore(at(0).isVertex(), index);
+    //Journal::addBefore(at(0).isVertex(), index);
+    Journal::addVertex(index);
     at(index).remove();
-    Journal::addAfter(at(0).isVertex());
 }
 
 template <class T> void ElementContainer <T>::setSelected(int index, bool value)

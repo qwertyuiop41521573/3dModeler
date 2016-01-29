@@ -26,7 +26,7 @@ public:
 
     void setPosition(float x, float y);
     void setPosition(float x, float y, float z);
-    void setPosition(const QVector4D &pos);
+    void setPosition(const QVector4D &pos) { _position = QVector3D(pos); }
     void setUV(float u, float v);
 
     bool operator ==(const Vertex &vertex)
@@ -35,7 +35,7 @@ public:
     void operator =(const Vertex &vertex);
 
     void addTriangle(Triangle *triangle);
-    void delTriange(Triangle *triangle);
+    void delTriangle(Triangle *triangle);
     const vector<Triangle*> &triangles() const { return _triangles; }
 
 private:

@@ -1,11 +1,17 @@
 #ifndef JOURNAL_H
 #define JOURNAL_H
 
-#include "record.h"
 #include "vertex.h"
 #include "types.h"
 
 #include <QRadioButton>
+
+//record types
+//CREATE - new elements
+//EDIT   - changing elements (transform, remove, select / deselect)
+typedef enum { CREATE, EDIT, DELETE } Type;
+
+class Record;
 
 namespace Journal
 {

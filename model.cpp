@@ -54,6 +54,7 @@ bool Model::load(const char *newFileName)
 
             _triangle.back().setSelected(false, false);
             _triangle.back().undoRemove();
+            _triangle.back().record();
         }
     }
     _modified = false;
@@ -92,12 +93,9 @@ bool Model::save()
     for(tr_it it = _triangle.begin(); it != _triangle.end(); it++)
         if(it->exists()) triangles++;
     fprintf(output, "%i ", triangles);
-    for(tr_it it = _triangle.begin(); it != _triangle.end(); it++)
-    {
-        if(!it->exists()) continue;
 
+    for(tr_it it = _triangle.begin(); it != _triangle.end(); it++)
         for(j = 0; j < 3; j++) fprintf(output, "%i ", it->getIndex(j));
-    }
 
     fclose(output);
     _loaded = true;

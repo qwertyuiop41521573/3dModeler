@@ -12,7 +12,6 @@ class Triangle;
 class TriangleContainer : public list<Triangle>
 {
 public:
-    TriangleContainer();
     tr_it push(const Triangle &triangle);
     void rem(tr_it it);
     void setSelected(tr_it it, bool value);

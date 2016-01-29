@@ -19,11 +19,6 @@ void Vertex::setPosition(float x, float y, float z)
     _position.setY(y);
     _position.setZ(z);
 }
-
-void Vertex::setPosition(const QVector4D &pos)
-{
-    _position = QVector3D(pos);
-}
     
 void Vertex::setUV(float u, float v)
 {
@@ -46,7 +41,7 @@ void Vertex::addTriangle(Triangle *triangle)
     if(i == _triangles.size()) _triangles.push_back(triangle);
 }
 
-void Vertex::delTriange(Triangle *triangle)
+void Vertex::delTriangle(Triangle *triangle)
 {
     for(int i = 0; i < _triangles.size(); i++) {
         if(_triangles[i] != triangle) continue;

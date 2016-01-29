@@ -22,6 +22,5 @@ public:
 };
 
 template class ElementContainer <Vertex>;
-template class ElementContainer <Triangle>;
 
 #endif // ELEMENTCONTAINER_H

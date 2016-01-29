@@ -51,7 +51,11 @@ SOURCES += \
     j_signalhandler.cpp \
     target.cpp \
     t_signalhandler.cpp \
-    trianglecontainer.cpp
+    trianglecontainer.cpp \
+    records/rcreate.cpp \
+    records/redit.cpp \
+    recordwith1element.cpp \
+    records/rdelete.cpp
 
 
 HEADERS += \
@@ -103,7 +107,11 @@ HEADERS += \
     target.h \
     t_signalhandler.h \
     types.h \
-    trianglecontainer.h
+    trianglecontainer.h \
+    records/rcreate.h \
+    records/redit.h \
+    recordwith1element.h \
+    records/rdelete.h
 
 
 RESOURCES += \
@@ -134,7 +142,6 @@ RESOURCES += \
 # move dirty code to functions
 # remove all int i, j ...
 # rewrite namespace Target
-# make Record a base class for Create and Edit (record.h)
 # divide Tool::function()
 # while creating box without wireframeOverlay, the plane should be visible
 # fix saving model
@@ -160,16 +167,18 @@ RESOURCES += \
 # save and load smoothing groups and normals
 # rename ElementWithIndex ...
 # remove all 'vector<tr_it> tri'
+# in Journal replace int _current with iterator
+# in journal::submit check if nothing was selected / created before submitting
+# use vector::back() instead of [size() - 1]
+# replace 'x - 1' with '--x', same with +
+# records have common in headers
+
 
 
 # current:
-# previous - in glwidget.cpp (drawSmoothShaded)
-# remove '_exists' parameter in Triangle ?
+# glwidget.cpp - drawSmoothShaded - normals should be recorded in vertices
 # rewrite or remove ElementContainer
-
 # use accessing triangles by vertex where possible
-
-
 
 
 

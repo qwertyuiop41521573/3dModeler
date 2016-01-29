@@ -3,6 +3,8 @@
 #include "target.h"
 #include "trianglecontainer.h"
 
+#include "records/redit.h"
+
 using namespace Target;
 
 TransformingTool::TransformingTool() : ToolWithWidget()
@@ -37,8 +39,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
             for(int i = 0; i < vertex().size(); i++) checked[i] = false;
 
             for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
-                if(!it->exists() || !it->selected())
-                    continue;
+                if(!it->exists() || !it->selected()) continue;
 
                 for(int j = 0; j < 3; j++)
                 {
@@ -78,10 +79,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     if(action == STOP)
     {
         _busy = false;
-
-        vector <TwoElementsWithIndex <Vertex> > &vertex = Journal::current()->data().edit->vertex();
-        for(int i = 0; i < vertex.size(); i++) vertex[i].setAfter(Model::vertex()[vertex[i].index()]);
-
+        static_cast<REdit*>(Journal::current())->setAfter();
         Journal::submit();
     }
     //actual transformation

@@ -160,7 +160,6 @@ void ToolSet::SignalHandler::weldTogether()
             for(tr_it it = triangle().begin(); it != triangle().end(); it++)
             {
                 if(!it->exists()) continue;
-
                 for(l = 0; l < 3; l++)
                 {
                     if(it->getIndex(l) == index)
@@ -183,13 +182,11 @@ void ToolSet::SignalHandler::deleteSlot()
     vector <int> vertexList, vertexList2;
     vector<tr_it> triangleList;
 
-    Journal::newRecord(EDIT);
+    Journal::newRecord(DELETE);
 
-    if(workWithElements[0]->isChecked())
-    {
+    if(workWithElements[0]->isChecked()) {
         //add to vertexList all selected vertices, remove them
-        for(i = 0; i < vertex().size(); i++)
-        {
+        for(i = 0; i < vertex().size(); i++) {
             if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
 
             vertexList.push_back(i);
@@ -199,13 +196,10 @@ void ToolSet::SignalHandler::deleteSlot()
         bool selected;
         int l;
         //loop though all triangles
-        for(tr_it it = triangle().begin(); it != triangle().end(); it++)
-        {
+        for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
             if(!it->exists()) continue;
-
             selected = false;
-            for(j = 0; j < 3; j++)
-            {
+            for(j = 0; j < 3; j++) {
                 //check if this triangle's vertices were removed
                 for(k = 0; k < vertexList.size(); k++)
                 {
@@ -226,8 +220,7 @@ void ToolSet::SignalHandler::deleteSlot()
     else
     {
         //add to triangleList all selected triangles
-        for(tr_it it = triangle().begin(); it != triangle().end(); it++)
-        {
+        for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
             if(!it->exists() || !it->selected()) continue;
 
             triangleList.push_back(it);
@@ -246,21 +239,17 @@ void ToolSet::SignalHandler::deleteSlot()
         if(it->exists()) break;
     bool noTriangles = i == triangle().size();
 
-    for(i = 0; i < vertexList2.size(); i++)
-    {
+    for(i = 0; i < vertexList2.size(); i++) {
         //vertex should be removed if it does not belong to any triangle
         //if there are no triangles
-        if(noTriangles)
-        {
+        if(noTriangles) {
             vertex().remove(vertexList2[i]);
             continue;
         }
         //if there are some, we should check if one of them is built on this vertex
         tr_it it;
-        for(it = triangle().begin(); it != triangle().end(); it++)
-        {
+        for(it = triangle().begin(); it != triangle().end(); it++) {
             if(!it->exists()) continue;
-
             for(k = 0; k < 3; k++) if(it->getIndex(k) == vertexList2[i])
                 break;
             if(k < 3) break;

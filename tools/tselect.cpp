@@ -13,11 +13,10 @@ using namespace Target;
 TSelect::TSelect() : ToolWithWidget()
 {
     button->setText("Select");
-    int i;
-    for(i = 0; i < 2; i++) checkBox[i] = new MyCheckBox;
+    for(int i = 0; i < 2; i++) checkBox[i] = new MyCheckBox;
     checkBox[0]->setText("Add");
     checkBox[1]->setText("Remove");
-    for(i = 0; i < 2; i++)
+    for(int i = 0; i < 2; i++)
     {
         checkBox[i]->setNeighbor(checkBox[!i]);
         layout->addWidget(checkBox[i], 0, i, 1, 2);
@@ -103,10 +102,8 @@ void TSelect::function(Action action, QMouseEvent *event)
         }
         else
         {
-            for(tr_it it = triangle().begin(); it != triangle().end(); it++)
-            {
+            for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
                 if(!it->exists()) continue;
-
                 bool newSelected = it->newSelected();
                 it->setNewSelected(false);
 
@@ -136,13 +133,11 @@ void TSelect::countMinAndMax(QVector2D *min, QVector2D *max, const QVector2D &cu
 void TSelect::_select(const QVector2D &min, const QVector2D &max)
 {
     GLWidget *widget = Workspace::activeWidget();
-    //work with vertices
-    bool workWithVert = workWithElements[0]->isChecked();
     int i;
 
     widget->countFinalMatrix();
     int j;
-    if(workWithVert)
+    if(workWithElements[0]->isChecked())
     {
         for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex()[i].setNewSelected(widget->isSelected(vertex()[i].position(), min, max));
     }
