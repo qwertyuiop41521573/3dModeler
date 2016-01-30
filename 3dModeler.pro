@@ -160,18 +160,13 @@ RESOURCES += \
 # in tselect.cpp fromWorldToScreen() is counted twice (for 'vertexOnScreen' and 'selected')
 # add 'bool checked[]' to lists of vertices/triangles that should not repeat
 # in glwidget rename VertexData_Flat to shaded
-
-# normals should be stored in Model, not counted in paintGL() - for smooth shaded
 # normals should be stored in Model, not counted in paintGL() - update when delete, snapTogether...
 # save and load smoothing groups and normals
 # rename ElementWithIndex ...
-# replace 'x - 1' with '--x', same with +
-# records have common in headers
 
 
 
 # current:
-# glwidget.cpp - drawSmoothShaded - normals should be recorded in vertices
 # rewrite or remove ElementContainer
 # use accessing triangles by vertex where possible
 

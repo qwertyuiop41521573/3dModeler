@@ -89,6 +89,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             vertex()[ver[i]].setNewSelected(true);
         }
         triangulateCap(_hasStage2);
+        updateNormals();
         break;
     }
     case FINAL:

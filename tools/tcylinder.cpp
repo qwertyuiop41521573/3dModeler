@@ -75,10 +75,10 @@ void TCylinder::function(Action action, QMouseEvent *event)
             QVector3D temp;
 
             temp = vertex()[ver[segments + 1 + i]].position();
-            vertex()[ver[segments + 1 + i]] = vertex()[ver[2 * segments - i]];
+            vertex()[ver[segments + 1 + i]].setPosition(vertex()[ver[2 * segments - i]].position());
             vertex()[ver[2 * segments - i]].setPosition(temp);
             temp = vertex()[ver[i]].position();
-            vertex()[ver[i]] = vertex()[ver[segments - 1 - i]];
+            vertex()[ver[i]].setPosition(vertex()[ver[segments - 1 - i]].position());
             vertex()[ver[segments - 1 - i]].setPosition(temp);
         }
         updateNormals();
@@ -113,6 +113,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].setNewSelected(true);
 
         widget->setMouseTracking(true);
+        updateNormals();
     }
     }
 }

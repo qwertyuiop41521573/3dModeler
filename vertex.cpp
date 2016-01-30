@@ -1,4 +1,5 @@
 #include "vertex.h"
+#include "triangle.h"
 
 Vertex::Vertex(const QVector3D &position) : Element()
 {
@@ -48,4 +49,13 @@ void Vertex::delTriangle(Triangle *triangle)
         _triangles.erase(_triangles.begin() + i);
         return;
     }
+}
+
+void Vertex::countNormals()
+{
+    _normals.clear();
+    for(int i = 0; i < _triangles.size(); i++)
+        _normals.push(_triangles[i]->smoothingGroup(), _triangles[i]->normal());
+    for(AdditiveMap::iterator i = _normals.begin(); i != _normals.end(); i++)
+        i->second.normalize();
 }

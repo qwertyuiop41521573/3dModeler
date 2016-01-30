@@ -319,8 +319,6 @@ void GLWidget::drawSmoothShaded()
 
     vector <VertexData_Flat> vertices;
 
-
-
     vector<AdditiveMap> vertexGroup(vertex().size());
 
     /*for(int i = 0; i < vertex().size(); i++) {
@@ -333,7 +331,7 @@ void GLWidget::drawSmoothShaded()
         }
     }*/
 
-    for(tr_it it = triangle().begin(); it != triangle().end(); it++)
+   /* for(tr_it it = triangle().begin(); it != triangle().end(); it++)
         if(it->exists()) for(int j = 0; j < 3; j++) vertexGroup[it->getIndex(j)].push(it->smoothingGroup(), it->normal());
 
 
@@ -341,7 +339,9 @@ void GLWidget::drawSmoothShaded()
     for(int i = 0; i < vertexGroup.size(); i++) {
         AdditiveMap &m = vertexGroup[i];
         if(!m.empty()) for(AdditiveMap::iterator j = m.begin(); j != m.end(); j++) j->second.normalize();
-    }
+    }*/
+
+
 
     for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
         if(!it->exists()) continue;
@@ -351,8 +351,9 @@ void GLWidget::drawSmoothShaded()
 
 
         for(int j = 0; j < 3; j++) {
-            int index = it->getIndex(j);
-            vertices.push_back({vertex()[index].position(), vertexGroup[index].at(it->smoothingGroup()), color});
+            const Vertex &v = Model::vertex()[it->getIndex(j)];
+            vertices.push_back({v.position(), v.normal(it->smoothingGroup())
+                 /*vertexGroup[it->getIndex(j)].at(it->smoothingGroup())*/, color});
         }
     }
 

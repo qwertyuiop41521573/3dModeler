@@ -134,10 +134,10 @@ void TBox::function(Action action, QMouseEvent *event)
         //flip the box if needed
         if(QVector3D::dotProduct(normal, vertex()[ver[0]].position() - vertex()[ver[4]].position()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) > 0) {
             QVector3D temp = vertex()[ver[1]].position();
-            vertex()[ver[1]] = vertex()[ver[3]];
+            vertex()[ver[1]].setPosition(vertex()[ver[3]].position());
             vertex()[ver[3]].setPosition(temp);
             temp = vertex()[ver[5]].position();
-            vertex()[ver[5]] = vertex()[ver[7]];
+            vertex()[ver[5]].setPosition(vertex()[ver[7]].position());
             vertex()[ver[7]].setPosition(temp);
         }
 
@@ -197,6 +197,7 @@ void TBox::function(Action action, QMouseEvent *event)
         addTriangle(4, 7, 6, 0);
 
         widget->setMouseTracking(true);
+        updateNormals();
     }
     }
 }

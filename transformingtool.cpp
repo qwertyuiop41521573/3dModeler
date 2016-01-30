@@ -92,5 +92,24 @@ void TransformingTool::function(Action action, QMouseEvent *event)
 
 void TransformingTool::updateNormals()
 {
-    for(int i = 0; i < tri.size(); i++) tri[i]->countNormal();
+    vector <int> ver2;
+    for(int i = 0; i < tri.size(); i++) {
+        tri[i]->countNormal();
+        for(int j = 0; j < 3; j++) {
+            int k;
+
+            for(k = 0; k < toTransform.size(); k++)
+                if(tri[i]->getIndex(j) == toTransform[k]) break;
+            if(k < toTransform.size()) continue;
+
+            for(k = 0; k < ver2.size(); k++)
+                if(tri[i]->getIndex(j) == ver2[k]) break;
+            if(k < ver2.size()) continue;
+
+            ver2.push_back(tri[i]->getIndex(j));
+        }
+    }
+    for(int i = 0; i < toTransform.size(); i++)
+        Model::vertex()[toTransform[i]].countNormals();
+    for(int i = 0; i < ver2.size(); i++) Model::vertex()[ver2[i]].countNormals();
 }

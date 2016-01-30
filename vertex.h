@@ -13,6 +13,17 @@ using namespace std;
 
 class Triangle;
 
+class AdditiveMap : public map<int, QVector3D>
+{
+public:
+    void push(int smoothingGroup, const QVector3D &normal)
+    {
+        if(!count(smoothingGroup))
+            insert(pair<int, QVector3D>(smoothingGroup, normal));
+        else at(smoothingGroup) += normal;
+    }
+};
+
 class Vertex : public Element
 {
 public:
@@ -38,9 +49,14 @@ public:
     void delTriangle(Triangle *triangle);
     const vector<Triangle*> &triangles() const { return _triangles; }
 
+    void countNormals();
+    const QVector3D &normal(int smoothingGroup) const
+    { return _normals.at(smoothingGroup); }
+
 private:
     QVector3D _position;
     QVector2D UVCoordinates;
+    AdditiveMap _normals;
 
     vector<Triangle*> _triangles;
 };

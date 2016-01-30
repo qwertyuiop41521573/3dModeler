@@ -48,6 +48,7 @@ void TPlane::function(Action action, QMouseEvent *event)
         bool flip = _hasStage2;
         addTriangle(!flip, flip, 2, 0);
         addTriangle(2 * !flip, 2 * flip, 3, 0);
+        updateNormals();
         break;
     }
     case EXECUTE:

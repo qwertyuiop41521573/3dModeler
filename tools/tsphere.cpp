@@ -101,7 +101,7 @@ void TSphere::function(Action action, QMouseEvent *event)
         }
 
         triangulate();
-
+        updateNormals();
         break;
     }
     case FINAL:
