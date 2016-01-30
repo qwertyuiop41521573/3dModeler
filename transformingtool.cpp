@@ -79,7 +79,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
     if(action == STOP)
     {
         _busy = false;
-        static_cast<REdit*>(Journal::current())->setAfter();
+        static_cast<REdit*>(Journal::temporary())->setAfter();
         Journal::submit();
     }
     //actual transformation

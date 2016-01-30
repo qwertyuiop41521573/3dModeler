@@ -4,7 +4,7 @@
 class Record
 {
 public:
-    virtual void submit() {}
+    virtual bool submit() = 0;
     virtual void undo() = 0;
     virtual void redo() = 0;
 };

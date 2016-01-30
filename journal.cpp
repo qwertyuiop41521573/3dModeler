@@ -34,7 +34,7 @@ namespace Journal
 
     SignalHandler *signalHandler;
 
-   // Record *currentRecord;
+    Record *temp = 0;
 }
 
 void Journal::cleanAll()
@@ -46,23 +46,18 @@ void Journal::cleanAll()
 
 void Journal::newRecord(Type type)
 {
-    //if we did some undos and from that point do something, we should clean the journal records starting from current point
-    for(rec_it it = _current + 1; it != _vec.end(); it++) delete *it;
-    _vec.erase(_current + 1, _vec.end());
-    //and only then push
-    Record *record;
-    if(type == CREATE) record = new RCreate;
-    if(type == EDIT)   record = new REdit;
-    if(type == DELETE) record = new RDelete;
-    _vec.push_back(record);
-    _current = --_vec.end();
+    delete temp;
+
+    if(type == CREATE) temp = new RCreate;
+    if(type == EDIT)   temp = new REdit;
+    if(type == DELETE) temp = new RDelete;
 }
 
 void Journal::addBefore(bool isVertex, int index)
 {
     //before tool was used
     //if(isVertex)
-    static_cast<REdit*>(*_current)->vertex().push_back({index, vertex()[index]});
+    static_cast<REdit*>(temp)->vertex().push_back({index, vertex()[index]});
     //else data.triangle().push_back({index, triangle()[index]});
 }
 
@@ -72,13 +67,13 @@ void Journal::addBefore(tr_it it)
     //Edit &data = *current()->data().edit;
     //if(isVertex) data.vertex().push_back({index, vertex()[index]});
     //else
-    static_cast<REdit*>(*_current)->triangle().push_back(it);
+    static_cast<REdit*>(temp)->triangle().push_back(it);
 }
 
 void Journal::addAfter(bool isVertex)
 {
     //after
-    REdit &data = *static_cast<REdit*>(*_current);
+    REdit &data = *static_cast<REdit*>(temp);
     if(isVertex)
     {
         vector <TwoVerticesWithIndex> &vertex = data.vertex();
@@ -87,13 +82,25 @@ void Journal::addAfter(bool isVertex)
     else data.triangle().back().after = *data.triangle().back().iterator;
 }
 
-void Journal::submit() { _vec[_vec.size() - 1]->submit(); }
+void Journal::submit()
+{
+    if(!temp->submit()) return;
+
+    //if we did some undos and from that point do something, we should clean the journal records starting from current point
+    for(rec_it it = _current + 1; it != _vec.end(); it++) delete *it;
+    _vec.erase(_current + 1, _vec.end());
+    //and only then push
+    _vec.push_back(temp);
+    temp = 0;
+    _current = --_vec.end();
+}
 
 void Journal::addVertex(int index)
-{ static_cast<RecordWith1Element*>(_vec.back())->vertex().push_back(index); }
+{ static_cast<RecordWith1Element*>(temp)->vertex().push_back(index); }
 void Journal::addTriangle(tr_it it)
-{ static_cast<RecordWith1Element*>(_vec.back())->triangle().push_back(it); }
+{ static_cast<RecordWith1Element*>(temp)->triangle().push_back(it); }
 
+Record *Journal::temporary() { return temp; }
 Record *Journal::current() { return *_current; }
 Record *Journal::next() { return *(_current + 1); }
 

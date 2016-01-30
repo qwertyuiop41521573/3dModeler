@@ -3,12 +3,14 @@
 #include "trianglecontainer.h"
 #include "triangle.h"
 
-void RCreate::submit()
+bool RCreate::submit()
 {
     for(int i = 0; i < _vertex.size(); i++)
         _vertex[i].value = Model::vertex()[_vertex[i].index];
     for(int i = 0; i < _triangle.size(); i++)
         _triangle[i].value = *_triangle[i].iterator;
+
+    return true;
 }
 
 void RCreate::undo()

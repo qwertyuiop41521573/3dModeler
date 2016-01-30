@@ -27,6 +27,7 @@ namespace Journal
     void transform(const QMatrix4x4 &matrix);
     void submit();
 
+    Record *temporary();
     Record *current();
     void cleanAll();    
 

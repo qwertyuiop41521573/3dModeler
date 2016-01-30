@@ -35,6 +35,7 @@ struct TwoTrianglesWithIterator
 class REdit : public Record
 {
 public:
+    bool submit() { return !_vertex.empty() || !_triangle.empty(); }
     void undo();
     void redo();
 

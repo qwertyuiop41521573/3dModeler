@@ -3,7 +3,7 @@
 #include "trianglecontainer.h"
 #include "triangle.h"
 
-void RDelete::submit()
+bool RDelete::submit()
 {
     for(int i = 0; i < _vertex.size(); i++) {
         _vertex[i].value = Model::vertex()[_vertex[i].index];
@@ -13,6 +13,8 @@ void RDelete::submit()
         _triangle[i].value = *_triangle[i].iterator;
         _triangle[i].value.undoRemove();
     }
+
+    return true;
 }
 
 void RDelete::undo()

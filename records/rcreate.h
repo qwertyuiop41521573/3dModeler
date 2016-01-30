@@ -6,7 +6,7 @@
 class RCreate : public RecordWith1Element
 {
 public:
-    void submit();
+    bool submit();
     void undo();
     void redo();
 };
