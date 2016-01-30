@@ -243,5 +243,5 @@ void TSphere::setVertices(const QVector3D &center, double radius)
         }
     }
     //bottom pole
-    vertex()[ver[ver.size() - 1]].setPosition(scaleAndTranslate * QVector4D(-normal, 1));
+    vertex()[ver.back()].setPosition(scaleAndTranslate * QVector4D(-normal, 1));
 }

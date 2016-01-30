@@ -129,7 +129,7 @@ void ToolSet::SignalHandler::weldTogether()
 
         //if this is first vertex with such coordinates, create GROUP with 1 element - this vertex
         groups.resize(groups.size() + 1);
-        groups[groups.size() - 1].push_back(i);
+        groups.back().push_back(i);
     }
 
     //search for first group that has more than 1 vertex

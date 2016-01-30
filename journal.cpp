@@ -77,7 +77,7 @@ void Journal::addAfter(bool isVertex)
     if(isVertex)
     {
         vector <TwoVerticesWithIndex> &vertex = data.vertex();
-        vertex[vertex.size() - 1].after = Model::vertex()[vertex[vertex.size() - 1].index];
+        vertex.back().after = Model::vertex()[vertex.back().index];
     }
     else data.triangle().back().after = *data.triangle().back().iterator;
 }
