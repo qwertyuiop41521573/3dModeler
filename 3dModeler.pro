@@ -55,7 +55,8 @@ SOURCES += \
     records/redit.cpp \
     recordwith1element.cpp \
     records/rdelete.cpp \
-    vertexcontainer.cpp
+    vertexcontainer.cpp \
+    vectuniqe.cpp
 
 
 HEADERS += \
@@ -111,7 +112,9 @@ HEADERS += \
     records/redit.h \
     recordwith1element.h \
     records/rdelete.h \
-    vertexcontainer.h
+    vertexcontainer.h \
+    records/vectuniqe.h \
+    vectuniqe.h
 
 
 RESOURCES += \
@@ -160,10 +163,8 @@ RESOURCES += \
 # in tselect.cpp fromWorldToScreen() is counted twice (for 'vertexOnScreen' and 'selected')
 # add 'bool checked[]' to lists of vertices/triangles that should not repeat
 # in glwidget rename VertexData_Flat to shaded
-# normals should be stored in Model, not counted in paintGL() - update when delete, snapTogether...
+# normals should be stored in Model, not counted in paintGL() - update when snapTogether...
 # save and load smoothing groups and normals
-# rename ElementWithIndex ...
-# make container : public std::vector with non-repeating items
 
 
 

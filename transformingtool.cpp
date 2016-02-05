@@ -56,12 +56,8 @@ void TransformingTool::function(Action action, QMouseEvent *event)
         tri.clear();
         for(int i = 0; i < toTransform.size(); i++) {
             const Vertex &v = vertex()[toTransform[i]];
-            for(int j = 0; j < v.triangles().size(); j++) {
-                int l;
-                for(l = 0; l < tri.size(); l++) if(tri[l] == v.triangles()[j])
-                    break;
-                if(l == tri.size()) tri.push_back(v.triangles()[j]);
-            }
+            for(int j = 0; j < v.triangles().size(); j++)
+                tri.push(v.triangles()[j]);
         }
 
         for(int i = 0; i < toTransform.size(); i++) Journal::addBefore(true, toTransform[i]);

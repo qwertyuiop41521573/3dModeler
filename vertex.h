@@ -7,8 +7,7 @@
 #include "camera.h"
 #include "element.h"
 #include "types.h"
-
-#include <vector>
+#include "vectuniqe.h"
 
 using namespace std;
 
@@ -59,7 +58,7 @@ private:
     QVector2D UVCoordinates;
     AdditiveMap _normals;
 
-    vector<tr_it> _triangles;
+    VectUniqe<tr_it> _triangles;
 };
 
 #endif // VERTEX_H

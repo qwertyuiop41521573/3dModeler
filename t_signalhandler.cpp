@@ -179,7 +179,7 @@ void ToolSet::SignalHandler::deleteSlot()
 {
     using namespace Model;
     vector <int> vertexList, vertexList2;
-    vector<tr_it> triangleList;
+    VectUniqe<tr_it> triangleList;
 
     Journal::newRecord(DELETE);
 
@@ -194,11 +194,7 @@ void ToolSet::SignalHandler::deleteSlot()
 
             for(int j = 0; j < v.triangles().size(); j++) {
                 const tr_it it = v.triangles()[j];
-                int k;
-                for(k = 0; k < triangleList.size(); k++)
-                    if(triangleList[k] == it) break;
-                if(k == triangleList.size()) {
-                    triangleList.push_back(it);
+                if(triangleList.push(it)) {
                     for(int l = 0; l < 3; l++) if(it->getIndex(l) != i)
                         addToVertexList2(&vertexList, &vertexList2, it->getIndex(l));
                 }

@@ -22,7 +22,7 @@ protected:
     vector <bool> checked;
     //list of selected vertices
     vector <int> toTransform;
-    vector<tr_it> tri;
+    VectUniqe<tr_it> tri;
     QMatrix4x4 transformation;
 
     void function(Action action, QMouseEvent *event);
