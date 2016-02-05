@@ -1,11 +1,17 @@
 #ifndef TARGET_H
 #define TARGET_H
 
-class QRadioButton;
+class QWidget;
 
 namespace Target
 {
-    extern QRadioButton *workWithElements[2];
+    void createWorkWithWidget(QWidget *workWithWidget);
+
+    bool isVertex();
+    bool isTriangle();
+
+    enum Tgt {VERTEX, TRIANGLE};
+    void set(Tgt target);
 }
 
 #endif // TARGET_H

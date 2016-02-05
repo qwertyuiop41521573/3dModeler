@@ -281,7 +281,7 @@ void GLWidget::drawFlatShaded()
     for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
         if(!it->exists()) continue;
         QVector3D color;
-        if(workWithElements[1]->isChecked() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
+        if(Target::isTriangle() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
         else color = shaded;
 
         for(int j = 0; j < 3; j++) vertices.push_back({it->vertex(j).position(), it->normal(), color});
@@ -346,7 +346,7 @@ void GLWidget::drawSmoothShaded()
     for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
         if(!it->exists()) continue;
         QVector3D color;
-        if(workWithElements[1]->isChecked() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
+        if(Target::isTriangle() && (it->newSelected() || it->selected())) color = it->newSelected() ? blue : red;
         else color = shaded;
 
 
@@ -385,7 +385,7 @@ void GLWidget::drawSmoothShaded()
 
 void GLWidget::drawSelectedFaces()
 {
-    if(!workWithElements[1]->isChecked()) return;
+    if(Target::isVertex()) return;
 
     programColor->bind();
     prepareProgramColor(projectionMatrix);
@@ -424,7 +424,7 @@ void GLWidget::addSelectedFace(tr_it iterator)
 void GLWidget::drawVertices()
 {
     glDisable(GL_CULL_FACE);
-    if(!workWithElements[0]->isChecked()) return;
+    if(Target::isTriangle()) return;
 
     glPointSize(4);
     programColor->bind();

@@ -22,7 +22,7 @@ void ToolSet::SignalHandler::selectAll()
     using namespace Model;
     Journal::newRecord(EDIT);
     //if we work with vertices
-    if(workWithElements[0]->isChecked())
+    if(Target::isVertex())
     {
         for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex().setSelected(i, true);
     }
@@ -39,7 +39,7 @@ void ToolSet::SignalHandler::selectNone()
 {
     using namespace Model;
     Journal::newRecord(EDIT);
-    if(workWithElements[0]->isChecked())
+    if(Target::isVertex())
     {
         for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex().setSelected(i, false);
     }
@@ -55,7 +55,7 @@ void ToolSet::SignalHandler::snapTogether()
 {
     using namespace Model;
     //only for vertices
-    if(workWithElements[1]->isChecked()) return;
+    if(Target::isTriangle()) return;
 
     vector <int> selected;
     QVector3D min, max;
@@ -103,7 +103,7 @@ void ToolSet::SignalHandler::snapTogether()
 void ToolSet::SignalHandler::weldTogether()
 {
     using namespace Model;
-    if(workWithElements[1]->isChecked()) return;
+    if(Target::isTriangle()) return;
 
     // GROUP is vector<int>, that contains indices of vertices, that have the same coordinates
     //we need 'vector<GROUP> groups' if there are more than 1 groups of vertices that were snapped together
@@ -183,7 +183,7 @@ void ToolSet::SignalHandler::deleteSlot()
 
     Journal::newRecord(DELETE);
 
-    if(workWithElements[0]->isChecked()) {
+    if(Target::isVertex()) {
         //add to vertexList all selected vertices, remove them
         for(int i = 0; i < vertex().size(); i++) {
             const Vertex &v = vertex()[i];

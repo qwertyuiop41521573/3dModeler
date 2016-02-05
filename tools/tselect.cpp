@@ -8,7 +8,6 @@
 
 using namespace Model;
 using namespace Journal;
-using namespace Target;
 
 TSelect::TSelect() : ToolWithWidget()
 {
@@ -86,7 +85,7 @@ void TSelect::function(Action action, QMouseEvent *event)
         _busy = false;
         Journal::newRecord(EDIT);
 
-        if(workWithElements[0]->isChecked())
+        if(Target::isVertex())
         {
             for(int i = 0; i < vertex().size(); i++)
             {
@@ -137,7 +136,7 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
     widget->countFinalMatrix();
     int j;
-    if(workWithElements[0]->isChecked())
+    if(Target::isVertex())
     {
         for(i = 0; i < vertex().size(); i++) if(vertex()[i].exists()) vertex()[i].setNewSelected(widget->isSelected(vertex()[i].position(), min, max));
     }

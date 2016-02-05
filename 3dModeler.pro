@@ -143,8 +143,6 @@ RESOURCES += \
 
 # light ?
 # move dirty code to functions
-# remove all int i, j ...
-# rewrite namespace Target
 # divide Tool::function()
 # while creating box without wireframeOverlay, the plane should be visible
 # fix saving model

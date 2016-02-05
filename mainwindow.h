@@ -47,7 +47,6 @@ private:
     QScrollArea *createScrollArea();
     QWidget *createScrollAreaWidget();
 
-    void createWorkWithWidget();
     QGridLayout *createScrollAreaLayout();
 
     QWidget *createViewportsWidget();

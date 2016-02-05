@@ -15,7 +15,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
     int i, j, k;
 
     QVector3D min, max;
-    if(workWithElements[0]->isChecked())
+    if(Target::isVertex())
     {
         //find first vertex
         for(i = 0; i < vertex().size(); i++)

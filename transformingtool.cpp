@@ -27,7 +27,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
         toTransform.clear();
 
         //fill list of selected vertices or vertices that belong to selected triangles
-        if(workWithElements[0]->isChecked())
+        if(Target::isVertex())
         {
             for(int i = 0; i < vertex().size(); i++) if(vertex()[i].exists() && vertex()[i].selected()) toTransform.push_back(i);
         }

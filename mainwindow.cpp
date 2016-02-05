@@ -54,23 +54,10 @@ QWidget *MainWindow::createScrollAreaWidget()
 {
     QWidget *w = new QWidget;
     w->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    createWorkWithWidget();
+    workWithWidget = new QWidget;
+    Target::createWorkWithWidget(workWithWidget);
     w->setLayout(createScrollAreaLayout());
     return w;
-}
-
-void MainWindow::createWorkWithWidget()
-{
-    workWithWidget = new QWidget;
-    QGridLayout *workWithLayout = new QGridLayout;
-    for(int i = 0; i < 2; i++) workWithElements[i] = new QRadioButton;
-    workWithElements[0]->setText("Vertex");
-    workWithElements[1]->setText("Triangle");
-
-    for(int i = 0; i < 2; i++) workWithLayout->addWidget(workWithElements[i], i, 0);
-
-    workWithElements[0]->setChecked(true);
-    workWithWidget->setLayout(workWithLayout);
 }
 
 QGridLayout *MainWindow::createScrollAreaLayout()
@@ -278,12 +265,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_1:
     {
-        workWithElements[0]->setChecked(true);
+        Target::set(VERTEX);
         break;
     }
     case Qt::Key_2:
     {
-        workWithElements[1]->setChecked(true);
+        Target::set(TRIANGLE);
         break;
     }
     }
