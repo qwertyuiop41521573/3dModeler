@@ -16,8 +16,7 @@ namespace Model
     bool _loaded = false;
     bool _modified = false;
 
-    ElementContainer <Vertex> _vertex;
-    //ElementContainer <Triangle> _triangle;
+    VertexContainer _vertex;
     TriangleContainer _triangle;
 }
 
@@ -107,8 +106,7 @@ bool Model::empty()
 }
 
 bool Model::textured() { return _textured; }
-ElementContainer <Vertex> &Model::vertex() { return _vertex; }
-//ElementContainer <Triangle> &Model::triangle() { return _triangle; }
+VertexContainer &Model::vertex() { return _vertex; }
 TriangleContainer &Model::triangle() { return _triangle; }
 const QString &Model::fileName() { return _fileName; }
 void Model::setFileName(const QString &fileName) { _fileName = fileName; }

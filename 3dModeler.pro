@@ -43,7 +43,6 @@ SOURCES += \
     creatingtool.cpp \
     record.cpp \
     journal.cpp \
-    elementcontainer.cpp \
     element.cpp \
     toolset.cpp \
     workspace.cpp \
@@ -55,7 +54,8 @@ SOURCES += \
     records/rcreate.cpp \
     records/redit.cpp \
     recordwith1element.cpp \
-    records/rdelete.cpp
+    records/rdelete.cpp \
+    vertexcontainer.cpp
 
 
 HEADERS += \
@@ -98,7 +98,6 @@ HEADERS += \
     creatingtool.h \
     record.h \
     journal.h \
-    elementcontainer.h \
     element.h \
     toolset.h \
     workspace.h \
@@ -111,7 +110,8 @@ HEADERS += \
     records/rcreate.h \
     records/redit.h \
     recordwith1element.h \
-    records/rdelete.h
+    records/rdelete.h \
+    vertexcontainer.h
 
 
 RESOURCES += \
@@ -165,10 +165,6 @@ RESOURCES += \
 # rename ElementWithIndex ...
 # make container : public std::vector with non-repeating items
 
-
-
-# current:
-# rewrite or remove ElementContainer
 
 
 # textures don't work

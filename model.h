@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "elementcontainer.h"
+#include "vertexcontainer.h"
 
 #include <iostream>
 
@@ -17,7 +17,7 @@ namespace Model
 
     bool textured();
     bool empty();
-    ElementContainer <Vertex> &vertex();
+    VertexContainer &vertex();
     //ElementContainer <Triangle> &triangle();
     TriangleContainer &triangle();
     const QString &fileName();

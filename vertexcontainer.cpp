@@ -1,4 +1,4 @@
-#include "elementcontainer.h"
+#include "vertexcontainer.h"
 #include "journal.h"
 #include "model.h"
 
@@ -6,7 +6,7 @@
 
 using namespace std;
 
-template <class T> int ElementContainer <T>::push(const T &t)
+int VertexContainer::push(const Vertex &vertex)
 {
     Model::modify();
     int index;
@@ -17,7 +17,7 @@ template <class T> int ElementContainer <T>::push(const T &t)
     {
         if(at(i).exists()) continue;
         
-        at(i) = t;
+        at(i) = vertex;
         index = i;
         break;
     }
@@ -25,7 +25,7 @@ template <class T> int ElementContainer <T>::push(const T &t)
     //if no such place found
     if(i == size())
     {
-        push_back(t);
+        push_back(vertex);
         index = size() - 1;
     }
 
@@ -37,7 +37,7 @@ template <class T> int ElementContainer <T>::push(const T &t)
 }
 
 
-template <class T> void ElementContainer <T>::remove(int index)
+void VertexContainer::remove(int index)
 {
     Model::modify();
     //"element.remove(i)" is the same as "element[i].remove()", but records to journal
@@ -46,7 +46,7 @@ template <class T> void ElementContainer <T>::remove(int index)
     at(index).remove();
 }
 
-template <class T> void ElementContainer <T>::setSelected(int index, bool value)
+void VertexContainer::setSelected(int index, bool value)
 {
     //same as remove
     if(at(index).selected() == value) return;
