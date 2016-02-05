@@ -19,6 +19,7 @@ void RCreate::undo()
         Model::vertex()[_vertex[i].index].remove();
     for(int i = 0; i < _triangle.size(); i++)
         _triangle[i].iterator->remove();
+    updateNormals();
 }
 
 void RCreate::redo()
@@ -27,6 +28,7 @@ void RCreate::redo()
         Model::vertex()[_vertex[i].index] = _vertex[i].value;
     for(int i = 0; i < _triangle.size(); i++) {
         *_triangle[i].iterator = _triangle[i].value;
-        _triangle[i].iterator->record();
+        Model::triangle().record(_triangle[i].iterator);
     }
+    updateNormals();
 }

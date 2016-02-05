@@ -50,7 +50,7 @@ bool Model::load(const char *newFileName)
 
             _triangle.back().setSelected(false, false);
             _triangle.back().undoRemove();
-            _triangle.back().record();
+            _triangle.record(--_triangle.end());
         }
     }
     _modified = false;

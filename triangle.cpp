@@ -51,23 +51,12 @@ void Triangle::operator =(const Triangle &triangle)
     //_normal = triangle.normal();
 }
 
-const Vertex &Triangle::vertex(int ind) const
-{ return Model::vertex()[index[ind]]; }
-
-Vertex &Triangle::vertex(int ind)
-{ return Model::vertex()[index[ind]]; }
-
-void Triangle::setIndex(int num, int newIndex)
-{
-    index[num] = newIndex;
-    vertex(num).addTriangle(this);
-}
+const Vertex &Triangle::vertex(int ind) const { return Model::vertex()[index[ind]]; }
+Vertex &Triangle::vertex(int ind) { return Model::vertex()[index[ind]]; }
+void Triangle::setIndex(int num, int newIndex) { index[num] = newIndex; }
 
 void Triangle::remove()
 {
     Element::remove();
     for(int i = 0; i < 3; i++) vertex(i).delTriangle(this);
 }
-
-void Triangle::record()
-{ for(int i = 0; i < 3; i++) if(index[i] != -1) vertex(i).addTriangle(this); }

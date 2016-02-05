@@ -57,11 +57,11 @@ void ToolSet::SignalHandler::snapTogether()
     //only for vertices
     if(workWithElements[1]->isChecked()) return;
 
-    int i;
     vector <int> selected;
     QVector3D min, max;
 
     //find first vertex in list and set min and max to it's coordinates
+    int i;
     for(i = 0; i < vertex().size(); i++)
     {
         if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
@@ -105,18 +105,17 @@ void ToolSet::SignalHandler::weldTogether()
     using namespace Model;
     if(workWithElements[1]->isChecked()) return;
 
-    int i, j, k, l;
-
-    // GROUP is vector <int>, that contains indices of vertices, that have the same coordinates
-    //we need vector <GROUP> groups if there are more than 1 groups of vertices that were snapped together
-    vector <vector <int> > groups;
+    // GROUP is vector<int>, that contains indices of vertices, that have the same coordinates
+    //we need 'vector<GROUP> groups' if there are more than 1 groups of vertices that were snapped together
+    vector<vector<int> > groups;
 
     //spread all vertices to groups with same coordinates
-    for(i = 0; i < vertex().size(); i++)
+    for(int i = 0; i < vertex().size(); i++)
     {
         if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
 
-        //search for previous vertex with same coordinates (in groups, not vertex)
+        //search for previous vertex with same coordinates (in groups, not Model::vertex())
+        int j;
         for(j = 0; j < groups.size(); j++)
         {
             if(vertex()[i].position() != vertex()[groups[j][0]].position()) continue;
@@ -134,6 +133,7 @@ void ToolSet::SignalHandler::weldTogether()
 
     //search for first group that has more than 1 vertex
     //we don't need those that have 1 vertex - there's nothing to weld
+    int i;
     for(i = 0; i < groups.size(); i++)
     {
         if(groups[i].size() == 1) continue;
@@ -149,7 +149,7 @@ void ToolSet::SignalHandler::weldTogether()
         if(groups[i].size() == 1) continue;
 
         //loop through all vertices, except first one ( [0] )
-        for(j = 1; j < groups[i].size(); j++)
+        for(int j = 1; j < groups[i].size(); j++)
         {
             int index = groups[i][j];
             Journal::addBefore(true, index);
@@ -160,7 +160,7 @@ void ToolSet::SignalHandler::weldTogether()
             for(tr_it it = triangle().begin(); it != triangle().end(); it++)
             {
                 if(!it->exists()) continue;
-                for(l = 0; l < 3; l++)
+                for(int l = 0; l < 3; l++)
                 {
                     if(it->getIndex(l) == index)
                     {
@@ -178,7 +178,6 @@ void ToolSet::SignalHandler::weldTogether()
 void ToolSet::SignalHandler::deleteSlot()
 {
     using namespace Model;
-    int i, j, k;
     vector <int> vertexList, vertexList2;
     vector<tr_it> triangleList;
 
@@ -186,34 +185,23 @@ void ToolSet::SignalHandler::deleteSlot()
 
     if(workWithElements[0]->isChecked()) {
         //add to vertexList all selected vertices, remove them
-        for(i = 0; i < vertex().size(); i++) {
-            if(!vertex()[i].exists() || !vertex()[i].selected()) continue;
+        for(int i = 0; i < vertex().size(); i++) {
+            const Vertex &v = vertex()[i];
+            if(!v.exists() || !v.selected()) continue;
 
             vertexList.push_back(i);
             vertex().remove(i);
-        }
 
-        bool selected;
-        int l;
-        //loop though all triangles
-        for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
-            if(!it->exists()) continue;
-            selected = false;
-            for(j = 0; j < 3; j++) {
-                //check if this triangle's vertices were removed
-                for(k = 0; k < vertexList.size(); k++)
-                {
-                    if(vertexList[k] != it->getIndex(j)) continue;
-                    //if there is one vertex removed
-
-                    //add this triangle to list
+            for(int j = 0; j < v.triangles().size(); j++) {
+                const tr_it it = v.triangles()[j];
+                int k;
+                for(k = 0; k < triangleList.size(); k++)
+                    if(triangleList[k] == it) break;
+                if(k == triangleList.size()) {
                     triangleList.push_back(it);
-                    selected = true;
-                    //and other 2 vertices to vertexList2
-                    for(l = 0; l < 3; l++) if(l != j) addToVertexList2(&vertexList, &vertexList2, it->getIndex(l));
-                    break;
+                    for(int l = 0; l < 3; l++) if(it->getIndex(l) != i)
+                        addToVertexList2(&vertexList, &vertexList2, it->getIndex(l));
                 }
-                if(selected) break;
             }
         }
     }
@@ -225,37 +213,19 @@ void ToolSet::SignalHandler::deleteSlot()
 
             triangleList.push_back(it);
             //and all vertices of this triangle
-            for(j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, it->getIndex(j));
+            for(int j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, it->getIndex(j));
         }
-
     }
 
     //remove triangles from list
-    for(i = 0; i < triangleList.size(); i++)
+    for(int i = 0; i < triangleList.size(); i++)
         triangle().rem(triangleList[i]);
 
-    //check if there are some existing triangles (when deleting, they are just marked as not existing)
-    for(tr_it it = triangle().begin(); it != triangle().end(); it++)
-        if(it->exists()) break;
-    bool noTriangles = i == triangle().size();
-
-    for(i = 0; i < vertexList2.size(); i++) {
-        //vertex should be removed if it does not belong to any triangle
-        //if there are no triangles
-        if(noTriangles) {
+    for(int i = 0; i < vertexList2.size(); i++) {
+        //vertex()[vertexList2[i]].countNormals();
+        if(vertex()[vertexList2[i]].triangles().empty())
             vertex().remove(vertexList2[i]);
-            continue;
-        }
-        //if there are some, we should check if one of them is built on this vertex
-        tr_it it;
-        for(it = triangle().begin(); it != triangle().end(); it++) {
-            if(!it->exists()) continue;
-            for(k = 0; k < 3; k++) if(it->getIndex(k) == vertexList2[i])
-                break;
-            if(k < 3) break;
-        }
-        //if no such triangle found, remove vertex
-        if(it == triangle().end()) vertex().remove(vertexList2[i]);
+
     }
 
     Journal::submit();
@@ -264,7 +234,9 @@ void ToolSet::SignalHandler::deleteSlot()
 void ToolSet::SignalHandler::addToVertexList2(vector <int> *vertexList, vector <int> *vertexList2, int index)
 {
     //check if this vertex already is in vertexList 1 or 2
-    for(int i = 0; i < vertexList->size(); i++) if((*vertexList)[i] == index) return;
-    for(int i = 0; i < vertexList2->size(); i++) if((*vertexList2)[i] == index) return;
+    for(int i = 0; i < vertexList->size(); i++)
+        if((*vertexList)[i] == index) return;
+    for(int i = 0; i < vertexList2->size(); i++)
+        if((*vertexList2)[i] == index) return;
     vertexList2->push_back(index);
 }

@@ -7,11 +7,6 @@
 using namespace Model;
 using namespace Target;
 
-ToolWithPivot::ToolWithPivot() : TransformingTool()
-{
-
-}
-
 void ToolWithPivot::function(Action action, QMouseEvent *event)
 {
     if(action != START && action != FINAL) return;

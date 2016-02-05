@@ -26,7 +26,6 @@ public:
     Vertex &vertex(int ind);
 
     void remove();
-    void record();
 
 private:
     int index[3];

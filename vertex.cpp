@@ -34,18 +34,18 @@ void Vertex::operator =(const Vertex &vertex)
     _triangles = vertex.triangles();
 }
 
-void Vertex::addTriangle(Triangle *triangle)
+void Vertex::addTriangle(tr_it iterator)
 {
     int i;
     for(i = 0; i < _triangles.size(); i++)
-        if(_triangles[i] == triangle) break;
-    if(i == _triangles.size()) _triangles.push_back(triangle);
+        if(_triangles[i] == iterator) break;
+    if(i == _triangles.size()) _triangles.push_back(iterator);
 }
 
 void Vertex::delTriangle(Triangle *triangle)
 {
     for(int i = 0; i < _triangles.size(); i++) {
-        if(_triangles[i] != triangle) continue;
+        if(&*_triangles[i] != triangle) continue;
         _triangles.erase(_triangles.begin() + i);
         return;
     }

@@ -37,6 +37,8 @@ public:
 protected:
     vector <VertexWithIndex> _vertex;
     vector <TriangleWithIterator> _triangle;
+
+    void updateNormals();
 };
 
 #endif // RECORDWITH1ELEMENT_H

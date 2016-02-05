@@ -15,6 +15,7 @@ public:
     tr_it push(const Triangle &triangle);
     void rem(tr_it it);
     void setSelected(tr_it it, bool value);
+    void record(tr_it iterator);
 };
 
 #endif // TRIANGLECONTAINER_H

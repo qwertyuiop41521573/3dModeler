@@ -24,7 +24,7 @@ tr_it TriangleContainer::push(const Triangle &triangle)
     }
 
     //record to journal
-    iterator->record();
+    record(iterator);
     Journal::addTriangle(iterator);
     return iterator;
 }
@@ -47,4 +47,10 @@ void TriangleContainer::setSelected(tr_it it, bool value)
     Journal::addBefore(it);
     it->setSelected(value);
     Journal::addAfter(false);
+}
+
+void TriangleContainer::record(tr_it iterator)
+{
+    for(int i = 0; i < 3; i++) if(iterator->getIndex(i) != -1)
+        Model::vertex()[iterator->getIndex(i)].addTriangle(iterator);
 }

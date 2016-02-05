@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include "element.h"
+#include "types.h"
 
 #include <vector>
 
@@ -45,9 +46,9 @@ public:
 
     void operator =(const Vertex &vertex);
 
-    void addTriangle(Triangle *triangle);
+    void addTriangle(tr_it iterator);
     void delTriangle(Triangle *triangle);
-    const vector<Triangle*> &triangles() const { return _triangles; }
+    const vector<tr_it> &triangles() const { return _triangles; }
 
     void countNormals();
     const QVector3D &normal(int smoothingGroup) const
@@ -58,7 +59,7 @@ private:
     QVector2D UVCoordinates;
     AdditiveMap _normals;
 
-    vector<Triangle*> _triangles;
+    vector<tr_it> _triangles;
 };
 
 #endif // VERTEX_H

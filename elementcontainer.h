@@ -11,7 +11,6 @@ using namespace std;
 template <class T> class ElementContainer : public vector <T>
 {
 public:
-    ElementContainer();
     int push(const T &t);
     void remove(int index);
     void setSelected(int index, bool value);

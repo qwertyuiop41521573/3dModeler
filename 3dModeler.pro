@@ -163,12 +163,12 @@ RESOURCES += \
 # normals should be stored in Model, not counted in paintGL() - update when delete, snapTogether...
 # save and load smoothing groups and normals
 # rename ElementWithIndex ...
+# make container : public std::vector with non-repeating items
 
 
 
 # current:
 # rewrite or remove ElementContainer
-# use accessing triangles by vertex where possible
 
 
 # textures don't work

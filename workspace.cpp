@@ -120,7 +120,7 @@ void Workspace::setActiveWidget(GLWidget *widget)
     projection->setCurrentIndex(widget->getProjection());
 }
 
-GLWidget *Workspace::activeWidget() { return _activeWidget; };
+GLWidget *Workspace::activeWidget() { return _activeWidget; }
 
 void Workspace::hideViewport(int index)
 {

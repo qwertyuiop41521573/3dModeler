@@ -28,7 +28,7 @@ void REdit::updateNormals()
     for(int i = 0; i < _vertex.size(); i++) {
         const Vertex &v = Model::vertex()[_vertex[i].index];
         for(int j = 0; j < v.triangles().size(); j++) {
-            Triangle *t = v.triangles()[j];
+            Triangle *t = &*v.triangles()[j];
             int l;
 
             for(l = 0; l < _triangle.size(); l++)

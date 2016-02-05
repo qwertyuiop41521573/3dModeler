@@ -6,10 +6,6 @@
 
 using namespace std;
 
-template <class T> ElementContainer <T>::ElementContainer()
-{
-}
-
 template <class T> int ElementContainer <T>::push(const T &t)
 {
     Model::modify();
