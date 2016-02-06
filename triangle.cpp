@@ -7,22 +7,22 @@ using namespace std;
 
 Triangle::Triangle(int a, int b, int c, int smoothingGroup)
 {
-    index[0] = a;
-    index[1] = b;
-    index[2] = c;
+    _index[0] = a;
+    _index[1] = b;
+    _index[2] = c;
 
     init(smoothingGroup);
 }
 
 Triangle::Triangle(int *values, int smoothingGroup)
 {
-    for(int i = 0; i < 3; i++) index[i] = values[i];
+    for(int i = 0; i < 3; i++) _index[i] = values[i];
     init(smoothingGroup);
 }
 
 Triangle::Triangle(const Triangle &triangle)
 {
-    for(int i = 0; i < 3; i++) index[i] = triangle.getIndex(i);
+    for(int i = 0; i < 3; i++) _index[i] = triangle.index(i);
     init(triangle.smoothingGroup());
 }
 
@@ -36,14 +36,14 @@ void Triangle::init(int smoothingGroup)
 void Triangle::countNormal()
 {
     QVector3D v[3];
-    for(int j = 0; j < 3; j++) v[j] = Model::vertex()[index[j]].position();
+    for(int j = 0; j < 3; j++) v[j] = Model::vertex()[_index[j]].position();
     _normal = QVector3D::crossProduct(v[1] - v[0], v[2] - v[0]).normalized();
 }
 
 void Triangle::operator =(const Triangle &triangle)
 {
     Element::operator =(triangle);
-    for(int i = 0; i < 3; i++) index[i] = triangle.getIndex(i);
+    for(int i = 0; i < 3; i++) _index[i] = triangle.index(i);
     _smoothingGroup = triangle.smoothingGroup();
     //for(int i = 0; i < 3; i++)
       //  if(index[i] != -1) vertex(i).addTriangle(this);
@@ -51,9 +51,10 @@ void Triangle::operator =(const Triangle &triangle)
     //_normal = triangle.normal();
 }
 
-const Vertex &Triangle::vertex(int ind) const { return Model::vertex()[index[ind]]; }
-Vertex &Triangle::vertex(int ind) { return Model::vertex()[index[ind]]; }
-void Triangle::setIndex(int num, int newIndex) { index[num] = newIndex; }
+const Vertex &Triangle::vertex(int ind) const
+{ return Model::vertex()[_index[ind]]; }
+Vertex &Triangle::vertex(int ind) { return Model::vertex()[_index[ind]]; }
+void Triangle::setIndex(int num, int newIndex) { _index[num] = newIndex; }
 
 void Triangle::remove()
 {

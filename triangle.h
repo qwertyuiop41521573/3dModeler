@@ -14,7 +14,7 @@ public:
     Triangle(int *values, int smoothingGroup);
     Triangle(const Triangle &triangle);
 
-    int getIndex(int num) const { return index[num]; }
+    int index(int num) const { return _index[num]; }
     void setIndex(int num, int newIndex);
 
     void operator =(const Triangle &triangle);
@@ -28,7 +28,7 @@ public:
     void remove();
 
 private:
-    int index[3];
+    int _index[3];
     int _smoothingGroup;
     QVector3D _normal;
 

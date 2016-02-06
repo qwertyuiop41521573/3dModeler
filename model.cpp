@@ -90,7 +90,7 @@ bool Model::save()
     fprintf(output, "%i ", triangles);
 
     for(tr_it it = _triangle.begin(); it != _triangle.end(); it++)
-        for(j = 0; j < 3; j++) fprintf(output, "%i ", it->getIndex(j));
+        for(j = 0; j < 3; j++) fprintf(output, "%i ", it->index(j));
 
     fclose(output);
     _loaded = true;

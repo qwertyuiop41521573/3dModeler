@@ -58,7 +58,7 @@ void ToolWithPivot::function(Action action, QMouseEvent *event)
 
             for(j = 0; j < 3; j++)
             {
-                index = it->getIndex(j);
+                index = it->index(j);
                 if(checked[index]) continue;
 
                 for(k = 0; k < 3; k++)

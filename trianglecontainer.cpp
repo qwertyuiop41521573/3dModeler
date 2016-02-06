@@ -51,6 +51,6 @@ void TriangleContainer::setSelected(tr_it it, bool value)
 
 void TriangleContainer::record(tr_it iterator)
 {
-    for(int i = 0; i < 3; i++) if(iterator->getIndex(i) != -1)
-        Model::vertex()[iterator->getIndex(i)].addTriangle(iterator);
+    for(int i = 0; i < 3; i++) if(iterator->index(i) != -1)
+        Model::vertex()[iterator->index(i)].addTriangle(iterator);
 }

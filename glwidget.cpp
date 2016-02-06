@@ -351,7 +351,7 @@ void GLWidget::drawSmoothShaded()
 
 
         for(int j = 0; j < 3; j++) {
-            const Vertex &v = Model::vertex()[it->getIndex(j)];
+            const Vertex &v = Model::vertex()[it->index(j)];
             vertices.push_back({v.position(), v.normal(it->smoothingGroup())
                  /*vertexGroup[it->getIndex(j)].at(it->smoothingGroup())*/, color});
         }

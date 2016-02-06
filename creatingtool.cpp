@@ -19,7 +19,7 @@ void CreatingTool::updateNormals()
     for(int i = 0; i < tri.size(); i++) {
         tri[i]->countNormal();
         for(int j = 0; j < 3; j++) {
-            int index = tri[i]->getIndex(j);
+            int index = tri[i]->index(j);
             int k;
 
             for(k = 0; k < ver.size(); k++) if(index == ver[k]) break;

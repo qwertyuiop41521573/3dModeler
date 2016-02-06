@@ -43,7 +43,7 @@ void TransformingTool::function(Action action, QMouseEvent *event)
 
                 for(int j = 0; j < 3; j++)
                 {
-                    index = it->getIndex(j);
+                    index = it->index(j);
                     if(checked[index]) continue;
 
                     checked[index] = true;
@@ -90,14 +90,14 @@ void TransformingTool::updateNormals()
             int k;
 
             for(k = 0; k < toTransform.size(); k++)
-                if(tri[i]->getIndex(j) == toTransform[k]) break;
+                if(tri[i]->index(j) == toTransform[k]) break;
             if(k < toTransform.size()) continue;
 
             for(k = 0; k < ver2.size(); k++)
-                if(tri[i]->getIndex(j) == ver2[k]) break;
+                if(tri[i]->index(j) == ver2[k]) break;
             if(k < ver2.size()) continue;
 
-            ver2.push_back(tri[i]->getIndex(j));
+            ver2.push_back(tri[i]->index(j));
         }
     }
     for(int i = 0; i < toTransform.size(); i++)

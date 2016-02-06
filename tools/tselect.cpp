@@ -162,14 +162,14 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
             if(!it->exists()) continue;
             it->setNewSelected(false);
 
-            normal = QVector3D::crossProduct(vertexOnScreen[it->getIndex(1)] - vertexOnScreen[it->getIndex(0)], vertexOnScreen[it->getIndex(2)] - vertexOnScreen[it->getIndex(0)]).z();
+            normal = QVector3D::crossProduct(vertexOnScreen[it->index(1)] - vertexOnScreen[it->index(0)], vertexOnScreen[it->index(2)] - vertexOnScreen[it->index(0)]).z();
 
             if(ignoreBackfacing->isChecked() && normal < 0) continue;
 
             //check if triangle and rectangle can have common points
-            minT = maxT = vertexOnScreen[it->getIndex(0)];
+            minT = maxT = vertexOnScreen[it->index(0)];
             for(j = 1; j < 3; j++) {
-                const QVector2D &v = vertexOnScreen[it->getIndex(j)];
+                const QVector2D &v = vertexOnScreen[it->index(j)];
                 if(v.x() < minT.x()) minT.setX(v.x());
                 if(v.y() < minT.y()) minT.setY(v.y());
                 if(v.x() > maxT.x()) maxT.setX(v.x());
@@ -179,7 +179,7 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
             //check if some vertex of triangle is inside rectangle
             for(j = 0; j < 3; j++) {
-                if(selected[it->getIndex(j)]) {
+                if(selected[it->index(j)]) {
                     it->setNewSelected(true);
                     break;
                 }
@@ -189,8 +189,8 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
             //check if some point of rectangle (like vertex) is inside triangle
             for(j = 0; j < 4; j++) {
                 for(k = 0; k < 3; k++) {
-                    edge = vertexOnScreen[it->getIndex((k + 1) % 3)] - vertexOnScreen[it->getIndex(k)];
-                    fromVertexToCurrent = rectanglePoints[j] - vertexOnScreen[it->getIndex(k)];
+                    edge = vertexOnScreen[it->index((k + 1) % 3)] - vertexOnScreen[it->index(k)];
+                    fromVertexToCurrent = rectanglePoints[j] - vertexOnScreen[it->index(k)];
                     if(QVector3D::crossProduct(edge, fromVertexToCurrent).z() * normal <= 0) break;
                 }
                 if(k == 3) it->setNewSelected(true);
@@ -202,8 +202,8 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
             for(j = 0; j < 3; j++)
             {
                 // edge - j, (j + 1) % 3e
-                minT = maxT = vertexOnScreen[it->getIndex(j)];
-                const QVector2D &v = vertexOnScreen[it->getIndex((j + 1) % 3)];
+                minT = maxT = vertexOnScreen[it->index(j)];
+                const QVector2D &v = vertexOnScreen[it->index((j + 1) % 3)];
                 if(v.x() < minT.x()) minT.setX(v.x());
                 if(v.y() < minT.y()) minT.setY(v.y());
                 if(v.x() > maxT.x()) maxT.setX(v.x());
@@ -221,8 +221,8 @@ void TSelect::_select(const QVector2D &min, const QVector2D &max)
 
                         if(minT[l] >= rectanglePoints[recPoint][l] || maxT[l] <= rectanglePoints[recPoint][l]) continue;
 
-                        QVector2D &v1 = vertexOnScreen[it->getIndex(j)];
-                        QVector2D &v2 = vertexOnScreen[it->getIndex((j + 1) % 3)];
+                        QVector2D &v1 = vertexOnScreen[it->index(j)];
+                        QVector2D &v2 = vertexOnScreen[it->index((j + 1) % 3)];
 
                         bool shouldBeSelected = false;
                         if(v1[!l] == v2[!l])

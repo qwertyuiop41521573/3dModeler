@@ -162,7 +162,7 @@ void ToolSet::SignalHandler::weldTogether()
                 if(!it->exists()) continue;
                 for(int l = 0; l < 3; l++)
                 {
-                    if(it->getIndex(l) == index)
+                    if(it->index(l) == index)
                     {
                         Journal::addBefore(it);
                         it->setIndex(l, groups[i][0]);
@@ -195,8 +195,8 @@ void ToolSet::SignalHandler::deleteSlot()
             for(int j = 0; j < v.triangles().size(); j++) {
                 const tr_it it = v.triangles()[j];
                 if(triangleList.push(it)) {
-                    for(int l = 0; l < 3; l++) if(it->getIndex(l) != i)
-                        addToVertexList2(&vertexList, &vertexList2, it->getIndex(l));
+                    for(int l = 0; l < 3; l++) if(it->index(l) != i)
+                        addToVertexList2(&vertexList, &vertexList2, it->index(l));
                 }
             }
         }
@@ -209,7 +209,7 @@ void ToolSet::SignalHandler::deleteSlot()
 
             triangleList.push_back(it);
             //and all vertices of this triangle
-            for(int j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, it->getIndex(j));
+            for(int j = 0; j < 3; j++) addToVertexList2(&vertexList, &vertexList2, it->index(j));
         }
     }
 

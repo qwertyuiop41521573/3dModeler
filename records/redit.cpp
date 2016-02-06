@@ -45,7 +45,7 @@ void REdit::updateNormals()
     vector<int> ver;
     for(int i = 0; i < _triangle.size(); i++) {
         for(int j = 0; j < 3; j++) {
-            int index = _triangle[i].iterator->getIndex(j);
+            int index = _triangle[i].iterator->index(j);
             int k;
 
             for(k = 0; k < _vertex.size(); k++) if(index == _vertex[k].index) break;
@@ -59,7 +59,7 @@ void REdit::updateNormals()
     }
     for(int i = 0; i < tri.size(); i++) {
         for(int j = 0; j < 3; j++) {
-            int index = tri[i]->getIndex(j);
+            int index = tri[i]->index(j);
             int k;
 
             for(k = 0; k < _vertex.size(); k++) if(index == _vertex[k].index) break;
