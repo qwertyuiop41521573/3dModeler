@@ -149,15 +149,13 @@ RESOURCES += \
 # move functions from ElementContainer to static functions in Element
 # move function with tri.push_back to CreatinTool ?
 # default for perspective should be smoothshaded without wireframe overlay
-# make Triangle::vertex() to replace vertex()[triangle()[i].getIndex(j)] with triangle()[i].vertex(j)
+
 # make function to shorten vertex()[ver[i]]
-# undo / redo should record normals
 # TransformingTool::function(Action action, QMouseEvent *event) - remove event ?
 # CreatingTool and TransformingTool have common function - updateNormals() and common vector<int> tri
 # in journal.cpp remove rec reference
 # in tselect.cpp fromWorldToScreen() is counted twice (for 'vertexOnScreen' and 'selected')
 # add 'bool checked[]' to lists of vertices/triangles that should not repeat
-# in glwidget rename VertexData_Flat to shaded
 # normals should be stored in Model, not counted in paintGL() - update when snapTogether...
 # save and load smoothing groups and normals
 

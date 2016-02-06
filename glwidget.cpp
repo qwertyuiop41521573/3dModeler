@@ -277,7 +277,7 @@ void GLWidget::drawFlatShaded()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_FLAT);
 
-    vector <VertexData_Flat> vertices;
+    vector <VertexData_Shaded> vertices;
     for(tr_it it = triangle().begin(); it != triangle().end(); it++) {
         if(!it->exists()) continue;
         QVector3D color;
@@ -286,7 +286,7 @@ void GLWidget::drawFlatShaded()
 
         for(int j = 0; j < 3; j++) vertices.push_back({it->vertex(j).position(), it->normal(), color});
     }
-    int structSize = sizeof(VertexData_Flat);
+    int structSize = sizeof(VertexData_Shaded);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * structSize, vertices.data(), GL_STATIC_DRAW);
 
     vector <GLuint> indices(vertices.size());
@@ -317,7 +317,7 @@ void GLWidget::drawSmoothShaded()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_FLAT);
 
-    vector <VertexData_Flat> vertices;
+    vector <VertexData_Shaded> vertices;
 
     vector<AdditiveMap> vertexGroup(vertex().size());
 
@@ -358,7 +358,7 @@ void GLWidget::drawSmoothShaded()
     }
 
 
-    int structSize = sizeof(VertexData_Flat);
+    int structSize = sizeof(VertexData_Shaded);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * structSize, vertices.data(), GL_STATIC_DRAW);
 
     vector <GLuint> indices(vertices.size());

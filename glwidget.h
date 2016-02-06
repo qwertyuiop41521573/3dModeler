@@ -25,7 +25,7 @@ struct VertexData_Color
     QVector3D color;
 };
 
-struct VertexData_Flat
+struct VertexData_Shaded
 {
     QVector3D position;
     QVector3D normal;
