@@ -144,7 +144,6 @@ RESOURCES += \
 # light ?
 # move dirty code to functions
 # divide Tool::function()
-# while creating box without wireframeOverlay, the plane should be visible
 # fix saving model
 # move some functions from GLWidget to Workspace
 # move functions from ElementContainer to static functions in Element

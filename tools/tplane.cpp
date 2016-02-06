@@ -45,9 +45,8 @@ void TPlane::function(Action action, QMouseEvent *event)
             ver.push_back(vertex().push(worldCoordinates));
             vertex()[ver[i]].setNewSelected(true);
         }
-        bool flip = _hasStage2;
-        addTriangle(!flip, flip, 2, 0);
-        addTriangle(2 * !flip, 2 * flip, 3, 0);
+        addTriangle(1, 0, 2, 0);
+        addTriangle(2, 0, 3, 0);
         updateNormals();
         break;
     }
@@ -96,7 +95,14 @@ void TPlane::function(Action action, QMouseEvent *event)
             widget->_fromScreenToWorld(&posA, QVector4D(currentPosition.x(), startPosition.y(), 0, 1));
         }
         //flipping the cap (or not)
-        int a = (diagonal.x() * diagonal.y() > 0) ? 1 : 3;
+        bool flip = (diagonal.x() * diagonal.y() > 0);
+        if(projection == PERSPECTIVE) {
+            double z = vertex()[ver[0]].position().z();
+            if((z == 0 && widget->getCamera().position().z() < 0) || z > 0)
+                flip = false;
+        }
+        int a = flip ? 1 : 3;
+
         vertex()[ver[4 - a]].setPosition(posA);
         vertex()[ver[a]].setPosition(posB);
         updateNormals();

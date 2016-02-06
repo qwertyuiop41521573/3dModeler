@@ -132,7 +132,7 @@ void TBox::function(Action action, QMouseEvent *event)
         QVector3D e_x = vertex()[ver[7]].position() - vertex()[ver[4]].position();
 
         //flip the box if needed
-        if(QVector3D::dotProduct(normal, vertex()[ver[0]].position() - vertex()[ver[4]].position()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) > 0) {
+        if(QVector3D::dotProduct(normal, vertex()[ver[4]].position() - vertex()[ver[0]].position()) * QVector3D::dotProduct(normal,  QVector3D::crossProduct(e_x, diagonal)) > 0) {
             QVector3D temp = vertex()[ver[1]].position();
             vertex()[ver[1]].setPosition(vertex()[ver[3]].position());
             vertex()[ver[3]].setPosition(temp);
@@ -185,16 +185,16 @@ void TBox::function(Action action, QMouseEvent *event)
         }
 
         //triangles for walls and second cap
-        addTriangle(0, 5, 1, 1);
-        addTriangle(0, 4, 5, 1);
-        addTriangle(1, 6, 2, 2);
-        addTriangle(1, 5, 6, 2);
-        addTriangle(2, 7, 3, 1);
-        addTriangle(2, 6, 7, 1);
-        addTriangle(3, 4, 0, 2);
-        addTriangle(3, 7, 4, 2);
-        addTriangle(4, 6, 5, 0);
-        addTriangle(4, 7, 6, 0);
+        addTriangle(0, 1, 5, 1);
+        addTriangle(0, 5, 4, 1);
+        addTriangle(1, 2, 6, 2);
+        addTriangle(1, 6, 5, 2);
+        addTriangle(2, 3, 7, 1);
+        addTriangle(2, 7, 6, 1);
+        addTriangle(3, 0, 4, 2);
+        addTriangle(3, 4, 7, 2);
+        addTriangle(4, 5, 6, 0);
+        addTriangle(4, 6, 7, 0);
 
         widget->setMouseTracking(true);
         updateNormals();

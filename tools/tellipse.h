@@ -28,7 +28,7 @@ protected:
     bool ellipseFailed;
 
 private:
-    void triangulateCap(bool flip = false);
+    void triangulateCap();
     void createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate);
 
     QVector3D startPosition3D;

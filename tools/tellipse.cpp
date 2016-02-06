@@ -88,7 +88,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
             ver.push_back(vertex().push(startPosition3D));
             vertex()[ver[i]].setNewSelected(true);
         }
-        triangulateCap(_hasStage2);
+        triangulateCap();
         updateNormals();
         break;
     }
@@ -129,7 +129,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
         //center of first cap
         ver.push_back(vertex().push(center));
 
-        triangulateCap(_hasStage2);
+        triangulateCap();
 
         for(i = 0; i <= segments; i++) vertex()[ver[i]].setSelected(true);
         if(!_hasStage2) Journal::submit();
@@ -163,8 +163,12 @@ void TEllipse::function(Action action, QMouseEvent *event)
 
             double angle = 360 / double(segments);
             if(!circle) angle *= sign(radius.x() * radius.y());
-            normal = { 0, 0, 1 };
-            createCap({ 1.f, 0.f, 0.f, 1.f }, angle, scaleAndTranslate);
+            bool flip = true;
+            double z = vertex()[ver[0]].position().z();
+            if((z == 0 && widget->getCamera().position().z() < 0) || z > 0)
+                flip = false;
+            normal = {0, 0, flip ? 1 : -1};
+            createCap({1, 0, 0, 1}, angle, scaleAndTranslate);
         }
         else
         {
@@ -184,13 +188,14 @@ void TEllipse::function(Action action, QMouseEvent *event)
             if(circle) scaleAndTranslate.scale(radius.length(), radius.length(), radius.length());
             else
             {
-                for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01) radius[i] = sign(radius[i]);
+                for(i = 0; i < 3; i++) if(qAbs(normal[i]) > 0.01)
+                    radius[i] = sign(radius[i]);
                 scaleAndTranslate.scale(radius.x(), radius.y(), radius.z());
             }
             double angle = 360 / double(segments) * sign(radius.x() * radius.y() * radius.z());
             if(projection == TOP || projection == BOTTOM) angle *= -1;
             bool front = projection == FRONT || projection == BACK;
-            createCap({ !front, front, 0.f, 1.f }, angle, scaleAndTranslate);
+            createCap({!front, front, 0, 1}, angle, scaleAndTranslate);
         }
         updateNormals();
         break;
@@ -218,7 +223,7 @@ void TEllipse::function(Action action, QMouseEvent *event)
     }
 }
 
-void TEllipse::triangulateCap(bool flip)
+void TEllipse::triangulateCap()
 {
     //(flip == true) - ellipse's normal is directed down (in perspective)
     //    (needed for cylinder's lower cap
@@ -227,7 +232,7 @@ void TEllipse::triangulateCap(bool flip)
     int i;
 
     //set triangle indices for first cap
-    for(i = 0; i < segments; i++) addTriangle((i + flip) % segments, (i + !flip) % segments, segments, 0);
+    for(i = 0; i < segments; i++) addTriangle(i % segments, (i + 1) % segments, segments, 0);
 }
 
 void TEllipse::createCap(QVector4D rotatingVertex, double angle, const QMatrix4x4 &scaleAndTranslate)

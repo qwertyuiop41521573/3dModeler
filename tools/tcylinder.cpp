@@ -59,8 +59,8 @@ void TCylinder::function(Action action, QMouseEvent *event)
     case EXECUTE:
     {
         if(!_stage2) break;
-        Projection projection = widget->getProjection();
         double dy = (widget->getHalfHeight() - event->y() - widget->getLastPosition().y()) / double(100);
+        if(widget->getProjection() == PERSPECTIVE && normal.z() == -1) dy *= -1;
 
         for(i = 0; i <= segments; i++) vertex()[ver[segments + 1 + i]].move(normal * dy);
 
@@ -70,7 +70,7 @@ void TCylinder::function(Action action, QMouseEvent *event)
         QVector3D h = vertex()[ver[segments]].position() - vertex()[ver[2 * segments + 1]].position();
 
         //flip if needed
-        if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) > 0) for(i = 0; i < segments / 2; i++)
+        if(QVector3D::dotProduct(h, QVector3D::crossProduct(v1, v2)) < 0) for(i = 0; i < segments / 2; i++)
         {
             QVector3D temp;
 
@@ -130,14 +130,14 @@ void TCylinder::createWallsAndSecondCap(bool final)
     //add triangles for walls and second cap
 
     //cap
-    for(i = 0; i < segments; i++) addTriangle(segments + 1 + i, segments + 1 + (i + 1) % segments, segments + 1 + segments, 0);
+    for(i = 0; i < segments; i++) addTriangle(segments + 1 + i, segments + 1 + segments, segments + 1 + (i + 1) % segments, 0);
 
     //wall
     for(i = 0; i < segments; i++)
     {
         int t = (i + 1) % segments;
-        addTriangle(segments + 1 + t, segments + 1 + i, i, 1);
-        addTriangle(i, t, segments + 1 + t, 1);
+        addTriangle(segments + 1 + t, i, segments + 1 + i, 1);
+        addTriangle(i, segments + 1 + t, t, 1);
     }
 }
 
